@@ -26,7 +26,7 @@
     <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></svg>
     <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg>
   </button>
-  <div class="nav" id="nav"></div>
+  <div class="nav" id="nav"><div class="tabs" id="tabs"></div></div>
   <div class="pager" id="pager">
 
     <!-- 封面 -->
@@ -123,28 +123,101 @@
 
   <svg class="scene scene-d" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#081726"/><stop offset=".38" stop-color="#1a3b59"/><stop offset=".66" stop-color="#5d6283"/><stop offset=".86" stop-color="#df8a5f"/><stop offset="1" stop-color="#ffb866"/></linearGradient>
-    <radialGradient id="dglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".85"/><stop offset=".35" stop-color="#ff9a50" stop-opacity=".4"/><stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/></radialGradient>
-    <linearGradient id="dsea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a5e"/><stop offset=".05" stop-color="#37627e"/><stop offset=".5" stop-color="#15384f"/><stop offset="1" stop-color="#091b2a"/></linearGradient>
-    <linearGradient id="drefl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc47a" stop-opacity=".8"/><stop offset="1" stop-color="#ffc47a" stop-opacity="0"/></linearGradient>
-    <linearGradient id="dsand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a3f46"/><stop offset="1" stop-color="#17161d"/></linearGradient>
-    <filter id="db1"><feGaussianBlur stdDeviation="1"/></filter>
-    <filter id="db3"><feGaussianBlur stdDeviation="3"/></filter>
-    <filter id="db6"><feGaussianBlur stdDeviation="6"/></filter>
-  </defs>
-  <rect width="390" height="570" fill="url(#dsky)"/>
+    <linearGradient id="dksky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#091a2b"/>
+      <stop offset=".30" stop-color="#1c3f5e"/>
+      <stop offset=".52" stop-color="#6b6e86"/>
+      <stop offset=".64" stop-color="#e38a5c"/>
+      <stop offset=".70" stop-color="#ffb866"/>
+    </linearGradient>
+    <linearGradient id="dksea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d98a5e"/>
+      <stop offset=".08" stop-color="#34607c"/>
+      <stop offset=".5" stop-color="#15384f"/>
+      <stop offset="1" stop-color="#091b2a"/>
+    </linearGradient>
+    <radialGradient id="dksun" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fff0c8" stop-opacity=".95"/>
+      <stop offset=".3" stop-color="#ffb55a" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dkmtn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3a4d66"/>
+      <stop offset=".6" stop-color="#22324a"/>
+      <stop offset="1" stop-color="#16233a"/>
+    </linearGradient>
+    <linearGradient id="dksnow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cfe6f5"/>
+      <stop offset=".6" stop-color="#f4fbff"/>
+      <stop offset="1" stop-color="#ffd9a8"/>
+    </linearGradient>
+    <linearGradient id="dkstreak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb55a" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#ffb55a" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="dkrock" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2f36"/>
+      <stop offset="1" stop-color="#0a0c10"/>
+    </linearGradient>
+    
+    
+    <filter id="dkblur6"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="dkblur2"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="dkgrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/>
+    </filter>
+    </defs>
+
+  <!-- 天空 -->
+  <rect width="390" height="600" fill="url(#dksky)"/>
+  <!-- 星 -->
   <g id="stars" fill="#fff"></g>
-  <circle cx="195" cy="566" r="270" fill="url(#dglow)"/>
-  <circle cx="195" cy="566" r="46" fill="#ffe2ad" opacity=".95"/>
-  <g filter="url(#db6)" opacity=".5"><ellipse cx="75" cy="450" rx="80" ry="8" fill="#ffb98a"/><ellipse cx="330" cy="430" rx="64" ry="7" fill="#ffc9a0"/></g>
-  <rect y="566" width="390" height="290" fill="url(#dsea)"/>
-  <g filter="url(#db6)"><rect x="176" y="566" width="38" height="150" fill="url(#drefl)"/></g>
-  <g filter="url(#db3)" opacity=".7"><rect x="168" y="582" width="90" height="3" fill="#ffd9a0"/><rect x="148" y="606" width="130" height="2.5" fill="#ffc47a" opacity=".8"/><rect x="128" y="636" width="170" height="2" fill="#ffb55a" opacity=".5"/></g>
-  <g stroke="#9ec6dd" stroke-width="1.1" opacity=".2" fill="none"><path d="M0,622 Q50,616 100,622 T200,622 T300,622 T400,622"/><path d="M0,656 Q60,649 120,656 T240,656 T360,656 T480,656"/><path d="M0,694 Q70,686 140,694 T280,694 T420,694"/></g>
-  <path d="M-10,567 Q60,563 140,567 T300,567 T420,567" stroke="#ffd9a0" stroke-width="3" fill="none" opacity=".45" filter="url(#db1)"/>
-  <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766 L400,860 L-10,860Z" fill="url(#dsand)"/>
-  <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766" stroke="#cfe6f5" stroke-width="5" fill="none" opacity=".35" filter="url(#db3)"/>
-  <path d="M-10,768 C60,752 140,760 200,770 C270,782 340,758 400,754" stroke="#cfe6f5" stroke-width="1.6" fill="none" opacity=".3" filter="url(#db1)"/>
+  <!-- 日落光暈 -->
+  <ellipse cx="300" cy="575" rx="230" ry="150" fill="url(#dksun)"/>
+  <!-- 雲 -->
+  <g filter="url(#dkblur6)" opacity=".55">
+    <ellipse cx="90" cy="470" rx="110" ry="9" fill="#ffb98a"/>
+    <ellipse cx="320" cy="445" rx="90" ry="8" fill="#ffc9a0"/>
+    <ellipse cx="200" cy="500" rx="140" ry="7" fill="#f2a276"/>
+  </g>
+
+  <!-- 漢拿山(盾狀火山,山形寬而平緩) -->
+  <g transform="translate(0,118) scale(1,.8)">
+  <path d="M-10,585 L60,540 L130,488 L170,458 L195,448 L215,454 L235,450 L262,463 L320,510 L400,560 L400,590 Z" fill="url(#dkmtn)"/>
+  <path d="M130,488 L170,458 L195,448 L215,454 L235,450 L262,463 L292,488 Q272,480 256,488 Q240,476 225,486 Q210,474 195,484 Q180,473 165,486 Q150,480 130,488Z" fill="url(#dksnow)"/>
+  <!-- 山腰暖色邊光 -->
+  <path d="M235,450 L262,463 L320,510 L400,560 L400,590 L330,560 L270,500Z" fill="#ff9a50" opacity=".28"/>
+  </g>
+  <!-- 近處的小山丘(오름) -->
+  <path d="M-10,600 Q50,560 130,590 Q170,602 200,606 L-10,606Z" fill="#14202f"/>
+  <path d="M250,606 Q320,572 400,590 L400,610 L250,610Z" fill="#101b29"/>
+
+  <!-- 海 -->
+  <rect y="590" width="390" height="260" fill="url(#dksea)"/>
+  <!-- 海面反光 -->
+  <g filter="url(#dkblur2)">
+    <rect x="285" y="594" width="30" height="120" fill="url(#dkstreak)" opacity=".8"/>
+    <rect x="270" y="604" width="60" height="3" fill="#ffd9a0" opacity=".7"/>
+    <rect x="255" y="622" width="90" height="2.5" fill="#ffc47a" opacity=".55"/>
+    <rect x="240" y="644" width="120" height="2" fill="#ffb55a" opacity=".4"/>
+    <rect x="225" y="672" width="150" height="2" fill="#ffb55a" opacity=".28"/>
+  </g>
+  <!-- 海浪細紋 -->
+  <g stroke="#9ec6dd" stroke-width="1" opacity=".18" fill="none">
+    <path d="M0,640 Q50,634 100,640 T200,640 T300,640 T400,640"/>
+    <path d="M0,670 Q60,663 120,670 T240,670 T360,670 T480,670"/>
+    <path d="M0,705 Q70,697 140,705 T280,705 T420,705"/>
+  </g>
+
+  <!-- 玄武岩前景 -->
+  <path d="M-10,760 L40,735 L88,752 L140,728 L190,748 L240,738 L300,758 L350,740 L400,752 L400,860 L-10,860Z" fill="url(#dkrock)"/>
+  <path d="M40,735 L88,752 L70,770Z M140,728 L190,748 L160,772Z M300,758 L350,740 L335,785Z" fill="#000" opacity=".35"/>
+  <path d="M-10,760 L40,735 L88,752 L140,728 L190,748 L240,738 L300,758 L350,740 L400,752" stroke="#ff9a50" stroke-width="1.2" fill="none" opacity=".35"/>
+<!-- 雪 -->
+  <g id="snowfall" fill="#fff"></g>
+  <!-- 底紋顆粒,增加寫實質感 -->
+  <rect width="390" height="844" filter="url(#dkgrain)"/>
 </svg>
   <svg class="deco" viewBox="0 0 390 844">
     <defs>
@@ -241,7 +314,7 @@
     <!-- 總覽 -->
     <section class="pg v" data-nav="總覽">
       <div class="eyebrow">OVERVIEW</div><h3>濟州島總覽</h3>
-      <div class="ovmap" id="ovMap"></div>
+      <div class="ovmap" id="ovMap"><div class="mhost" id="ovHost"></div><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>
       <div class="filters" id="filters"></div>
       <div class="rglist" id="rgList"></div>
     </section>
@@ -265,7 +338,11 @@
 
 <script src="js/data.js"></script>
 <script src="js/audio-map.js"></script>
+<script src="js/coast.js"></script>
+<script src="js/landmarks.js"></script>
 <script src="js/map.js"></script>
+<script src="js/lmap.js"></script>
+<script src="js/mapui.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

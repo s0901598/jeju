@@ -3,7 +3,7 @@
 2027/02/08–02/11 濟州島四天三夜家族旅遊行程表(網頁版,手機翻頁)。
 
 ## 結構
-- `index.html` + `css/style.css` + `js/data.js` `js/map.js` `js/app.js`:整合版(封面 → 機票 → 住宿 → 總覽 → Day 1–4 → 資訊,左右滑動翻頁)
+- `index.html` + `css/style.css` + `js/`:整合版(`map.js` 插畫地圖、`lmap.js` 真實地圖、`mapui.js` 放大視窗、`landmarks.js` 地標、`coast.js` 海岸線、`audio-map.js` 韓文發音)(封面 → 機票 → 住宿 → 總覽 → Day 1–4 → 資訊,左右滑動翻頁)
 - 目前內容都是範例,正式行程填在 `js/data.js`
 - `prototype/light5.html`:淺色封面 + 航班頁原型(已定案)
 - `prototype/day.html`:每日頁原型(地圖霓虹路線 + 時間軸 ↔ 行程卡同步 + 橘子翻頁動畫)

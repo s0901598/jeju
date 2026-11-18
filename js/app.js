@@ -1,6 +1,6 @@
 const PITCH=144;
 const $=s=>document.querySelector(s);
-const pager=$('#pager'),navEl=$('#nav');
+const pager=$('#pager'),navEl=$('#nav'),tabsEl=$('#tabs');
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 
 
@@ -53,18 +53,20 @@ $('#stayList').innerHTML=STAYS.map(s=>`
    <span class="navbtn">導航 ›</span></div>`).join('');
 
 /* ---------- 總覽頁:分類篩選(全部 / 機場 / 景點 / 美食 / 住宿) ---------- */
-const OV=overviewPoints();let ovFilter='all';
+const cv=k=>{const c=TYPE[k][1],n=parseInt(c.slice(1),16);return `--c:${c};--rgb:${n>>16},${(n>>8)&255},${n&255}`};
+const OV=overviewPoints();let ovFilter='all',ovJM=null,ovPts=OV;
 function renderOverview(){
   const pts=ovFilter==='all'?OV:OV.filter(s=>s.ty===ovFilter);
-  $('#ovMap').innerHTML=overviewSVG(pts);
+  ovPts=pts;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:pts,route:false,badge:'type',interactive:false,fit:'island',regions:true});
   $('#rgList').innerHTML=['東','南','西','北'].map(r=>{
-    const list=pts.filter(s=>regionOf(...px(s.lon,s.lat))===r);
+    const list=pts.filter(s=>regionOf(s.lon,s.lat)===r);
     return `<div class="rgc"><h4>${r}部 <small>${list.length} 個點</small></h4><div class="chips">${
-      list.length?list.map(s=>`<span class="chip"><i style="background:${TYPE[s.ty][1]}">${s.ty==='airport'?'✈':TYPE[s.ty][2]}</i>${s.name}<em>D${s.days.join('、')}</em></span>`).join(''):'<span class="empty">沒有安排</span>'}</div></div>`}).join('');
-  $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all">全部<em>${OV.length}</em></button>`+
-    Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="--c:${c}"><i>${k==='airport'?'✈':g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
+      list.length?list.map(s=>`<span class="chip" style="${cv(s.ty)}"><i style="background:${TYPE[s.ty][1]}">${s.ty==='airport'?'✈':TYPE[s.ty][2]}</i>${s.name}<em>D${s.days.join('、')}</em></span>`).join(''):'<span class="empty">沒有安排</span>'}</div></div>`}).join('');
+  $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
+    Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${k==='airport'?'✈':g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});
 renderOverview();
+$('#ovMap').onclick=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
 
 /* ---------- 每日頁 ---------- */
 const infoPg=$('#p-info');
@@ -73,7 +75,7 @@ DAYS.forEach(d=>{
   const pg=document.createElement('section');pg.className='pg day';pg.dataset.nav='Day '+d.n;
   pg.innerHTML=`
    <div class="dh"><h2>Day ${d.n}<small>${d.date} 週${d.wk} · ${d.title}</small></h2></div>
-   <div class="map">${mapSVG(d)}<span class="badge l">${letters}</span><span class="badge r">範例</span></div>
+   <div class="map"><div class="mhost"></div><span class="badge l">${letters}</span><span class="badge r">範例</span><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>
    <div class="body">
      <div class="tl">${d.stops.map((s,i)=>`<div class="tli${i===0?' on':''}${i===d.stops.length-1?' last':''}" data-i="${i}"><span class="tm">${s.t}</span><span class="d"></span>${s.dr?`<span class="dr">${s.dr}</span>`:''}</div>`).join('')}<div class="sp"></div></div>
      <div class="cards">${d.stops.map((s,i)=>{const [tn,tc]=TYPE[s.ty];return `<div class="card${i===0?' on':''}" data-i="${i}">
@@ -81,27 +83,32 @@ DAYS.forEach(d=>{
         <div class="cb"><div class="r1"><span class="nm">${s.name}</span><span class="ty" style="background:${tc}">${tn}</span></div>
         <div class="ko"><span class="kt">${s.ko||''}</span>${btn('copy',s.ko||s.name,'複製地點名稱')}${s.ko?btn('play',s.ko,'播放韓文發音'):''}</div>
         <div class="ad"><span class="at">📍 ${s.addr}</span>${btn('copy',s.addr,'複製地址')}</div>
-        <div class="ft"><span class="nt">${s.note||''}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"><div class="end">Day ${d.n} · 完</div></div></div>
+        <div class="ft"><span class="nt">${s.note||''}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"></div></div>
    </div>`;
   pager.insertBefore(pg,infoPg);
+  const jm=JMap(pg.querySelector('.mhost'),{points:d.stops,route:true,badge:'letter',interactive:false,active:0});
+  let curIdx=0;
+  pg.querySelector('.map').onclick=()=>openMapFull({title:`Day ${d.n} · ${letters}`,points:d.stops,route:true,badge:'letter',sel:curIdx});
 
   /* 時間軸 <-> 行程 雙向連動 */
   const tl=pg.querySelector('.tl'),cards=pg.querySelector('.cards');
   let src=null,ts=0;
-  const setActive=i=>{
+  const setActive=i=>{curIdx=i;jm.setActive(i);
     pg.querySelectorAll('.tli').forEach((e,k)=>e.classList.toggle('on',k===i));
     pg.querySelectorAll('.card').forEach((e,k)=>e.classList.toggle('on',k===i));
     pg.querySelectorAll('.mk').forEach((e,k)=>e.classList.toggle('on',k===i));};
   const link=(a,b)=>a.addEventListener('scroll',()=>{
     if(src&&src!==a&&performance.now()-ts<150)return;
     src=a;ts=performance.now();b.scrollTop=a.scrollTop;
-    setActive(Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH))));},{passive:true});
+    setActive(Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH))));
+    if(a.scrollTop>PITCH*.5)pg.classList.add('compact');else if(a.scrollTop<PITCH*.3)pg.classList.remove('compact');},{passive:true});
   link(tl,cards);link(cards,tl);
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>tl.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });
 function fitSpacers(){document.querySelectorAll('.tl,.cards').forEach(l=>{l.querySelector('.sp').style.height=Math.max(0,l.clientHeight-PITCH)+'px'})}
 fitSpacers();addEventListener('resize',fitSpacers);
+if(window.ResizeObserver){const ro2=new ResizeObserver(fitSpacers);document.querySelectorAll('.cards').forEach(e=>ro2.observe(e))}
 
 /* ---------- 資訊頁:出發前清單(勾選會記在這支手機) ---------- */
 const doneSet=new Set(JSON.parse(store.get('jeju-check')||'[]'));
@@ -127,13 +134,14 @@ lockSlots();{const saved=store.get('jeju-code');if(saved){codeIn.value=saved;try
 const pages=[...pager.children];
 pages.forEach((p,i)=>{
   const t=document.createElement('div');t.className='tab'+(i===0?' on':'');t.textContent=p.dataset.nav;
-  t.onclick=()=>pager.scrollTo({left:i*pager.clientWidth});navEl.appendChild(t);});
+  t.onclick=()=>pager.scrollTo({left:i*pager.clientWidth});tabsEl.appendChild(t);});
 let cur=0,quiet=true;
+function resetPage(pg){pg.scrollTop=0;pg.classList.remove('compact');pg.querySelectorAll('.tl,.cards').forEach(e=>{e.style.scrollBehavior='auto';e.scrollTop=0;e.style.scrollBehavior=''});pg.querySelectorAll('.tli,.card,.mk').forEach((e,k)=>{});}
 pager.addEventListener('scroll',()=>{
-  const i=Math.round(pager.scrollLeft/pager.clientWidth);if(i===cur)return;cur=i;
-  [...navEl.children].forEach((t,k)=>t.classList.toggle('on',k===i));
+  const i=Math.round(pager.scrollLeft/pager.clientWidth);if(i===cur)return;const prevI=cur;cur=i;setTimeout(()=>resetPage(pages[prevI]),350);
+  [...tabsEl.children].forEach((t,k)=>t.classList.toggle('on',k===i));
   navEl.classList.toggle('off',i===0);
-  const on=navEl.children[i];if(on)navEl.scrollTo({left:on.offsetLeft-navEl.clientWidth/2+on.offsetWidth/2,behavior:'smooth'});
+  const on=tabsEl.children[i];if(on)tabsEl.scrollTo({left:on.offsetLeft-tabsEl.clientWidth/2+on.offsetWidth/2,behavior:'smooth'});
 },{passive:true});
 navEl.classList.add('off');
 
@@ -155,6 +163,8 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
   const n=+q.get('p');pager.style.scrollBehavior='auto';pager.scrollLeft=n*pager.clientWidth;
   const pg=pages[n],i=+q.get('i')||0,tgt=pg.querySelector(q.get('drive')==='timeline'?'.tl':'.cards');
   if(tgt){tgt.style.scrollBehavior='auto';tgt.scrollTop=i*PITCH}
+  if(q.get('compact'))pg.classList.add('compact');
+  if(q.get('open'))setTimeout(()=>{const m=pg.querySelector('.map,.ovmap');m&&m.click();if(q.get('pick'))setTimeout(()=>{const c=document.querySelector(`.mf-chp[data-i="${q.get('pick')}"]`);c&&c.click()},300);if(q.get('mode')==='B')setTimeout(()=>document.querySelector('.mf-mode')?.click(),500)},150);
   if(q.get('sy'))pg.scrollTop=+q.get('sy');
   if(q.get('f')){const b=document.querySelector(`.fpill[data-f="${q.get('f')}"]`);if(b)b.click()}
   setTimeout(()=>{pager.style.scrollBehavior='';quiet=false},400);},60)}else{setTimeout(()=>quiet=false,400)}
