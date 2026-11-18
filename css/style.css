@@ -480,3 +480,10 @@ html,body{touch-action:manipulation}
 .chip i{width:22px;height:22px;font-size:11px}
 .chip em{font-size:11px}
 .rgc h4{font-size:18px}.rgc h4 small{font-size:12px}
+
+/* 一滑不會衝過頭:每一張行程卡都是必停的吸附點,快速滑動也只會一張一張走 */
+.cards .card,.tl .tli{scroll-snap-stop:always}
+
+/* 時間軸不能被拖動、不能捲動:只跟著右邊行程卡自動對應(點時間軸的某一站仍可跳過去) */
+.tl{overflow-y:hidden;scroll-snap-type:none;cursor:default;touch-action:none}
+.tl.dragging{cursor:default}
