@@ -417,3 +417,13 @@ html,body{touch-action:manipulation}
 /* 機票頁(深色):框線恢復成原本的粗細,不要再加粗 */
 [data-theme=dark] #p-flight .fc{border-width:1.5px}
 [data-theme=dark] #p-flight .fc.ticket{border-width:2px}
+
+/* 總覽頁的放大鈕維持原本尺寸(34px、圖示 16px);每日頁才是縮小版 */
+.ovmap .mexpand{width:34px;height:34px;right:10px;bottom:10px}
+.ovmap .mexpand svg{width:16px;height:16px}
+
+/* 小地圖:拖動 / 縮放後才出現的「回到全景」鈕 */
+.mreset{position:absolute;left:8px;bottom:8px;width:26px;height:26px;border-radius:50%;border:0;background:var(--plate);color:var(--orange-d);display:none;place-items:center;font-size:13px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:3;cursor:pointer;padding:0;font-family:inherit}
+.mreset.on{display:grid}
+.ovmap .mreset{width:34px;height:34px;left:10px;bottom:10px;font-size:17px}
+.map .jm,.ovmap .jm{cursor:grab}

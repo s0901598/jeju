@@ -35,7 +35,7 @@ const REGIONS=(()=>{const L=(sx,sy)=>`<line x1="${HX}" y1="${HY}" x2="${HX+sx*60
 
 let uid=0;
 function JMap(host,o){
-  const {points=[],route=false,badge='letter',interactive=false,fit='points',regions=false,zoomBias=1}=o;
+  const {points=[],route=false,badge='letter',interactive=false,small=false,fit='points',regions=false,zoomBias=1}=o;
   const id='m'+(++uid),svg=document.createElementNS(NS,'svg');svg.setAttribute('class','jm');host.prepend(svg);
   const P=points.map(s=>[wx(s.lon),wy(s.lat)]);
   /* 路線(弧線)+ 箭頭 */
@@ -61,6 +61,8 @@ function JMap(host,o){
     <linearGradient id="${id}land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--land1)"/><stop offset="1" stop-color="var(--land2)"/></linearGradient>
     <radialGradient id="${id}h" gradientUnits="userSpaceOnUse" cx="${HX}" cy="${HY}" r="230"><stop offset="0" stop-color="var(--hillhi)" stop-opacity=".85"/><stop offset="1" stop-color="var(--hillhi)" stop-opacity="0"/></radialGradient>
     <radialGradient id="${id}og" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffd27a"/><stop offset=".5" stop-color="#ff8f1c"/><stop offset="1" stop-color="#d45a00"/></radialGradient>
+    <filter id="${id}g1" filterUnits="userSpaceOnUse" x="-5000" y="-5000" width="12000" height="12000"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="${id}g2" filterUnits="userSpaceOnUse" x="-5000" y="-5000" width="12000" height="12000"><feGaussianBlur stdDeviation="1.6"/></filter>
     <clipPath id="${id}clip"><path d="${ISL}"/></clipPath></defs>
    <rect x="-4000" y="-4000" width="9000" height="9000" fill="url(#${id}sea)"/>
    <path d="${ISL}" fill="none" stroke="var(--shore)" stroke-width="26" opacity=".25" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
@@ -70,10 +72,9 @@ function JMap(host,o){
      <g fill="none" stroke="var(--contour)" stroke-width="1.4" vector-effect="non-scaling-stroke"><ellipse cx="${HX}" cy="${HY}" rx="150" ry="95"/><ellipse cx="${HX}" cy="${HY}" rx="105" ry="64"/><ellipse cx="${HX}" cy="${HY}" rx="62" ry="36"/></g>${DECOR}${regions?REGIONS:''}</g>
    <ellipse cx="${wx(126.952)}" cy="${wy(33.503)}" rx="13" ry="9" fill="url(#${id}land)" stroke="var(--shore)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
    ${MOUNTAIN}
-   ${d?`<path d="${d}" fill="none" stroke="var(--case)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".95" vector-effect="non-scaling-stroke"/>
-   <path class="glow" d="${d}" fill="none" stroke="#ff6a00" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" opacity=".32" vector-effect="non-scaling-stroke"/>
-   <path class="mid" d="${d}" fill="none" stroke="#ff8a1f" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-   <path class="core" d="${d}" fill="none" stroke="#fff1d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+   ${d?`<path class="glow" d="${d}" fill="none" stroke="#ff4a00" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="1" filter="url(#${id}g1)" vector-effect="non-scaling-stroke"/>
+   <path class="mid" d="${d}" fill="none" stroke="#ff8a1f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="1" filter="url(#${id}g2)" vector-effect="non-scaling-stroke"/>
+   <path class="core" d="${d}" fill="none" stroke="#fff4d6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
    <path class="flow" d="${d}" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".9" vector-effect="non-scaling-stroke"/>`:''}
    <g>${lms}</g><g>${arrows}</g><g>${stops}</g>`;
   const mks=[...svg.querySelectorAll('.jk')],lmEls=[...svg.querySelectorAll('.jlm')],stopEls=[...svg.querySelectorAll('.jstop')];
@@ -84,9 +85,14 @@ function JMap(host,o){
     else{bx=[Math.min(...P.map(p=>p[0])),Math.max(...P.map(p=>p[0]))];by=[Math.min(...P.map(p=>p[1])),Math.max(...P.map(p=>p[1]))]}
     const bw=Math.max(bx[1]-bx[0],minW)*k1,bh=Math.max(by[1]-by[0],minH)*k2;
     return{cx:(bx[0]+bx[1])/2,cy:(by[0]+by[1])/2,ppu:Math.min(W()/bw,H()/bh,3.4)}};
-  let v={cx:0,cy:0,ppu:1},touched=false;const MINP=.3,MAXP=9;
-  function apply(){const w=W(),h=H();if(w<10||h<10)return;const vw=w/v.ppu,vh=h/v.ppu,inv=1/v.ppu;
+  let v={cx:0,cy:0,ppu:1},touched=false,basePpu=1;const MINP=.3,MAXP=9;
+  const setTouched=t=>{if(touched!==t){touched=t;if(api&&api.onTouched)api.onTouched(t)}};
+  function apply(){const w=W(),h=H();if(w<10||h<10)return;
+    v.cx=Math.max(ISLAND_BOX.x[0]-80,Math.min(ISLAND_BOX.x[1]+80,v.cx));v.cy=Math.max(ISLAND_BOX.y[0]-80,Math.min(ISLAND_BOX.y[1]+80,v.cy));
+    /* 總覽的小地圖:沒放大時,上下滑動讓頁面捲動;放大後才讓手指拖動地圖 */
+    if(small&&fit==='island')svg.style.touchAction=(v.ppu>basePpu*1.04)?'none':'pan-y';const vw=w/v.ppu,vh=h/v.ppu,inv=1/v.ppu;
     svg.setAttribute('viewBox',`${v.cx-vw/2} ${v.cy-vh/2} ${vw} ${vh}`);
+    const f1=svg.querySelector(`#${id}g1 feGaussianBlur`),f2=svg.querySelector(`#${id}g2 feGaussianBlur`);if(f1){f1.setAttribute('stdDeviation',7/v.ppu);f2.setAttribute('stdDeviation',1.6/v.ppu)}
     mks.forEach(g=>g.setAttribute('transform',`translate(${g.dataset.x},${g.dataset.y}) rotate(${g.dataset.rot||0}) scale(${inv})`));
     /* 標籤自動避開:先排行程點,再依重要程度排地標;放不下的地標就先隱藏 */
     const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2,sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2,placed=[];
@@ -101,25 +107,25 @@ function JMap(host,o){
       g.style.display='';pl.setAttribute('transform',`translate(${best[0]},${best[1]})`);placed.push(best[2]);if(!must)placed.push(circ(g))};
     stopEls.forEach(g=>put(g,true));
     [1,2,3].forEach(lv=>lmEls.filter(g=>+g.dataset.lv===lv).forEach(g=>{const ok=lv===1||(lv===2&&v.ppu>=.9)||(lv===3&&v.ppu>=1.7);if(!ok){g.style.display='none';return}put(g,false)}))}
-  const refit=()=>{v=fitView();v.ppu*=zoomBias;apply()};
+  const refit=()=>{v=fitView();v.ppu*=zoomBias;basePpu=v.ppu;apply()};
   const ro=new ResizeObserver(()=>{if(!touched)refit();else apply()});ro.observe(host);refit();
-  const zoomAt=(px,py,f)=>{touched=true;const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;apply()};
+  const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;apply()};
   let flying=0;
-  const fly=(t,ms=450)=>{touched=true;const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
-  const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{touched=false;const t=fitView();t.ppu*=zoomBias;fly(t);touched=false},
-    focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,
+  const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
+  const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{const t=fitView();t.ppu*=zoomBias;basePpu=t.ppu;fly(t);setTouched(false)},
+    focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,onTap:null,onTouched:null,
     setActive:i=>stopEls.forEach(g=>g.classList.toggle('on',+g.dataset.i===i)),
     destroy:()=>{ro.disconnect();flying++;svg.remove()}};
   if(interactive){
     const ptr=new Map();let moved=0,downEl=null;
-    svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);moved=0;downEl=document.elementFromPoint(e.clientX,e.clientY);flying++});
-    svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o2=ptr.get(e.pointerId),n=[e.clientX,e.clientY];touched=true;
+    svg.addEventListener('pointerdown',e=>{try{svg.setPointerCapture(e.pointerId)}catch(_){}ptr.set(e.pointerId,[e.clientX,e.clientY]);moved=0;downEl=document.elementFromPoint(e.clientX,e.clientY);flying++});
+    svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o2=ptr.get(e.pointerId),n=[e.clientX,e.clientY];setTouched(true);
       if(ptr.size===1){v.cx-=(n[0]-o2[0])/v.ppu;v.cy-=(n[1]-o2[1])/v.ppu;moved+=Math.abs(n[0]-o2[0])+Math.abs(n[1]-o2[1]);ptr.set(e.pointerId,n);apply()}
       else if(ptr.size===2){const ids=[...ptr.keys()],a=ptr.get(ids[0]),b=ptr.get(ids[1]),d0=Math.hypot(a[0]-b[0],a[1]-b[1]);ptr.set(e.pointerId,n);
         const a2=ptr.get(ids[0]),b2=ptr.get(ids[1]),d1=Math.hypot(a2[0]-b2[0],a2[1]-b2[1]),r=host.getBoundingClientRect();moved+=9;
         if(d0>0)zoomAt((a2[0]+b2[0])/2-r.left,(a2[1]+b2[1])/2-r.top,d1/d0)}});
-    const up=e=>{if(ptr.has(e.pointerId)&&moved<6&&ptr.size===1){const st=downEl&&downEl.closest&&downEl.closest('.jstop');if(st&&api.onStop)api.onStop(+st.dataset.i)}ptr.delete(e.pointerId)};
+    const up=e=>{if(ptr.has(e.pointerId)&&moved<6&&ptr.size===1){const st=downEl&&downEl.closest&&downEl.closest('.jstop');if(st&&api.onStop)api.onStop(+st.dataset.i);else if(!st&&api.onTap)api.onTap()}ptr.delete(e.pointerId)};
     svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
-    svg.addEventListener('wheel',e=>{e.preventDefault();const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,Math.exp(-e.deltaY*.0018))},{passive:false});
-    svg.addEventListener('dblclick',e=>{const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,1.8)})}
+    if(!small){svg.addEventListener('wheel',e=>{e.preventDefault();const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,Math.exp(-e.deltaY*.0018))},{passive:false});
+    svg.addEventListener('dblclick',e=>{const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,1.8)})}}
   return api}

@@ -9,7 +9,11 @@ function loadLeaflet(){
     s.onload=()=>res(window.L);s.onerror=()=>{_leafP=null;rej(new Error('leaflet'))};document.head.appendChild(s)});
   return _leafP}
 function LMap(host,o){
-  const {points=[],route=false,badge='letter',sel=-1}=o,L=window.L;
+  const {points=[],route=false,badge='letter',sel=-1}=o,L=window.L;let glowPl=null;
+  /* 霓虹光暈:等地圖就緒、路線的 SVG 元素建好後,再加上模糊濾鏡 */
+  const addGlow=()=>{if(!glowPl||!glowPl[0]._path||glowPl[0]._glow)return;const sv=glowPl[0]._path.ownerSVGElement,df=document.createElementNS('http://www.w3.org/2000/svg','defs');
+    df.innerHTML='<filter id="lgl1" filterUnits="userSpaceOnUse" x="-5000" y="-5000" width="12000" height="12000"><feGaussianBlur stdDeviation="6"/></filter><filter id="lgl2" filterUnits="userSpaceOnUse" x="-5000" y="-5000" width="12000" height="12000"><feGaussianBlur stdDeviation="1.6"/></filter>';
+    sv.prepend(df);glowPl[0]._path.setAttribute('filter','url(#lgl1)');glowPl[1]._path.setAttribute('filter','url(#lgl2)');glowPl[0]._glow=1};
   const ilon=x=>x/K_X+LON0,ilat=y=>LAT0-y/K_Y;
   const map=L.map(host,{zoomControl:false,attributionControl:true,zoomSnap:.25,fadeAnimation:false,keyboard:false,tap:false,boxZoom:false});
   map.attributionControl.setPrefix(false);
@@ -23,8 +27,8 @@ function LMap(host,o){
       for(let k=1;k<=24;k++){const p=bz(k/24);pts.push([ilat(p[1]),ilon(p[0])])}
       const m=bz(.5),m1=bz(.46),m2=bz(.54);arrows.push({ll:[ilat(m[1]),ilon(m[0])],ang:Math.atan2(m2[1]-m1[1],m2[0]-m1[0])*180/Math.PI})}
     const lay=(cls,op)=>L.polyline(pts,{className:cls,lineCap:'round',lineJoin:'round',interactive:false,...op}).addTo(map);
-    if(document.documentElement.dataset.theme!=='dark')lay('case',{color:'#fff',weight:9,opacity:.95});
-    lay('glow',{color:'#ff6a00',weight:15,opacity:.32});lay('mid',{color:'#ff8a1f',weight:5.5,opacity:1});lay('core',{color:'#fff1d0',weight:2,opacity:1});lay('flow',{color:'#fff',weight:2.2,opacity:.9});
+    const pl=[lay('glow',{color:'#ff4a00',weight:22,opacity:1}),lay('mid',{color:'#ff8a1f',weight:6,opacity:1}),lay('core',{color:'#fff4d6',weight:2.4,opacity:1}),lay('flow',{color:'#fff',weight:2.4,opacity:.95})];
+    glowPl=pl;
     arrows.forEach(a=>L.marker(a.ll,{interactive:false,icon:L.divIcon({className:'',iconSize:[18,18],html:`<div class="barr" style="transform:rotate(${a.ang}deg)"><svg width="16" height="16" viewBox="-8 -8 16 16"><path d="M-6,-6 L7,0 L-6,6 L-3,0Z" fill="#fff6e0" stroke="#e5600a" stroke-width="1.6" stroke-linejoin="round"/></svg></div>`})}).addTo(map))}
   /* 地標與行程點 */
   const items=[],names=new Set(points.map(s=>s.name));
@@ -48,10 +52,10 @@ function LMap(host,o){
     items.filter(i=>i.stop).forEach(i=>put(i,true));
     [1,2,3].forEach(lv=>items.filter(i=>i.lv===lv).forEach(i=>{const ok=lv===1||(lv===2&&z>=10.5)||(lv===3&&z>=12);if(!ok){i.m.getElement().firstChild.style.display='none';return}put(i,false)}))};
   map.on('zoomend moveend resize',layout);
-  const bounds=points.length?L.latLngBounds(points.map(s=>[s.lat,s.lon])).pad(.35):L.latLngBounds([[33.2,126.15],[33.57,126.96]]);
+  const bounds=points.length?L.latLngBounds(points.map(s=>[s.lat,s.lon])).pad(.15):L.latLngBounds([[33.2,126.15],[33.57,126.96]]);
   const home=anim=>map.fitBounds(o.fit==='island'||!points.length?L.latLngBounds([[33.2,126.15],[33.57,126.96]]):bounds,{maxZoom:13,animate:!!anim,padding:[20,20]});
   map.setView([33.4,126.55],10);
-  setTimeout(()=>{map.invalidateSize();home(false);if(o.zoomDelta)map.setZoom(map.getZoom()+o.zoomDelta,{animate:false});layout()},30);
+  setTimeout(()=>{map.invalidateSize();home(false);addGlow();if(o.zoomDelta)map.setZoom(map.getZoom()+o.zoomDelta,{animate:false});layout()},30);
   Object.assign(api,{zoom:d=>map.setZoom(map.getZoom()+d),home:()=>home(true),setActive:()=>{},
     focus:i=>map.flyTo([points[i].lat,points[i].lon],Math.max(map.getZoom(),13),{duration:.6}),destroy:()=>map.remove()});
   return api}

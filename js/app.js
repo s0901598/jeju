@@ -55,9 +55,11 @@ $('#stayList').innerHTML=STAYS.map(s=>`
 /* ---------- 總覽頁:分類篩選(全部 / 機場 / 景點 / 美食 / 住宿) ---------- */
 const cv=k=>{const c=TYPE[k][1],n=parseInt(c.slice(1),16);return `--c:${c};--rgb:${n>>16},${(n>>8)&255},${n&255}`};
 const OV=overviewPoints();let ovFilter='all',ovJM=null,ovPts=OV;
+const openOv=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
 function renderOverview(){
   const pts=ovFilter==='all'?OV:OV.filter(s=>s.ty===ovFilter);
-  ovPts=pts;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:pts,route:false,badge:'type',interactive:false,fit:'island',regions:true});
+  ovPts=pts;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:pts,route:false,badge:'type',interactive:true,small:true,fit:'island',regions:true});
+  const rs2=$('#ovReset');rs2.classList.remove('on');ovJM.onTouched=t=>rs2.classList.toggle('on',t);ovJM.onTap=openOv;ovJM.onStop=()=>openOv();
   $('#rgList').innerHTML=['東','南','西','北'].map(r=>{
     const list=pts.filter(s=>regionOf(s.lon,s.lat)===r);
     return `<div class="rgc"><h4>${r}部 <small>${list.length} 個點</small></h4><div class="chips">${
@@ -66,7 +68,7 @@ function renderOverview(){
     Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${k==='airport'?'✈':g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});
 renderOverview();
-$('#ovMap').onclick=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
+$('#ovMap .mexpand').onclick=e=>{e.stopPropagation();openOv()};$('#ovReset').onclick=e=>{e.stopPropagation();ovJM&&ovJM.home()};
 
 /* ---------- 每日頁 ---------- */
 const infoPg=$('#p-info');
@@ -75,7 +77,7 @@ DAYS.forEach(d=>{
   const pg=document.createElement('section');pg.className='pg day';pg.dataset.nav='Day '+d.n;
   pg.innerHTML=`
    <div class="dh"><h2>Day ${d.n}<small>${d.date} 週${d.wk} · ${d.title}</small></h2></div>
-   <div class="map"><div class="mhost"></div><span class="badge l">${letters}</span><span class="badge r">範例</span><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>
+   <div class="map"><div class="mhost"></div><span class="badge l">${letters}</span><span class="badge r">範例</span><button class="mreset" aria-label="回到全景">◎</button><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>
    <div class="body">
      <div class="tl">${d.stops.map((s,i)=>`<div class="tli${i===0?' on':''}${i===d.stops.length-1?' last':''}" data-i="${i}"><span class="tm">${s.t}</span><span class="d"></span>${s.dr?`<span class="dr">${s.dr}</span>`:''}</div>`).join('')}<div class="sp"></div></div>
      <div class="cards">${d.stops.map((s,i)=>{const [tn,tc]=TYPE[s.ty];return `<div class="card${i===0?' on':''}" data-i="${i}">
@@ -85,9 +87,12 @@ DAYS.forEach(d=>{
         <div class="ft"><span class="nt"><span class="lb">內容：</span>${s.note||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"></div></div>
    </div>`;
   pager.insertBefore(pg,infoPg);
-  const jm=JMap(pg.querySelector('.mhost'),{points:d.stops,route:true,badge:'letter',interactive:false,active:0});
+  const jm=JMap(pg.querySelector('.mhost'),{points:d.stops,route:true,badge:'letter',interactive:true,small:true,active:0});pg._jm=jm;
   let curIdx=0;
-  pg.querySelector('.map').onclick=()=>openMapFull({title:`Day ${d.n} · ${letters}`,points:d.stops,route:true,badge:'letter',sel:curIdx});
+  const openDay=sel=>openMapFull({title:`Day ${d.n} · ${letters}`,points:d.stops,route:true,badge:'letter',sel});
+  jm.onTap=()=>openDay(curIdx);jm.onStop=i=>openDay(i);
+  const rs=pg.querySelector('.mreset');jm.onTouched=t=>rs.classList.toggle('on',t);rs.onclick=e=>{e.stopPropagation();jm.home()};
+  pg.querySelector('.mexpand').onclick=e=>{e.stopPropagation();openDay(curIdx)};
 
   /* 時間軸 <-> 行程 雙向連動 */
   const tl=pg.querySelector('.tl'),cards=pg.querySelector('.cards');
@@ -135,7 +140,7 @@ pages.forEach((p,i)=>{
   const t=document.createElement('div');t.className='tab'+(i===0?' on':'');t.textContent=p.dataset.nav;
   t.onclick=()=>pager.scrollTo({left:i*pager.clientWidth});tabsEl.appendChild(t);});
 let cur=0,quiet=true;
-function resetPage(pg){pg.scrollTop=0;pg.classList.remove('compact');pg.querySelectorAll('.tl,.cards').forEach(e=>{e.style.scrollBehavior='auto';e.scrollTop=0;e.style.scrollBehavior=''});pg.querySelectorAll('.tli,.card,.mk').forEach((e,k)=>{});}
+function resetPage(pg){if(pg._jm)pg._jm.home();pg.scrollTop=0;pg.classList.remove('compact');pg.querySelectorAll('.tl,.cards').forEach(e=>{e.style.scrollBehavior='auto';e.scrollTop=0;e.style.scrollBehavior=''});pg.querySelectorAll('.tli,.card,.mk').forEach((e,k)=>{});}
 pager.addEventListener('scroll',()=>{
   const i=Math.round(pager.scrollLeft/pager.clientWidth);if(i===cur)return;const prevI=cur;cur=i;setTimeout(()=>resetPage(pages[prevI]),350);
   [...tabsEl.children].forEach((t,k)=>t.classList.toggle('on',k===i));
