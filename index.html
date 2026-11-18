@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff1da">
+<title>羊羊得億 · 林家濟州島之旅</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- 共用的 SVG 定義 -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d2a42"/><stop offset="1" stop-color="#1c5273"/></linearGradient>
+    <linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f6877"/><stop offset="1" stop-color="#3e7a6a"/></linearGradient>
+    <radialGradient id="halla" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#8fbf9a" stop-opacity=".75"/><stop offset="1" stop-color="#5b9a84" stop-opacity="0"/></radialGradient>
+    <filter id="gl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="gl2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <filter id="coast"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+</svg>
+
+<div class="app">
+  <div class="nav" id="nav"></div>
+  <div class="pager" id="pager">
+
+    <!-- 封面 -->
+    <section class="pg cover" data-nav="封面">
+  <svg class="scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="s3sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#b3d5ee"/>
+        <stop offset=".42" stop-color="#d2e7f3"/>
+        <stop offset=".70" stop-color="#f1e8e0"/>
+        <stop offset=".88" stop-color="#fbdcc2"/>
+        <stop offset="1" stop-color="#fbcfa8"/>
+      </linearGradient>
+      <radialGradient id="s3glow" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#fff8e8" stop-opacity=".95"/>
+        <stop offset=".3" stop-color="#ffe6c4" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#ffd6b0" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="s3sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbd6b8"/>
+        <stop offset=".05" stop-color="#d3e6ea"/>
+        <stop offset=".35" stop-color="#a8d1df"/>
+        <stop offset="1" stop-color="#7cb3cd"/>
+      </linearGradient>
+      <linearGradient id="s3mt" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#bcd6a8"/>
+        <stop offset=".5" stop-color="#93bb97"/>
+        <stop offset="1" stop-color="#7aa38c"/>
+      </linearGradient>
+      <linearGradient id="s3cliff" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#a08c78" stop-opacity="0"/>
+        <stop offset="1" stop-color="#a08c78" stop-opacity=".8"/>
+      </linearGradient>
+      <linearGradient id="s3haze" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbdcc2" stop-opacity="0"/>
+        <stop offset="1" stop-color="#fbdcc2" stop-opacity=".85"/>
+      </linearGradient>
+      <linearGradient id="s3refl" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff2dc" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#fff2dc" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="s3sand" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbe6cf"/>
+        <stop offset="1" stop-color="#f1cba4"/>
+      </linearGradient>
+      <path id="s3mtpath" d="M-10,566 C30,560 70,552 100,530 C120,515 130,495 142,480 Q148,468 158,470 Q164,458 174,462 Q182,450 192,456 Q202,446 212,452 Q222,442 233,450 Q244,442 254,450 Q264,444 274,452 Q284,450 292,462 C304,478 312,505 316,530 C318,545 320,556 324,566 Z"/>
+      <clipPath id="s3clip"><use href="#s3mtpath"/></clipPath>
+      <filter id="s3b1"><feGaussianBlur stdDeviation="1"/></filter>
+      <filter id="s3b3"><feGaussianBlur stdDeviation="3"/></filter>
+      <filter id="s3b6"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+
+    <!-- 天空:淡藍到粉橘的柔和漸層 -->
+    <rect width="390" height="570" fill="url(#s3sky)"/>
+    <circle cx="195" cy="566" r="260" fill="url(#s3glow)"/>
+    <circle cx="195" cy="566" r="56" fill="#fff9ec" opacity=".96"/>
+    <circle cx="195" cy="566" r="74" fill="#fff9ec" opacity=".4" filter="url(#s3b6)"/>
+
+    <!-- 雲:柔霧狀 -->
+    <g filter="url(#s3b6)" fill="#fff">
+      <ellipse cx="70" cy="410" rx="70" ry="10" opacity=".7"/>
+      <ellipse cx="335" cy="392" rx="62" ry="9" opacity=".65"/>
+      <ellipse cx="200" cy="330" rx="90" ry="8" opacity=".35"/>
+    </g>
+    <g filter="url(#s3b6)" fill="#fde0c4" opacity=".8">
+      <ellipse cx="80" cy="420" rx="66" ry="6"/>
+      <ellipse cx="340" cy="402" rx="56" ry="5"/>
+    </g>
+
+    <!-- 海 -->
+    <rect y="566" width="390" height="290" fill="url(#s3sea)"/>
+    <g filter="url(#s3b6)">
+      <rect x="172" y="566" width="46" height="150" fill="url(#s3refl)"/>
+    </g>
+    <g filter="url(#s3b3)" opacity=".7">
+      <rect x="170" y="582" width="90" height="3" fill="#fff6e6"/>
+      <rect x="150" y="606" width="130" height="2.5" fill="#fff0d8"/>
+      <rect x="128" y="636" width="170" height="2" fill="#fff0d8" opacity=".7"/>
+    </g>
+    <g stroke="#fff" stroke-width="1.2" opacity=".28" fill="none">
+      <path d="M0,622 Q50,616 100,622 T200,622 T300,622 T400,622"/>
+      <path d="M0,656 Q60,649 120,656 T240,656 T360,656 T480,656"/>
+      <path d="M0,694 Q70,686 140,694 T280,694 T420,694"/>
+    </g>
+
+    <!-- 水線柔光 -->
+    <path d="M-10,567 Q60,563 140,567 T300,567 T420,567" stroke="#fff" stroke-width="3" fill="none" opacity=".55" filter="url(#s3b1)"/>
+
+    <!-- 前景:柔和沙灘與浪花 -->
+    <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766 L400,860 L-10,860Z" fill="url(#s3sand)"/>
+    <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766" stroke="#fff" stroke-width="6" fill="none" opacity=".75" filter="url(#s3b3)"/>
+    <path d="M-10,768 C60,752 140,760 200,770 C270,782 340,758 400,754" stroke="#fff" stroke-width="2" fill="none" opacity=".5" filter="url(#s3b1)"/>
+  </svg>
+
+  <svg class="deco" viewBox="0 0 390 844">
+    <defs>
+      <radialGradient id="og" cx=".35" cy=".3" r=".8">
+        <stop offset="0" stop-color="#ffd27a"/><stop offset=".45" stop-color="#ff8f1c"/><stop offset="1" stop-color="#cf5200"/>
+      </radialGradient>
+      <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#4aa35a"/><stop offset="1" stop-color="#1b5a2a"/>
+      </linearGradient>
+      <g id="orange">
+        <circle r="26" fill="url(#og)"/>
+        <ellipse cx="-9" cy="-10" rx="9" ry="5" fill="#fff" opacity=".35" transform="rotate(-30 -9 -10)"/>
+        <circle cx="0" cy="-24" r="4.5" fill="#2f7a3f"/>
+        <path d="M-5,-24 L0,-30 L5,-24" stroke="#2f7a3f" stroke-width="2" fill="none"/>
+      </g>
+      <g id="leafg">
+        <path d="M0,0 Q16,-14 40,-4 Q18,12 0,0Z" fill="url(#leaf)"/>
+        <path d="M2,0 Q20,-4 38,-4" stroke="#b9e8bf" stroke-width=".8" fill="none" opacity=".6"/>
+      </g>
+      <filter id="sh"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#401a00" flood-opacity=".35"/></filter>
+    </defs>
+    <!-- 右上橘枝 -->
+    <g filter="url(#sh)">
+      <path d="M410,14 Q350,26 300,64 T236,104" stroke="#4a2f1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <use href="#leafg" transform="translate(372,24) rotate(-15) scale(1.05)"/>
+      <use href="#leafg" transform="translate(340,44) rotate(60) scale(1.1)"/>
+      <use href="#leafg" transform="translate(308,62) rotate(-20) scale(1.15)"/>
+      <use href="#leafg" transform="translate(270,84) rotate(65) scale(1.05)"/>
+      <use href="#orange" transform="translate(330,70) scale(.85)"/>
+      <use href="#orange" transform="translate(270,90) scale(.6)"/>
+      <use href="#orange" transform="translate(378,76) scale(.62)"/>
+    </g>
+    <!-- 左下橘子 -->
+    <g filter="url(#sh)">
+      <path d="M-10,742 Q40,752 96,790" stroke="#4a2f1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <use href="#leafg" transform="translate(8,748) rotate(-10) scale(1.1)"/>
+      <use href="#leafg" transform="translate(54,764) rotate(65) scale(1.1)"/>
+      <use href="#leafg" transform="translate(80,780) rotate(-30) scale(1)"/>
+      <use href="#orange" transform="translate(38,800) scale(.9)"/>
+      <use href="#orange" transform="translate(98,812) scale(.7)"/>
+    </g>
+    <g filter="url(#sh)">
+      <path d="M410,760 Q370,770 330,800" stroke="#4a2f1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <use href="#leafg" transform="translate(396,764) rotate(190) scale(1.1)"/>
+      <use href="#leafg" transform="translate(362,780) rotate(120) scale(1)"/>
+      <use href="#orange" transform="translate(352,806) scale(.8)"/>
+    </g>
+  </svg>
+      <div class="text">
+        <div class="t-year">2027 · 丁未年</div>
+        <div class="t-h1">羊羊得億</div>
+        <div class="t-h2">林家春節濟州島之旅</div>
+        <div class="t-rule"></div>
+        <div class="t-date">2027.02.08 — 02.11</div>
+      </div>
+      <div class="hint">向左滑動 翻頁 ›</div>
+    </section>
+
+    <!-- 機票 -->
+    <section class="pg v" data-nav="機票">
+      <div class="eyebrow">FLIGHT</div><h3>航班資訊</h3>
+      <div class="fc">
+        <div class="head"><span class="pill">去程</span><span class="dt">2027年02月08日(一)</span></div>
+        <div class="route">
+          <div class="pt"><div class="code">TPE</div><div class="city">台北桃園</div><div class="time">--:--</div><div class="tmx">第 ? 航廈 · 出發</div></div>
+          <div class="fmid"><div class="line"></div><div class="no">航班 --</div></div>
+          <div class="pt r"><div class="code">CJU</div><div class="city">濟州島</div><div class="time">--:--</div><div class="tmx">抵達</div></div>
+        </div>
+      </div>
+      <div class="fc">
+        <div class="head"><span class="pill">回程</span><span class="dt">2027年02月11日(四)</span></div>
+        <div class="route">
+          <div class="pt"><div class="code">CJU</div><div class="city">濟州島</div><div class="time">--:--</div><div class="tmx">出發</div></div>
+          <div class="fmid"><div class="line"></div><div class="no">航班 --</div></div>
+          <div class="pt r"><div class="code">TPE</div><div class="city">台北桃園</div><div class="time">--:--</div><div class="tmx">第 ? 航廈 · 抵達</div></div>
+        </div>
+      </div>
+      <div class="fc ticket">
+        <div class="t">電子機票</div>
+        <div class="s">輸入你們這一組的代碼,就會顯示夫妻兩人的電子機票。<br>(目前是範例,試試代碼 DEMO)</div>
+        <div class="field"><input id="code" placeholder="請輸入機票代碼" autocomplete="off" autocapitalize="characters"><button id="codeBtn">查看</button></div>
+        <div class="msg" id="codeMsg"></div>
+        <div class="locked" id="slots"></div>
+        <div class="relink" id="relink">換一組代碼</div>
+      </div>
+    </section>
+
+    <!-- 住宿 -->
+    <section class="pg v" data-nav="住宿">
+      <div class="eyebrow">STAY</div><h3>住宿資訊</h3>
+      <div id="stayList"></div>
+    </section>
+
+    <!-- 總覽 -->
+    <section class="pg v" data-nav="總覽">
+      <div class="eyebrow">OVERVIEW</div><h3>濟州島總覽</h3>
+      <div class="ovmap" id="ovMap"></div>
+      <div class="legend" id="legend"></div>
+      <div class="rglist" id="rgList"></div>
+    </section>
+
+    <!-- Day 1~4 由 js/app.js 插入 -->
+
+    <!-- 資訊 -->
+    <section class="pg v" id="p-info" data-nav="資訊">
+      <div class="eyebrow">INFO</div><h3>實用資訊</h3>
+      <div class="fc"><h5>緊急聯絡</h5>
+        <div class="sos"><div><b>112</b><span>警察</span></div><div><b>119</b><span>消防 / 救護</span></div><div><b>1330</b><span>旅遊諮詢</span></div></div>
+        <div class="note-sm">出發前請再確認各號碼是否有異動。</div></div>
+      <div class="fc"><h5>出發前確認</h5><div id="checklist"></div></div>
+      <div class="fc"><h5>小提醒</h5>
+        <div class="tips">・幣別:韓元(KRW)<br>・時差:韓國比台灣快 1 小時<br>・電壓:220V,插頭為兩孔圓頭<br>・2 月偏冷,早晚風大,帶防風外套與暖暖包</div></div>
+    </section>
+
+  </div>
+</div>
+
+<svg class="roll" id="roll" viewBox="-30 -34 60 62"><g>
+  <circle r="26" fill="url(#og)"/><ellipse cx="-9" cy="-10" rx="9" ry="5" fill="#fff" opacity=".35" transform="rotate(-30 -9 -10)"/>
+  <circle cx="0" cy="-24" r="4.5" fill="#2f7a3f"/><path d="M-5,-24 L0,-30 L5,-24" stroke="#2f7a3f" stroke-width="2" fill="none"/>
+</g></svg>
+
+<script src="js/data.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
