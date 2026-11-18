@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>地圖預覽 A · 插畫風</title>
+<style>
+:root{--navy:#0f2f4a;--orange:#ff8a1f;--orange-d:#e8700a;--ink:#16395a;--muted:#5b7389;
+ --sea1:#cdeaf5;--sea2:#8fcbe3;--land1:#e2f0cf;--land2:#bddca9;--hill:#a6cf91;--hillhi:#eef8e2;--contour:rgba(70,120,70,.2);
+ --plate:rgba(255,255,255,.94);--plateTx:#16395a;--shore:#fff;--orch:#ff9a2a;--orchLeaf:#72b061;--snow:#fff;--mtn:#86b592;--mtn2:#5f9272;--case:#fff;--panel:rgba(255,255,255,.92)}
+[data-theme=dark]{--navy:#f6e9d6;--ink:#f6e9d6;--muted:#9fb6c8;--orange-d:#ffa64d;
+ --sea1:#0a2033;--sea2:#14405c;--land1:#1d4a4c;--land2:#2b6659;--hill:#33786b;--hillhi:#55a08c;--contour:rgba(150,230,200,.14);
+ --plate:rgba(8,26,42,.88);--plateTx:#fff;--shore:#9ee0e6;--orch:#ffa23a;--orchLeaf:#3c7a58;--snow:#e8f4fb;--mtn:#42847b;--mtn2:#2c635f;--case:rgba(0,0,0,0);--panel:rgba(10,30,48,.9)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}body{background:#dfeaf3;font-family:"PingFang TC","Noto Sans TC",sans-serif;color:var(--ink)}
+[data-theme=dark] body{background:#08141f}
+.app{height:100dvh;max-width:430px;margin:0 auto;position:relative;overflow:hidden;background:linear-gradient(180deg,#dff1ff,#fff4e0 55%,#ffe9c9)}
+[data-theme=dark] .app{background:linear-gradient(180deg,#0b1e30,#14304a 55%,#1c3347)}
+.dh{padding:22px 18px 10px}.dh h2{font-family:"Songti TC",serif;font-weight:900;font-size:30px;letter-spacing:.08em}
+.dh h2 small{font-family:"PingFang TC";font-size:12px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:.08em}
+.card-map{position:relative;margin:0 16px;height:268px;border-radius:20px;overflow:hidden;box-shadow:0 12px 28px rgba(15,47,74,.25);cursor:pointer}
+.jm{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+.tag{position:absolute;top:10px;font-size:11px;letter-spacing:.1em;padding:4px 10px;border-radius:999px;background:var(--plate);color:var(--plateTx);box-shadow:0 2px 8px rgba(0,0,0,.15);font-weight:700}
+.tag.l{left:10px}.tag.r{right:10px;color:var(--orange-d)}
+.expand{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;background:var(--plate);display:grid;place-items:center;color:var(--orange-d);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hintline{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;letter-spacing:.1em}
+/* 地圖元素 */
+.glow{animation:flick 3.6s infinite}.mid{animation:flick 3.6s infinite .05s}.core{animation:flick 3.6s infinite .1s}
+.flow{stroke-dasharray:3 11;animation:flow 1.1s linear infinite}
+@keyframes flick{0%,100%{opacity:1}6%{opacity:.5}8%{opacity:1}22%{opacity:.9}24%{opacity:.35}26%{opacity:1}52%{opacity:.95}54%{opacity:.5}57%{opacity:1}78%{opacity:.85}80%{opacity:1}}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.plate rect{fill:var(--plate)}.plate text{fill:var(--plateTx);font-weight:700}
+.ring{transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+/* 全螢幕地圖 */
+.full{position:absolute;inset:0;z-index:20;background:var(--sea1)}
+.full .jm{cursor:grab}
+.bar{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:8px;align-items:center;pointer-events:none}
+.bar>*{pointer-events:auto}
+.round{width:40px;height:40px;border-radius:50%;background:var(--panel);display:grid;place-items:center;color:var(--orange-d);font-size:20px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.22);border:0;cursor:pointer}
+.ttl{flex:1;height:40px;border-radius:999px;background:var(--panel);display:flex;align-items:center;padding:0 16px;font-weight:800;font-size:14px;letter-spacing:.08em;box-shadow:0 4px 12px rgba(0,0,0,.22);color:var(--plateTx)}
+.zoomc{position:absolute;right:12px;top:68px;display:flex;flex-direction:column;gap:8px}
+.chips{position:absolute;left:0;right:0;bottom:16px;display:flex;gap:8px;padding:0 12px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chp{flex:none;display:flex;align-items:center;gap:6px;height:38px;padding:0 14px 0 5px;border-radius:999px;background:var(--panel);box-shadow:0 4px 12px rgba(0,0,0,.22);font-size:13px;font-weight:700;color:var(--plateTx);border:2px solid transparent;cursor:pointer}
+.chp b{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;display:grid;place-items:center;font-size:13px}
+.chp.on{border-color:#ff8a1f}
+.pop{position:absolute;left:12px;right:12px;bottom:66px;border-radius:18px;background:var(--panel);box-shadow:0 8px 24px rgba(0,0,0,.28);padding:12px 14px;display:flex;gap:12px;align-items:center;color:var(--plateTx)}
+.pop .bd{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;font-weight:800;display:grid;place-items:center;font-size:16px;flex:none}
+.pop .nm{font-family:"Songti TC",serif;font-weight:900;font-size:19px}.pop .ko{font-size:12px;color:var(--muted)}
+.pop .go{margin-left:auto;font-size:12px;font-weight:700;color:var(--orange-d);padding:6px 12px;border-radius:999px;border:1px solid rgba(232,112,10,.5)}
+.credit{position:absolute;left:8px;bottom:2px;font-size:9px;color:var(--muted);opacity:.7;z-index:3}
+</style></head><body>
+<div class="app" id="app">
+  <div class="dh"><h2 id="h2"></h2></div>
+  <div class="card-map" id="card"><span class="tag l" id="route"></span><span class="tag r">範例</span>
+    <div class="expand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></div></div>
+  <div class="hintline">點一下地圖放大 · 可縮放、拖動</div>
+</div>
+<script src="../js/data.js"></script><script src="../js/coast.js"></script><script src="../js/landmarks.js"></script>
+<script>
+const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
+const q=new URLSearchParams(location.search);
+document.documentElement.dataset.theme=q.get('theme')==='dark'?'dark':'light';
+const day=DAYS[(+q.get('day')||2)-1];
+const K_X=929,K_Y=1110,LON0=126.0,LAT0=33.7;
+const wx=lon=>(lon-LON0)*K_X,wy=lat=>(LAT0-lat)*K_Y;
+const COASTW=JEJU_COAST.map(([lo,la])=>[wx(lo),wy(la)]);
+const ISL='M'+COASTW.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join('L')+'Z';
+function inPoly(x,y,P){let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const[xi,yi]=P[i],[xj,yj]=P[j];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c}return c}
+let sd=11;const rnd=()=>(sd=sd*16807%2147483647)/2147483647;
+const HX=wx(126.531),HY=wy(33.362);
+/* 靜態風景:山丘、橘園、漢拿山(只做一次) */
+const DECOR=(()=>{let o='',n=0,t=0;
+  while(n<28&&t<3000){t++;const x=150+rnd()*740,y=140+rnd()*430;if(!inPoly(x,y,COASTW)||Math.hypot(x-HX,(y-HY)*1.3)<90)continue;
+    const s=.7+rnd()*.9;o+=`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${s.toFixed(2)})"><path d="M-10,2 Q0,-14 10,2Z" fill="var(--hill)"/><path d="M-3.5,-4 Q0,-10 3.5,-4" stroke="var(--hillhi)" stroke-width="1.5" fill="none" opacity=".8"/></g>`;n++}
+  n=0;t=0;while(n<120&&t<5000){t++;const x=wx(126.27+rnd()*.64),y=wy(33.232+rnd()*.08);if(!inPoly(x,y,COASTW))continue;
+    o+=`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><circle r="4.4" fill="var(--orchLeaf)" opacity=".85"/><circle r="2.5" cy="-.4" fill="var(--orch)"/></g>`;n++}
+  return o})();
+const MOUNTAIN=`<g transform="translate(${HX.toFixed(1)},${(HY+8).toFixed(1)}) scale(1.25)">
+  <ellipse cy="14" rx="74" ry="10" fill="#000" opacity=".12"/>
+  <path d="M-66,16 L-30,-12 L-13,-7 L0,-36 L15,-21 L26,-27 L66,16Z" fill="var(--mtn)"/>
+  <path d="M0,-36 L15,-21 L26,-27 L66,16 L22,16 L8,-8Z" fill="var(--mtn2)" opacity=".75"/>
+  <path d="M-11,-16 L0,-36 L15,-21 L10,-18 L5,-23 L0,-15 L-5,-20Z" fill="var(--snow)"/>
+  <path d="M-30,-12 L-13,-7 L-22,8 L-40,4Z" fill="var(--hillhi)" opacity=".25"/></g>`;
+let uid=0;
+function JMap(host,{interactive,zoomBias=1,selIdx=-1}){
+  const id='m'+(++uid),svg=document.createElementNS(NS,'svg');svg.setAttribute('class','jm');host.prepend(svg);
+  const P=day.stops.map(s=>[wx(s.lon),wy(s.lat)]);
+  /* 路線(弧線) */
+  let d=`M${P[0][0].toFixed(1)},${P[0][1].toFixed(1)}`,arrows='';
+  for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,sg=(i%2?1:-1)*L*.2,cx=mx-dy/L*sg,cy=my+dx/L*sg;
+    d+=`Q${cx.toFixed(1)},${cy.toFixed(1)} ${b[0].toFixed(1)},${b[1].toFixed(1)}`;
+    const x=.25*a[0]+.5*cx+.25*b[0],y=.25*a[1]+.5*cy+.25*b[1],ang=Math.atan2(dy,dx)*180/Math.PI;
+    arrows+=`<g class="mk" data-x="${x.toFixed(1)}" data-y="${y.toFixed(1)}" data-rot="${ang.toFixed(1)}" data-arrow="1"><path d="M-6,-6 L7,0 L-6,6 L-3,0Z" fill="#fff6e0" stroke="#e5600a" stroke-width="1.6" stroke-linejoin="round"/></g>`;}
+  const names=new Set(day.stops.map(s=>s.name));
+  const lms=LANDMARKS.filter(l=>!names.has(l.n)).map(l=>{const [ic,c]=KIND[l.k],w=l.n.length*12+12;
+    return `<g class="mk lm" data-x="${wx(l.lon).toFixed(1)}" data-y="${wy(l.lat).toFixed(1)}" data-lv="${l.lv}" data-pw="${w}" data-r="11"><g class="plate"><rect width="${w}" height="18" rx="9"/><text x="${w/2}" y="13" text-anchor="middle" font-size="11">${l.n}</text></g>
+      <circle r="10" fill="#fff" stroke="${c}" stroke-width="2.2"/><text y="4.2" text-anchor="middle" font-size="11">${ic}</text></g>`}).join('');
+  const stops=day.stops.map((s,i)=>{const w=s.name.length*12+12;
+    return `<g class="mk stop" data-i="${i}" data-x="${P[i][0].toFixed(1)}" data-y="${P[i][1].toFixed(1)}" data-pw="${w}" data-r="14">
+     ${i===selIdx?'<circle class="ring" r="16" fill="none" stroke="#ff8a1f" stroke-width="2.5"/>':''}
+     <g class="plate"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${s.name}</text></g>
+     <circle r="13" fill="url(#${id}og)" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${String.fromCharCode(65+i)}</text></g>`}).join('');
+  svg.innerHTML=`<defs>
+    <linearGradient id="${id}sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sea1)"/><stop offset="1" stop-color="var(--sea2)"/></linearGradient>
+    <linearGradient id="${id}land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--land1)"/><stop offset="1" stop-color="var(--land2)"/></linearGradient>
+    <radialGradient id="${id}h" gradientUnits="userSpaceOnUse" cx="${HX}" cy="${HY}" r="230"><stop offset="0" stop-color="var(--hillhi)" stop-opacity=".85"/><stop offset="1" stop-color="var(--hillhi)" stop-opacity="0"/></radialGradient>
+    <radialGradient id="${id}og" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffd27a"/><stop offset=".5" stop-color="#ff8f1c"/><stop offset="1" stop-color="#d45a00"/></radialGradient>
+    <clipPath id="${id}clip"><path d="${ISL}"/></clipPath></defs>
+   <rect x="-4000" y="-4000" width="9000" height="9000" fill="url(#${id}sea)"/>
+   <path d="${ISL}" fill="none" stroke="var(--shore)" stroke-width="26" opacity=".25" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+   <path d="${ISL}" fill="none" stroke="var(--shore)" stroke-width="11" opacity=".35" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+   <path d="${ISL}" fill="url(#${id}land)" stroke="var(--shore)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+   <g clip-path="url(#${id}clip)"><circle cx="${HX}" cy="${HY}" r="230" fill="url(#${id}h)"/>
+     <g fill="none" stroke="var(--contour)" stroke-width="1.4" vector-effect="non-scaling-stroke"><ellipse cx="${HX}" cy="${HY}" rx="150" ry="95"/><ellipse cx="${HX}" cy="${HY}" rx="105" ry="64"/><ellipse cx="${HX}" cy="${HY}" rx="62" ry="36"/></g>${DECOR}</g>
+   <ellipse cx="${wx(126.952)}" cy="${wy(33.503)}" rx="13" ry="9" fill="url(#${id}land)" stroke="var(--shore)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+   ${MOUNTAIN}
+   <path d="${d}" fill="none" stroke="var(--case)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".95" vector-effect="non-scaling-stroke"/>
+   <path class="glow" d="${d}" fill="none" stroke="#ff6a00" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" opacity=".32" vector-effect="non-scaling-stroke"/>
+   <path class="mid" d="${d}" fill="none" stroke="#ff8a1f" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+   <path class="core" d="${d}" fill="none" stroke="#fff1d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+   <path class="flow" d="${d}" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".9" vector-effect="non-scaling-stroke"/>
+   <g id="${id}L">${lms}</g><g>${arrows}</g><g>${stops}</g>`;
+  const mks=[...svg.querySelectorAll('.mk')],lmEls=[...svg.querySelectorAll('.lm')],stopEls=[...svg.querySelectorAll('.stop')];
+  /* 視角:先框住當天的點 */
+  let xs=P.map(p=>p[0]),ys=P.map(p=>p[1]);
+  const bx=[Math.min(...xs),Math.max(...xs)],by=[Math.min(...ys),Math.max(...ys)];
+  const W=()=>host.clientWidth||358,H=()=>host.clientHeight||268;
+  const fit=()=>{const bw=Math.max(bx[1]-bx[0],140)*1.38,bh=Math.max(by[1]-by[0],90)*1.5;return{cx:(bx[0]+bx[1])/2,cy:(by[0]+by[1])/2,ppu:Math.min(W()/bw,H()/bh,3.4)}};
+  let v=fit();v.ppu*=zoomBias;const MINP=.42,MAXP=9;
+  function apply(){const w=W(),h=H(),vw=w/v.ppu,vh=h/v.ppu,inv=1/v.ppu;
+    svg.setAttribute('viewBox',`${v.cx-vw/2} ${v.cy-vh/2} ${vw} ${vh}`);
+    mks.forEach(g=>{g.setAttribute('transform',`translate(${g.dataset.x},${g.dataset.y}) rotate(${g.dataset.rot||0}) scale(${inv})`)});
+    /* 標籤自動避開:先排行程點,再依重要程度排地標;放不下的地標就先隱藏 */
+    const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2,sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2,placed=[];
+    const hit=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
+    const circ=g=>{const r=+g.dataset.r;return{x:sx(g)-r,y:sy(g)-r,w:2*r,h:2*r}};
+    stopEls.forEach(g=>placed.push(circ(g)));
+    const put=(g,must)=>{const pw=+g.dataset.pw,r=+g.dataset.r,x=sx(g),y=sy(g),ph=19,pl=g.querySelector('.plate');
+      if(x<-60||y<-40||x>w+60||y>h+40){g.style.display='none';return false}
+      const cand=[[r+4,-ph/2],[-r-4-pw,-ph/2],[-pw/2,r+3],[-pw/2,-r-3-ph],[r,r],[-r-pw,r],[r,-r-ph],[-r-pw,-r-ph]];
+      let best=null,bp=1e9;
+      cand.forEach(([dx,dy])=>{const rc={x:x+dx,y:y+dy,w:pw,h:ph};let p=0;
+        if(rc.x<4||rc.x+pw>w-4||rc.y<4||rc.y+ph>h-4)p+=60;
+        placed.forEach(o=>p+=hit(rc,o));if(p<bp){bp=p;best=[dx,dy,rc]}});
+      if(!must&&bp>0){g.style.display='none';return false}
+      g.style.display='';pl.setAttribute('transform',`translate(${best[0]},${best[1]})`);placed.push(best[2]);if(!must)placed.push(circ(g));return true};
+    stopEls.forEach(g=>put(g,true));
+    [1,2,3].forEach(lv=>lmEls.filter(g=>+g.dataset.lv===lv).forEach(g=>{
+      const ok=lv===1||(lv===2&&v.ppu>=.9)||(lv===3&&v.ppu>=1.7);
+      if(!ok){g.style.display='none';return}put(g,false)}))}
+  apply();addEventListener('resize',apply);
+  const zoomAt=(px,py,f)=>{const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;apply()};
+  const fly=(t,ms=450)=>{const a={...v},t0=performance.now();(function s(n){const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
+  if(interactive){
+    const ptr=new Map();let moved=0,downEl=null;
+    svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);moved=0;downEl=document.elementFromPoint(e.clientX,e.clientY)});
+    svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=ptr.get(e.pointerId),n=[e.clientX,e.clientY];
+      if(ptr.size===1){v.cx-=(n[0]-o[0])/v.ppu;v.cy-=(n[1]-o[1])/v.ppu;moved+=Math.abs(n[0]-o[0])+Math.abs(n[1]-o[1]);ptr.set(e.pointerId,n);apply()}
+      else if(ptr.size===2){const ids=[...ptr.keys()],a=ptr.get(ids[0]),b=ptr.get(ids[1]),d0=Math.hypot(a[0]-b[0],a[1]-b[1]);ptr.set(e.pointerId,n);
+        const a2=ptr.get(ids[0]),b2=ptr.get(ids[1]),d1=Math.hypot(a2[0]-b2[0],a2[1]-b2[1]),r=host.getBoundingClientRect();moved+=9;
+        if(d0>0)zoomAt((a2[0]+b2[0])/2-r.left,(a2[1]+b2[1])/2-r.top,d1/d0)}});
+    const up=e=>{if(ptr.has(e.pointerId)&&moved<6&&ptr.size===1){const st=downEl&&downEl.closest&&downEl.closest('.stop');if(st&&api.onStop)api.onStop(+st.dataset.i)}ptr.delete(e.pointerId)};
+    svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+    svg.addEventListener('wheel',e=>{e.preventDefault();const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,Math.exp(-e.deltaY*.0018))},{passive:false});
+    svg.addEventListener('dblclick',e=>{const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,1.8)});}
+  const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>fly(fit()),focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null};
+  return api;}
+
+/* ===== 頁面 ===== */
+$('#h2').innerHTML=`Day ${day.n}<small>${day.date} 週${day.wk} · ${day.title}</small>`;
+$('#route').textContent=day.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ');
+JMap($('#card'),{interactive:false});
+$('#card').onclick=()=>openFull();
+function openFull(opts={}){
+  const f=document.createElement('div');f.className='full';$('#app').appendChild(f);
+  const sel=opts.sel!=null?opts.sel:-1;
+  const m=JMap(f,{interactive:true,zoomBias:opts.zoom||.9,selIdx:sel});
+  f.insertAdjacentHTML('beforeend',`<div class="bar"><button class="round" id="x">✕</button><div class="ttl">Day ${day.n} · ${day.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ')}</div></div>
+   <div class="zoomc"><button class="round" id="zi">＋</button><button class="round" id="zo">－</button><button class="round" id="zh">◎</button></div>
+   <div class="chips">${day.stops.map((s,i)=>`<div class="chp${i===sel?' on':''}" data-i="${i}"><b>${String.fromCharCode(65+i)}</b>${s.name}</div>`).join('')}</div>`);
+  const pop=i=>{f.querySelector('.pop')?.remove();f.querySelectorAll('.chp').forEach((c,k)=>c.classList.toggle('on',k===i));const s=day.stops[i];
+    f.insertAdjacentHTML('beforeend',`<div class="pop"><div class="bd">${String.fromCharCode(65+i)}</div><div><div class="nm">${s.name}</div><div class="ko">${s.ko||s.note||''}</div></div><span class="go">導航 ›</span></div>`)};
+  m.onStop=i=>{pop(i);m.focus(i)};
+  f.querySelector('.chips').onclick=e=>{const c=e.target.closest('.chp');if(c){pop(+c.dataset.i);m.focus(+c.dataset.i)}};
+  f.querySelector('#x').onclick=()=>f.remove();f.querySelector('#zi').onclick=()=>m.zoom(1.6);f.querySelector('#zo').onclick=()=>m.zoom(1/1.6);f.querySelector('#zh').onclick=()=>m.home();
+  if(sel>=0)pop(sel)}
+if(q.get('view')==='full')openFull({sel:q.get('sel')!=null?+q.get('sel'):-1,zoom:+q.get('zoom')||.9});
+</script></body></html>

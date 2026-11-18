@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>地圖預覽 B · 真實地圖</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--navy:#0f2f4a;--orange:#ff8a1f;--orange-d:#e8700a;--ink:#16395a;--muted:#5b7389;
+ --sea1:#cdeaf5;--sea2:#8fcbe3;--land1:#e2f0cf;--land2:#bddca9;--hill:#a6cf91;--hillhi:#eef8e2;--contour:rgba(70,120,70,.2);
+ --plate:rgba(255,255,255,.94);--plateTx:#16395a;--shore:#fff;--orch:#ff9a2a;--orchLeaf:#72b061;--snow:#fff;--mtn:#86b592;--mtn2:#5f9272;--case:#fff;--panel:rgba(255,255,255,.92)}
+[data-theme=dark]{--navy:#f6e9d6;--ink:#f6e9d6;--muted:#9fb6c8;--orange-d:#ffa64d;
+ --sea1:#0a2033;--sea2:#14405c;--land1:#1d4a4c;--land2:#2b6659;--hill:#33786b;--hillhi:#55a08c;--contour:rgba(150,230,200,.14);
+ --plate:rgba(8,26,42,.88);--plateTx:#fff;--shore:#9ee0e6;--orch:#ffa23a;--orchLeaf:#3c7a58;--snow:#e8f4fb;--mtn:#42847b;--mtn2:#2c635f;--case:rgba(0,0,0,0);--panel:rgba(10,30,48,.9)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}body{background:#dfeaf3;font-family:"PingFang TC","Noto Sans TC",sans-serif;color:var(--ink)}
+[data-theme=dark] body{background:#08141f}
+.app{height:100dvh;max-width:430px;margin:0 auto;position:relative;overflow:hidden;background:linear-gradient(180deg,#dff1ff,#fff4e0 55%,#ffe9c9)}
+[data-theme=dark] .app{background:linear-gradient(180deg,#0b1e30,#14304a 55%,#1c3347)}
+.dh{padding:22px 18px 10px}.dh h2{font-family:"Songti TC",serif;font-weight:900;font-size:30px;letter-spacing:.08em}
+.dh h2 small{font-family:"PingFang TC";font-size:12px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:.08em}
+.card-map{position:relative;margin:0 16px;height:268px;border-radius:20px;overflow:hidden;box-shadow:0 12px 28px rgba(15,47,74,.25);cursor:pointer}
+.jm{display:block;width:100%;height:100%}
+.tag{position:absolute;top:10px;font-size:11px;letter-spacing:.1em;padding:4px 10px;border-radius:999px;background:var(--plate);color:var(--plateTx);box-shadow:0 2px 8px rgba(0,0,0,.15);font-weight:700}
+.tag.l{left:10px}.tag.r{right:10px;color:var(--orange-d)}
+.expand{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;background:var(--plate);display:grid;place-items:center;color:var(--orange-d);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hintline{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;letter-spacing:.1em}
+/* 地圖元素 */
+.glow{animation:flick 3.6s infinite}.mid{animation:flick 3.6s infinite .05s}.core{animation:flick 3.6s infinite .1s}
+.flow{stroke-dasharray:3 11;animation:flow 1.1s linear infinite}
+@keyframes flick{0%,100%{opacity:1}6%{opacity:.5}8%{opacity:1}22%{opacity:.9}24%{opacity:.35}26%{opacity:1}52%{opacity:.95}54%{opacity:.5}57%{opacity:1}78%{opacity:.85}80%{opacity:1}}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.plate rect{fill:var(--plate)}.plate text{fill:var(--plateTx);font-weight:700}
+.ring{transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+/* 全螢幕地圖 */
+.full{position:absolute;inset:0;z-index:20;background:var(--sea1)}
+.full .jm{cursor:grab}
+.bar{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:8px;align-items:center;pointer-events:none}
+.bar>*{pointer-events:auto}
+.round{width:40px;height:40px;border-radius:50%;background:var(--panel);display:grid;place-items:center;color:var(--orange-d);font-size:20px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.22);border:0;cursor:pointer}
+.ttl{flex:1;height:40px;border-radius:999px;background:var(--panel);display:flex;align-items:center;padding:0 16px;font-weight:800;font-size:14px;letter-spacing:.08em;box-shadow:0 4px 12px rgba(0,0,0,.22);color:var(--plateTx)}
+.zoomc{position:absolute;right:12px;top:68px;display:flex;flex-direction:column;gap:8px}
+.chips{position:absolute;left:0;right:0;bottom:16px;display:flex;gap:8px;padding:0 12px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chp{flex:none;display:flex;align-items:center;gap:6px;height:38px;padding:0 14px 0 5px;border-radius:999px;background:var(--panel);box-shadow:0 4px 12px rgba(0,0,0,.22);font-size:13px;font-weight:700;color:var(--plateTx);border:2px solid transparent;cursor:pointer}
+.chp b{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;display:grid;place-items:center;font-size:13px}
+.chp.on{border-color:#ff8a1f}
+.pop{position:absolute;left:12px;right:12px;bottom:66px;border-radius:18px;background:var(--panel);box-shadow:0 8px 24px rgba(0,0,0,.28);padding:12px 14px;display:flex;gap:12px;align-items:center;color:var(--plateTx)}
+.pop .bd{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;font-weight:800;display:grid;place-items:center;font-size:16px;flex:none}
+.pop .nm{font-family:"Songti TC",serif;font-weight:900;font-size:19px}.pop .ko{font-size:12px;color:var(--muted)}
+.pop .go{margin-left:auto;font-size:12px;font-weight:700;color:var(--orange-d);padding:6px 12px;border-radius:999px;border:1px solid rgba(232,112,10,.5)}
+.credit{position:absolute;left:8px;bottom:2px;font-size:9px;color:var(--muted);opacity:.7;z-index:3}
+</style>
+<style>
+.leaflet-container{background:var(--sea1);font-family:inherit}
+.card-map{isolation:isolate;z-index:0}
+.leaflet-tile-pane{filter:saturate(.85) brightness(1.02)}
+[data-theme=dark] .leaflet-tile-pane{filter:invert(1) hue-rotate(195deg) saturate(.55) brightness(.82) contrast(.92)}
+.full{isolation:isolate}
+.leaflet-control-attribution{font-size:9px!important;background:rgba(255,255,255,.7)!important}
+[data-theme=dark] .leaflet-control-attribution{background:rgba(0,0,0,.5)!important;color:#aaa!important}[data-theme=dark] .leaflet-control-attribution a{color:#ccc!important}
+.lm,.sp{position:relative;width:0;height:0;pointer-events:none}
+.sp{pointer-events:auto}
+.lm i{position:absolute;left:-11px;top:-11px;width:22px;height:22px;border-radius:50%;background:#fff;border:2.2px solid var(--c);display:grid;place-items:center;font-style:normal;font-size:11px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.lm span,.sp span{position:absolute;left:0;top:0;font-size:11px;font-weight:700;padding:0 8px;height:19px;line-height:19px;border-radius:10px;background:var(--plate);color:var(--plateTx);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.sp span{font-size:11.5px;font-weight:800}
+.sp b{position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffd27a,#ff8f1c 55%,#d45a00);color:#fff;border:2.2px solid #fff;display:grid;place-items:center;font-size:13px;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+.sp.sel b{box-shadow:0 0 0 5px rgba(255,138,31,.35),0 3px 8px rgba(0,0,0,.35)}
+.arr{width:18px;height:18px;display:grid;place-items:center}
+.arr svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+path.glow{animation:flick 3.6s infinite}path.mid{animation:flick 3.6s infinite .05s}path.core{animation:flick 3.6s infinite .1s}
+path.flow{stroke-dasharray:3 11;animation:flow 1.1s linear infinite}
+</style></head><body>
+<div class="app" id="app">
+  <div class="dh"><h2 id="h2"></h2></div>
+  <div class="card-map" id="card"><span class="tag l" id="route"></span><span class="tag r">範例</span>
+    <div class="expand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></div></div>
+  <div class="hintline">點一下地圖放大 · 可縮放、拖動</div>
+</div>
+<script src="../js/data.js"></script><script src="../js/landmarks.js"></script>
+<script>
+const $=s=>document.querySelector(s),q=new URLSearchParams(location.search);
+const THEME=q.get('theme')==='dark'?'dark':'light';document.documentElement.dataset.theme=THEME;
+const day=DAYS[(+q.get('day')||2)-1];
+const K_X=929,K_Y=1110,LON0=126.0,LAT0=33.7;
+const wx=lon=>(lon-LON0)*K_X,wy=lat=>(LAT0-lat)*K_Y,ilon=x=>x/K_X+LON0,ilat=y=>LAT0-y/K_Y;
+const TILE='https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+function LMap(host,{interactive,sel=-1,zoomDelta=0}){
+  const map=L.map(host,{zoomControl:false,attributionControl:true,dragging:interactive,touchZoom:interactive,scrollWheelZoom:interactive,doubleClickZoom:interactive,boxZoom:false,keyboard:false,tap:false,zoomSnap:.25,zoomAnimation:true,fadeAnimation:false,inertia:true});
+  map.attributionControl.setPrefix(false);
+  L.tileLayer(TILE,{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+  const P=day.stops.map(s=>[wx(s.lon),wy(s.lat)]);
+  let pts=[[ilat(P[0][1]),ilon(P[0][0])]],arrows=[];
+  for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1],Ln=Math.hypot(dx,dy)||1,sg=(i%2?1:-1)*Ln*.2,cx=mx-dy/Ln*sg,cy=my+dx/Ln*sg;
+    const bz=t=>[(1-t)*(1-t)*a[0]+2*(1-t)*t*cx+t*t*b[0],(1-t)*(1-t)*a[1]+2*(1-t)*t*cy+t*t*b[1]];
+    for(let k=1;k<=24;k++){const p=bz(k/24);pts.push([ilat(p[1]),ilon(p[0])])}
+    const m=bz(.5),m1=bz(.46),m2=bz(.54);arrows.push({ll:[ilat(m[1]),ilon(m[0])],ang:Math.atan2(m2[1]-m1[1],m2[0]-m1[0])*180/Math.PI})}
+  const lay=(cls,o)=>L.polyline(pts,{className:cls,lineCap:'round',lineJoin:'round',interactive:false,...o}).addTo(map);
+  if(THEME==='light')lay('case',{color:'#fff',weight:9,opacity:.95});
+  lay('glow',{color:'#ff6a00',weight:15,opacity:.32});lay('mid',{color:'#ff8a1f',weight:5.5,opacity:1});lay('core',{color:'#fff1d0',weight:2,opacity:1});lay('flow',{color:'#fff',weight:2.2,opacity:.9});
+  arrows.forEach(a=>L.marker(a.ll,{interactive:false,icon:L.divIcon({className:'',iconSize:[18,18],html:`<div class="arr" style="transform:rotate(${a.ang}deg)"><svg width="16" height="16" viewBox="-8 -8 16 16"><path d="M-6,-6 L7,0 L-6,6 L-3,0Z" fill="#fff6e0" stroke="#e5600a" stroke-width="1.6" stroke-linejoin="round"/></svg></div>`})}).addTo(map));
+  const names=new Set(day.stops.map(s=>s.name));
+  const items=[];
+  LANDMARKS.filter(l=>!names.has(l.n)).forEach(l=>{const [ic,c]=KIND[l.k];
+    const m=L.marker([l.lat,l.lon],{interactive:false,keyboard:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="lm" style="--c:${c}"><i>${ic}</i><span>${l.n}</span></div>`})}).addTo(map);items.push({m,lv:l.lv,r:11,stop:false})});
+  const stopM=day.stops.map((s,i)=>{const m=L.marker([s.lat,s.lon],{keyboard:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="sp${i===sel?' sel':''}"><b>${String.fromCharCode(65+i)}</b><span>${s.name}</span></div>`})}).addTo(map);
+    m.on('click',()=>api.onStop&&api.onStop(i));items.push({m,lv:0,r:14,stop:true});return m});
+  const bounds=L.latLngBounds(day.stops.map(s=>[s.lat,s.lon])).pad(.35);
+  const home=(anim)=>map.fitBounds(bounds,{maxZoom:13,animate:!!anim,padding:[20,20]});
+  map.setView([33.4,126.55],10);
+  const layout=()=>{const z=map.getZoom(),sz=map.getSize(),placed=[],hit=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
+    const pos=it=>map.latLngToContainerPoint(it.m.getLatLng()),circ=it=>{const p=pos(it);return{x:p.x-it.r,y:p.y-it.r,w:2*it.r,h:2*it.r}};
+    items.filter(i=>i.stop).forEach(i=>placed.push(circ(i)));
+    const put=(it,must)=>{const el=it.m.getElement().firstChild,sp=el.querySelector('span'),p=pos(it),pw=sp.offsetWidth,ph=19,r=it.r;
+      if(p.x<-60||p.y<-40||p.x>sz.x+60||p.y>sz.y+40){el.style.display='none';return}
+      const cand=[[r+4,-ph/2],[-r-4-pw,-ph/2],[-pw/2,r+3],[-pw/2,-r-3-ph],[r,r],[-r-pw,r],[r,-r-ph],[-r-pw,-r-ph]];let best=null,bp=1e9;
+      cand.forEach(([dx,dy])=>{const rc={x:p.x+dx,y:p.y+dy,w:pw,h:ph};let s2=0;if(rc.x<4||rc.x+pw>sz.x-4||rc.y<4||rc.y+ph>sz.y-4)s2+=60;placed.forEach(o=>s2+=hit(rc,o));if(s2<bp){bp=s2;best=[dx,dy,rc]}});
+      if(!must&&bp>0){el.style.display='none';return}
+      el.style.display='';sp.style.transform=`translate(${best[0]}px,${best[1]}px)`;placed.push(best[2]);if(!must)placed.push(circ(it))};
+    items.filter(i=>i.stop).forEach(i=>put(i,true));
+    [1,2,3].forEach(lv=>items.filter(i=>i.lv===lv).forEach(i=>{const ok=lv===1||(lv===2&&z>=10.5)||(lv===3&&z>=12);if(!ok){i.m.getElement().firstChild.style.display='none';return}put(i,false)}))};
+  map.on('zoomend moveend resize',layout);setTimeout(()=>{map.invalidateSize();home(false);if(zoomDelta)map.setZoom(map.getZoom()+zoomDelta,{animate:false});layout()},30);
+  const api={zoom:d=>map.setZoom(map.getZoom()+d),home:()=>home(true),focus:i=>map.flyTo([day.stops[i].lat,day.stops[i].lon],Math.max(map.getZoom(),13),{duration:.6}),onStop:null,map};
+  return api}
+$('#h2').innerHTML=`Day ${day.n}<small>${day.date} 週${day.wk} · ${day.title}</small>`;
+$('#route').textContent=day.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ');
+const cardHost=document.createElement('div');cardHost.className='jm';cardHost.style.cssText='width:100%;height:100%';$('#card').prepend(cardHost);
+LMap(cardHost,{interactive:false});
+$('#card').onclick=()=>openFull();
+function openFull(opts={}){
+  const f=document.createElement('div');f.className='full';$('#app').appendChild(f);
+  const host=document.createElement('div');host.style.cssText='position:absolute;inset:0';f.appendChild(host);
+  const sel=opts.sel!=null?opts.sel:-1;const m=LMap(host,{interactive:true,sel,zoomDelta:opts.dz||-.5});
+  f.insertAdjacentHTML('beforeend',`<div class="bar" style="z-index:500"><button class="round" id="x">✕</button><div class="ttl">Day ${day.n} · ${day.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ')}</div></div>
+   <div class="zoomc" style="z-index:500"><button class="round" id="zi">＋</button><button class="round" id="zo">－</button><button class="round" id="zh">◎</button></div>
+   <div class="chips" style="z-index:500">${day.stops.map((s,i)=>`<div class="chp${i===sel?' on':''}" data-i="${i}"><b>${String.fromCharCode(65+i)}</b>${s.name}</div>`).join('')}</div>`);
+  const pop=i=>{f.querySelector('.pop')?.remove();f.querySelectorAll('.chp').forEach((c,k)=>c.classList.toggle('on',k===i));const s=day.stops[i];
+    f.insertAdjacentHTML('beforeend',`<div class="pop" style="z-index:500"><div class="bd">${String.fromCharCode(65+i)}</div><div><div class="nm">${s.name}</div><div class="ko">${s.ko||s.note||''}</div></div><span class="go">導航 ›</span></div>`)};
+  m.onStop=i=>{pop(i);m.focus(i)};
+  f.querySelector('.chips').onclick=e=>{const c=e.target.closest('.chp');if(c){pop(+c.dataset.i);m.focus(+c.dataset.i)}};
+  f.querySelector('#x').onclick=()=>f.remove();f.querySelector('#zi').onclick=()=>m.zoom(1);f.querySelector('#zo').onclick=()=>m.zoom(-1);f.querySelector('#zh').onclick=()=>m.home();
+  if(sel>=0)pop(sel)}
+if(q.get('view')==='full')openFull({sel:q.get('sel')!=null?+q.get('sel'):-1,dz:q.get('dz')!=null?+q.get('dz'):-.5});
+</script></body></html>
