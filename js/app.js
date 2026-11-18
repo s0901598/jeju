@@ -179,3 +179,7 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
  for(let i=0;i<90;i++){const y=rnd()*470,r=.5+rnd()*1.2,op=(.35+rnd()*.6).toFixed(2);
    o+=`<circle cx="${(rnd()*390).toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" style="--o:${op};animation-delay:${(rnd()*3).toFixed(1)}s" opacity="${op}"/>`}
  const st=document.getElementById('stars');if(st)st.innerHTML=o;}
+
+/* 封面文字位置:依螢幕大小跟著背景圖縮放 */
+{const cv=document.querySelector('.cover');const fit=()=>{if(!cv)return;const s=Math.max(cv.clientWidth/390,cv.clientHeight/844);cv.style.setProperty('--cs',s.toFixed(3))};
+ fit();addEventListener('resize',fit);if(window.ResizeObserver)new ResizeObserver(fit).observe(cv)}

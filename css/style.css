@@ -362,11 +362,7 @@ path.flow{stroke-dasharray:3 11;animation:flow 1.1s linear infinite}
 :root{--P:226px}
 /* 封面:深色用「羊年大吉」,日期放到海上 */
 .h-d{display:none}
-.t-date.d{display:none}
 [data-theme=dark] .h-l{display:none}[data-theme=dark] .h-d{display:inline}
-[data-theme=dark] .t-date.l{display:none}
-[data-theme=dark] .t-date.d{display:inline-block;position:absolute;left:50%;top:77%;transform:translateX(-50%);white-space:nowrap;
-  background:rgba(10,30,48,.55);border:1.5px solid rgba(255,196,120,.75);color:#ffe2ad;backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(0,0,0,.35);text-shadow:0 0 10px rgba(255,150,50,.5)}
 [data-theme=dark] .t-year{color:#ffc766;opacity:1;font-weight:700;text-shadow:0 1px 8px rgba(0,0,0,.7)}
 /* 行程卡:放大、拉高行距、按鈕加大加寬 */
 .card{height:212px;margin-bottom:14px;padding:14px 16px;gap:12px;opacity:1;transform:none;border-radius:20px}
@@ -413,3 +409,7 @@ html,body{touch-action:manipulation}
 .card .ad .at{font-size:15px}
 .card .nt{font-size:15px}
 .card .ko .kt{word-break:keep-all;overflow-wrap:normal}
+
+/* 封面:深色日期在副標題下方,淺琥珀漸層底;文字區以畫面正中央為基準,和背景圖一起移動 */
+[data-theme=dark] .t-date{background:linear-gradient(135deg,#ffeccb,#ffc47a);border:1.5px solid rgba(255,255,255,.7);color:#7a3a00;text-shadow:none;box-shadow:0 8px 22px rgba(255,150,50,.4);backdrop-filter:blur(6px)}
+.cover .text{top:calc(50% - 228px * var(--cs,1))}
