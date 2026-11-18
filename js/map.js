@@ -87,13 +87,13 @@ function JMap(host,o){
     return{cx:(bx[0]+bx[1])/2,cy:(by[0]+by[1])/2,ppu:Math.min(W()/bw,H()/bh,3.4)}};
   let v={cx:0,cy:0,ppu:1},touched=false,basePpu=1;const MINP=.3,MAXP=9;
   const setTouched=t=>{if(touched!==t){touched=t;if(api&&api.onTouched)api.onTouched(t)}};
-  function apply(){const w=W(),h=H();if(w<10||h<10)return;
+  function apply(full=true){const w=W(),h=H();if(w<10||h<10)return;
     v.cx=Math.max(ISLAND_BOX.x[0]-80,Math.min(ISLAND_BOX.x[1]+80,v.cx));v.cy=Math.max(ISLAND_BOX.y[0]-80,Math.min(ISLAND_BOX.y[1]+80,v.cy));
-    /* 總覽的小地圖:沒放大時,上下滑動讓頁面捲動;放大後才讓手指拖動地圖 */
-    if(small&&fit==='island')svg.style.touchAction=(v.ppu>basePpu*1.04)?'none':'pan-y';const vw=w/v.ppu,vh=h/v.ppu,inv=1/v.ppu;
+    const vw=w/v.ppu,vh=h/v.ppu,inv=1/v.ppu;
     svg.setAttribute('viewBox',`${v.cx-vw/2} ${v.cy-vh/2} ${vw} ${vh}`);
     const f1=svg.querySelector(`#${id}g1 feGaussianBlur`),f2=svg.querySelector(`#${id}g2 feGaussianBlur`);if(f1){f1.setAttribute('stdDeviation',7/v.ppu);f2.setAttribute('stdDeviation',1.6/v.ppu)}
     mks.forEach(g=>g.setAttribute('transform',`translate(${g.dataset.x},${g.dataset.y}) rotate(${g.dataset.rot||0}) scale(${inv})`));
+    if(full===false)return;   // 拖動中只移動畫面,不重排標籤(手指停下來才排)
     /* 標籤自動避開:先排行程點,再依重要程度排地標;放不下的地標就先隱藏 */
     const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2,sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2,placed=[];
     const hit=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
@@ -107,24 +107,35 @@ function JMap(host,o){
       g.style.display='';pl.setAttribute('transform',`translate(${best[0]},${best[1]})`);placed.push(best[2]);if(!must)placed.push(circ(g))};
     stopEls.forEach(g=>put(g,true));
     [1,2,3].forEach(lv=>lmEls.filter(g=>+g.dataset.lv===lv).forEach(g=>{const ok=lv===1||(lv===2&&v.ppu>=.9)||(lv===3&&v.ppu>=1.7);if(!ok){g.style.display='none';return}put(g,false)}))}
+  let raf=0,needFull=false,idleT=0;
+  const sched=full=>{needFull=needFull||full;if(!raf)raf=requestAnimationFrame(()=>{raf=0;const f=needFull;needFull=false;apply(f)});if(!full){clearTimeout(idleT);idleT=setTimeout(()=>apply(true),140)}};
   const refit=()=>{v=fitView();v.ppu*=zoomBias;basePpu=v.ppu;apply()};
   const ro=new ResizeObserver(()=>{if(!touched)refit();else apply()});ro.observe(host);refit();
-  const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;apply()};
+  const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;sched(true)};
   let flying=0;
   const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
   const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{const t=fitView();t.ppu*=zoomBias;basePpu=t.ppu;fly(t);setTouched(false)},
     focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,onTap:null,onTouched:null,
     setActive:i=>stopEls.forEach(g=>g.classList.toggle('on',+g.dataset.i===i)),
-    destroy:()=>{ro.disconnect();flying++;svg.remove()}};
+    destroy:()=>{ro.disconnect();flying++;cancelAnimationFrame(raf);clearTimeout(idleT);svg.remove()}};
   if(interactive){
-    const ptr=new Map();let moved=0,downEl=null;
-    svg.addEventListener('pointerdown',e=>{try{svg.setPointerCapture(e.pointerId)}catch(_){}ptr.set(e.pointerId,[e.clientX,e.clientY]);moved=0;downEl=document.elementFromPoint(e.clientX,e.clientY);flying++});
-    svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o2=ptr.get(e.pointerId),n=[e.clientX,e.clientY];setTouched(true);
-      if(ptr.size===1){v.cx-=(n[0]-o2[0])/v.ppu;v.cy-=(n[1]-o2[1])/v.ppu;moved+=Math.abs(n[0]-o2[0])+Math.abs(n[1]-o2[1]);ptr.set(e.pointerId,n);apply()}
+    const ptr=new Map();let moved=0,downEl=null,start=[0,0],mode='';
+    svg.addEventListener('pointerdown',e=>{try{svg.setPointerCapture(e.pointerId)}catch(_){}ptr.set(e.pointerId,[e.clientX,e.clientY]);if(ptr.size===1){moved=0;mode='';start=[e.clientX,e.clientY]}else mode='map';downEl=document.elementFromPoint(e.clientX,e.clientY);flying++});
+    svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o2=ptr.get(e.pointerId),n=[e.clientX,e.clientY];
+      if(ptr.size===1){
+        const dx=n[0]-o2[0],dy=n[1]-o2[1],tdx=n[0]-start[0],tdy=n[1]-start[1];moved+=Math.abs(dx)+Math.abs(dy);
+        if(!mode&&Math.hypot(tdx,tdy)>8){
+          const zoomedIn=v.ppu>basePpu*1.04;
+          mode=(small&&fit==='island'&&!zoomedIn&&Math.abs(tdy)>Math.abs(tdx)*1.2)?'page':'map';
+          if(mode==='map'){setTouched(true);v.cx-=tdx/v.ppu;v.cy-=tdy/v.ppu;sched(false)}
+          else{const pe=host.closest('.pg');if(pe)pe.scrollTop-=tdy}
+        }else if(mode==='map'){v.cx-=dx/v.ppu;v.cy-=dy/v.ppu;sched(false)}
+        else if(mode==='page'){const pe=host.closest('.pg');if(pe)pe.scrollTop-=dy}
+        ptr.set(e.pointerId,n)}
       else if(ptr.size===2){const ids=[...ptr.keys()],a=ptr.get(ids[0]),b=ptr.get(ids[1]),d0=Math.hypot(a[0]-b[0],a[1]-b[1]);ptr.set(e.pointerId,n);
         const a2=ptr.get(ids[0]),b2=ptr.get(ids[1]),d1=Math.hypot(a2[0]-b2[0],a2[1]-b2[1]),r=host.getBoundingClientRect();moved+=9;
         if(d0>0)zoomAt((a2[0]+b2[0])/2-r.left,(a2[1]+b2[1])/2-r.top,d1/d0)}});
-    const up=e=>{if(ptr.has(e.pointerId)&&moved<6&&ptr.size===1){const st=downEl&&downEl.closest&&downEl.closest('.jstop');if(st&&api.onStop)api.onStop(+st.dataset.i);else if(!st&&api.onTap)api.onTap()}ptr.delete(e.pointerId)};
+    const up=e=>{if(ptr.has(e.pointerId)&&moved<6&&ptr.size===1){const st=downEl&&downEl.closest&&downEl.closest('.jstop');if(st&&api.onStop)api.onStop(+st.dataset.i);else if(!st&&api.onTap)api.onTap()}ptr.delete(e.pointerId);if(!ptr.size){if(mode==='map'){clearTimeout(idleT);apply(true)}mode=''}};
     svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
     if(!small){svg.addEventListener('wheel',e=>{e.preventDefault();const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,Math.exp(-e.deltaY*.0018))},{passive:false});
     svg.addEventListener('dblclick',e=>{const r=host.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,1.8)})}}
