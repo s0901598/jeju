@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fff1da">
+<script>(function(){var t="light";try{t=localStorage.getItem("jeju-theme")||"light"}catch(e){}var m=location.search.match(/theme=(dark|light)/);if(m)t=m[1];document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light")})()</script>
 <title>羊羊得億 · 林家濟州島之旅</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -21,12 +22,16 @@
 </svg>
 
 <div class="app">
+  <button class="themebtn" id="themeBtn" aria-label="切換深淺色模式">
+    <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></svg>
+    <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg>
+  </button>
   <div class="nav" id="nav"></div>
   <div class="pager" id="pager">
 
     <!-- 封面 -->
     <section class="pg cover" data-nav="封面">
-  <svg class="scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+  <svg class="scene scene-l" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
     <defs>
       <linearGradient id="s3sky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#b3d5ee"/>
@@ -116,6 +121,31 @@
     <path d="M-10,768 C60,752 140,760 200,770 C270,782 340,758 400,754" stroke="#fff" stroke-width="2" fill="none" opacity=".5" filter="url(#s3b1)"/>
   </svg>
 
+  <svg class="scene scene-d" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#081726"/><stop offset=".38" stop-color="#1a3b59"/><stop offset=".66" stop-color="#5d6283"/><stop offset=".86" stop-color="#df8a5f"/><stop offset="1" stop-color="#ffb866"/></linearGradient>
+    <radialGradient id="dglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".85"/><stop offset=".35" stop-color="#ff9a50" stop-opacity=".4"/><stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="dsea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a5e"/><stop offset=".05" stop-color="#37627e"/><stop offset=".5" stop-color="#15384f"/><stop offset="1" stop-color="#091b2a"/></linearGradient>
+    <linearGradient id="drefl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc47a" stop-opacity=".8"/><stop offset="1" stop-color="#ffc47a" stop-opacity="0"/></linearGradient>
+    <linearGradient id="dsand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a3f46"/><stop offset="1" stop-color="#17161d"/></linearGradient>
+    <filter id="db1"><feGaussianBlur stdDeviation="1"/></filter>
+    <filter id="db3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="db6"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+  <rect width="390" height="570" fill="url(#dsky)"/>
+  <g id="stars" fill="#fff"></g>
+  <circle cx="195" cy="566" r="270" fill="url(#dglow)"/>
+  <circle cx="195" cy="566" r="46" fill="#ffe2ad" opacity=".95"/>
+  <g filter="url(#db6)" opacity=".5"><ellipse cx="75" cy="450" rx="80" ry="8" fill="#ffb98a"/><ellipse cx="330" cy="430" rx="64" ry="7" fill="#ffc9a0"/></g>
+  <rect y="566" width="390" height="290" fill="url(#dsea)"/>
+  <g filter="url(#db6)"><rect x="176" y="566" width="38" height="150" fill="url(#drefl)"/></g>
+  <g filter="url(#db3)" opacity=".7"><rect x="168" y="582" width="90" height="3" fill="#ffd9a0"/><rect x="148" y="606" width="130" height="2.5" fill="#ffc47a" opacity=".8"/><rect x="128" y="636" width="170" height="2" fill="#ffb55a" opacity=".5"/></g>
+  <g stroke="#9ec6dd" stroke-width="1.1" opacity=".2" fill="none"><path d="M0,622 Q50,616 100,622 T200,622 T300,622 T400,622"/><path d="M0,656 Q60,649 120,656 T240,656 T360,656 T480,656"/><path d="M0,694 Q70,686 140,694 T280,694 T420,694"/></g>
+  <path d="M-10,567 Q60,563 140,567 T300,567 T420,567" stroke="#ffd9a0" stroke-width="3" fill="none" opacity=".45" filter="url(#db1)"/>
+  <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766 L400,860 L-10,860Z" fill="url(#dsand)"/>
+  <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766" stroke="#cfe6f5" stroke-width="5" fill="none" opacity=".35" filter="url(#db3)"/>
+  <path d="M-10,768 C60,752 140,760 200,770 C270,782 340,758 400,754" stroke="#cfe6f5" stroke-width="1.6" fill="none" opacity=".3" filter="url(#db1)"/>
+</svg>
   <svg class="deco" viewBox="0 0 390 844">
     <defs>
       <radialGradient id="og" cx=".35" cy=".3" r=".8">

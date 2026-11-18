@@ -110,3 +110,14 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
   const pg=pages[n],i=+q.get('i')||0,tgt=pg.querySelector(q.get('drive')==='timeline'?'.tl':'.cards');
   if(tgt){tgt.style.scrollBehavior='auto';tgt.scrollTop=i*PITCH}
   setTimeout(()=>{pager.style.scrollBehavior='';quiet=false},400);},60)}else{setTimeout(()=>quiet=false,400)}
+
+/* ---------- 深淺色切換(預設淺色,選擇會記在這支手機) ---------- */
+{const root=document.documentElement,meta=document.querySelector('meta[name=theme-color]');
+ const apply=t=>{root.setAttribute('data-theme',t);if(meta)meta.content=t==='dark'?'#0b1e30':'#fff1da'};
+ apply(root.getAttribute('data-theme')||'light');
+ $('#themeBtn').onclick=()=>{const t=root.getAttribute('data-theme')==='dark'?'light':'dark';apply(t);store.set('jeju-theme',t)};
+ /* 星空:固定種子,每次都長一樣 */
+ let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;let o='';
+ for(let i=0;i<90;i++){const y=rnd()*470,r=.5+rnd()*1.2,op=(.35+rnd()*.6).toFixed(2);
+   o+=`<circle cx="${(rnd()*390).toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" style="--o:${op};animation-delay:${(rnd()*3).toFixed(1)}s" opacity="${op}"/>`}
+ const st=document.getElementById('stars');if(st)st.innerHTML=o;}
