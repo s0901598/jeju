@@ -83,16 +83,19 @@ $('#stayList').innerHTML=STAYS.map(s=>`
 
 /* ---------- 總覽頁:分類篩選(全部 / 機場 / 景點 / 美食 / 住宿) ---------- */
 const cv=k=>{const c=TYPE[k][1],n=parseInt(c.slice(1),16);return `--c:${c};--rgb:${n>>16},${(n>>8)&255},${n&255}`};
-const OV=overviewPoints();let ovFilter='all',ovJM=null,ovPts=OV;
+const OV=overviewPoints();let ovFilter='all',ovRegion='全部',ovJM=null,ovPts=OV;
+const REG=['東','南','西','北'];
+const rowHTML=s=>`<div class="rrow"><i class="rdot" style="background:${TYPE[s.ty][1]}">${s.ty==='airport'?'✈':TYPE[s.ty][2]}</i><span class="rnm">${s.name}</span><em class="rdy">D${s.days.join('、')}</em></div>`;
 const openOv=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
 function renderOverview(){
   const pts=ovFilter==='all'?OV:OV.filter(s=>s.ty===ovFilter);
-  ovPts=pts;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:pts,route:false,badge:'type',interactive:true,small:true,fit:'island',regions:true});
+  const byR=(l,r)=>l.filter(s=>regionOf(s.lon,s.lat)===r);const sel=ovRegion!=='全部'?ovRegion:'';const mp=sel?byR(pts,sel):pts;
+  ovPts=mp;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:mp,route:false,badge:'type',interactive:true,small:true,fit:sel?'points':'island',regions:!sel});
   const rs2=$('#ovReset');rs2.classList.remove('on');ovJM.onTouched=t=>rs2.classList.toggle('on',t);ovJM.onTap=openOv;ovJM.onStop=()=>openOv();
-  $('#rgList').innerHTML=['東','南','西','北'].map(r=>{
-    const list=pts.filter(s=>regionOf(s.lon,s.lat)===r);
-    return `<div class="rgc"><h4>${r}部 <small>${list.length} 個點</small></h4><div class="chips">${
-      list.length?list.map(s=>`<span class="chip" style="${cv(s.ty)}"><i style="background:${TYPE[s.ty][1]}">${s.ty==='airport'?'✈':TYPE[s.ty][2]}</i>${s.name}<em>D${s.days.join('、')}</em></span>`).join(''):'<span class="empty">沒有安排</span>'}</div></div>`}).join('');
+  const tabs=['全部',...REG].map(r=>`<button data-r="${r}" class="${ovRegion===r?'on':''}">${r==='全部'?'全部':r+'部'}<em>${r==='全部'?pts.length:byR(pts,r).length}</em></button>`).join('');
+  const body=sel?(byR(pts,sel).map(rowHTML).join('')||'<div class="empty">這個區域沒有安排</div>')
+    :REG.map(r=>{const l=byR(pts,r);return l.length?`<div class="rgp"><h4>${r}部 <small>${l.length}</small></h4>${l.map(rowHTML).join('')}</div>`:''}).join('')||'<div class="empty">沒有安排</div>';
+  $('#rgList').innerHTML=`<div class="seg">${tabs}</div><div class="rows">${body}</div>`;
   $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
     Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${k==='airport'?'✈':g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});
@@ -218,3 +221,5 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
 /* 封面文字位置:依螢幕大小跟著背景圖縮放 */
 {const cv=document.querySelector('.cover');const fit=()=>{if(!cv)return;const s=Math.max(cv.clientWidth/390,cv.clientHeight/844);cv.style.setProperty('--cs',s.toFixed(3))};
  fit();addEventListener('resize',fit);if(window.ResizeObserver)new ResizeObserver(fit).observe(cv)}
+
+$('#rgList').addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;ovRegion=b.dataset.r;renderOverview()});
