@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>濟州島預覽 淺色</title>
+<style>
+  :root{
+    --navy:#0f2f4a; --sky:#2f8fe6; --orange:#ff8a1f; --orange-d:#e8700a; --amber:#ffb347;
+    --yellow:#ffd23f; --cream:#fff1da; --red:#e5392b; --gold:#ffe28a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#e6e9ee;display:flex;gap:48px;justify-content:center;padding:40px;
+       font-family:"PingFang TC","Noto Sans TC",sans-serif;color:var(--navy)}
+  .phone{width:390px;height:844px;border-radius:38px;overflow:hidden;position:relative;
+         box-shadow:0 20px 50px rgba(20,40,70,.25),0 0 0 6px #fff}
+
+  /* ===== 封面(白天) ===== */
+  .cover{background:linear-gradient(180deg,#fff1da 0%,#ffd9a3 100%)}
+  .cover svg.scene{position:absolute;inset:0;width:100%;height:100%}
+  .cover svg.deco{position:absolute;inset:0;width:100%;height:100%}
+  .cover .text{position:absolute;left:0;right:0;top:176px;text-align:center}
+  .ribbon{display:inline-flex;align-items:center;gap:10px;padding:7px 22px 7px 22px;border-radius:999px;
+      background:linear-gradient(180deg,#f0493a,#cc2a1c);border:1.5px solid var(--gold);
+      box-shadow:0 8px 20px rgba(160,40,30,.28);
+      font-family:"Songti TC","STSong",serif;font-weight:900;font-size:25px;letter-spacing:.3em;
+      color:var(--gold);text-shadow:0 1px 0 #7a140a;padding-left:calc(22px + .3em)}
+  .ribbon i{font-style:normal;font-size:13px;letter-spacing:0;color:var(--gold)}
+  .cover h1{font-family:"Songti TC","STSong",serif;font-weight:900;margin-top:20px;line-height:1.08;
+      color:#16395a;letter-spacing:.1em;padding-left:.1em;
+      text-shadow:0 2px 14px rgba(255,255,255,.85),0 1px 2px rgba(255,255,255,.6)}
+  .cover h1 .a{display:block;font-size:68px}
+  .cover h1 .b{display:block;font-size:46px;color:#ee7a14;letter-spacing:.16em;padding-left:.16em;margin-top:2px;
+      text-shadow:0 2px 14px rgba(255,255,255,.9),0 1px 2px rgba(255,255,255,.6)}
+  .cover .date{position:absolute;left:0;right:0;top:612px;text-align:center}
+  .cover .date span{display:inline-block;padding:11px 28px;border-radius:999px;font-size:20px;font-weight:700;
+      letter-spacing:.14em;color:#fff;background:linear-gradient(135deg,#ffa133,#ee6a0a);
+      box-shadow:0 10px 24px rgba(230,120,30,.35);text-shadow:0 1px 2px rgba(120,50,0,.35)}
+  .cover .hint{position:absolute;bottom:30px;left:0;right:0;text-align:center;font-size:13px;letter-spacing:.2em;color:#b2601a}
+
+  /* ===== 航班頁(淺色) ===== */
+  .flight{background:linear-gradient(180deg,#dff1ff 0%,#fff4e0 55%,#ffe9c9 100%)}
+  .flight::before{content:"";position:absolute;inset:0;
+      background:radial-gradient(360px 240px at 100% 0%,rgba(255,138,31,.22),transparent 70%),
+                 radial-gradient(360px 280px at 0% 100%,rgba(255,138,31,.18),transparent 70%)}
+  .flight .inner{position:relative;padding:58px 22px 26px}
+  .eyebrow{font-size:11px;letter-spacing:.5em;color:var(--orange-d);font-weight:700}
+  .flight h3{font-family:"Songti TC",serif;font-size:30px;letter-spacing:.14em;margin:6px 0 20px;color:var(--navy)}
+  .card{background:rgba(255,255,255,.82);border:1px solid rgba(255,150,50,.35);border-radius:20px;
+        padding:16px 18px;margin-bottom:14px;box-shadow:0 8px 22px rgba(60,90,130,.14)}
+  .card .head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .pill{font-size:12px;font-weight:700;letter-spacing:.2em;padding:4px 12px 4px 14px;border-radius:999px;
+        background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff}
+  .card .d{font-size:15px;color:#3d5a73;letter-spacing:.06em}
+  .route{display:flex;align-items:center;justify-content:space-between}
+  .pt{width:104px}
+  .pt .code{font-size:34px;font-weight:800;letter-spacing:.04em;line-height:1;color:var(--navy)}
+  .pt .city{font-size:12px;color:#4d6a82;margin:4px 0 8px}
+  .pt .time{font-size:24px;font-weight:700;color:var(--orange-d);letter-spacing:.04em}
+  .pt .tm{font-size:11px;color:#4d6a82;margin-top:2px}
+  .pt.r{text-align:right}
+  .mid{flex:1;display:flex;flex-direction:column;align-items:center;margin-top:-28px;padding:0 6px}
+  .mid .line{width:100%;height:0;border-top:1.5px dashed rgba(232,112,10,.6);position:relative;margin-top:10px}
+  .mid .line::after{content:"✈";position:absolute;left:50%;top:-12px;transform:translateX(-50%);font-size:16px;color:var(--orange-d)}
+  .mid .no{font-size:11px;color:#4d6a82;margin-top:16px;letter-spacing:.1em}
+  .ticket{background:linear-gradient(160deg,#fff0d4,#ffe2b4);border:1px solid rgba(255,138,31,.55)}
+  .ticket .t{font-size:16px;font-weight:800;letter-spacing:.18em;margin-bottom:4px}
+  .ticket .s{font-size:12px;color:#4d6a82;margin-bottom:14px;line-height:1.6}
+  .field{display:flex;gap:8px}
+  .field .in{flex:1;height:46px;border-radius:12px;background:#fff;border:1.5px solid rgba(255,138,31,.6);
+         display:flex;align-items:center;padding:0 14px;font-size:15px;color:#9bb0c0;letter-spacing:.2em}
+  .field .btn{height:46px;padding:0 18px;border-radius:12px;display:flex;align-items:center;font-weight:800;
+         letter-spacing:.12em;font-size:14px;color:#fff;background:linear-gradient(135deg,#ffa133,#ee6a0a);
+         box-shadow:0 6px 14px rgba(230,120,30,.35)}
+  .locked{margin-top:14px;display:flex;gap:10px}
+  .locked div{flex:1;height:64px;border-radius:12px;border:1.5px dashed rgba(232,112,10,.45);background:rgba(255,255,255,.5);
+         display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:#4d6a82;gap:4px;letter-spacing:.1em}
+  .locked div b{font-size:18px;font-weight:400}
+
+  /* 與深色版相同的文字排版 */
+  .cover .text{top:196px}
+  .t-year{font-size:13px;letter-spacing:.5em;color:#b2601a;margin-bottom:14px;padding-left:.5em}
+  .t-h1{font-family:"Songti TC","STSong",serif;font-weight:900;font-size:72px;letter-spacing:.12em;line-height:1.1;padding-left:.12em;
+        background:linear-gradient(180deg,#ffb04a 0%,#f58a22 50%,#e5600a 100%);
+        -webkit-background-clip:text;background-clip:text;color:transparent;
+        filter:drop-shadow(0 2px 10px rgba(255,255,255,.9)) drop-shadow(0 3px 6px rgba(200,90,0,.25))}
+  .t-h2{font-family:"Songti TC","STSong",serif;font-weight:700;font-size:23px;letter-spacing:.18em;margin-top:18px;padding-left:.18em;
+        color:#16395a;text-shadow:0 2px 12px rgba(255,255,255,.9)}
+  .t-rule{width:120px;height:1px;margin:22px auto 20px;background:linear-gradient(90deg,transparent,#f58a22,transparent)}
+  .t-date{display:inline-block;padding:10px 24px;border-radius:999px;font-size:18px;font-weight:700;letter-spacing:.14em;
+        color:#fff;background:linear-gradient(135deg,#ffa133,#ee6a0a);
+        box-shadow:0 10px 24px rgba(230,120,30,.35);text-shadow:0 1px 2px rgba(120,50,0,.35)}
+</style>
+</head>
+<body>
+
+<!-- ===== 封面 ===== -->
+<div class="phone cover">
+  <svg class="scene" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="s3sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#b3d5ee"/>
+        <stop offset=".42" stop-color="#d2e7f3"/>
+        <stop offset=".70" stop-color="#f1e8e0"/>
+        <stop offset=".88" stop-color="#fbdcc2"/>
+        <stop offset="1" stop-color="#fbcfa8"/>
+      </linearGradient>
+      <radialGradient id="s3glow" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#fff8e8" stop-opacity=".95"/>
+        <stop offset=".3" stop-color="#ffe6c4" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#ffd6b0" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="s3sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbd6b8"/>
+        <stop offset=".05" stop-color="#d3e6ea"/>
+        <stop offset=".35" stop-color="#a8d1df"/>
+        <stop offset="1" stop-color="#7cb3cd"/>
+      </linearGradient>
+      <linearGradient id="s3mt" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#bcd6a8"/>
+        <stop offset=".5" stop-color="#93bb97"/>
+        <stop offset="1" stop-color="#7aa38c"/>
+      </linearGradient>
+      <linearGradient id="s3cliff" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#a08c78" stop-opacity="0"/>
+        <stop offset="1" stop-color="#a08c78" stop-opacity=".8"/>
+      </linearGradient>
+      <linearGradient id="s3haze" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbdcc2" stop-opacity="0"/>
+        <stop offset="1" stop-color="#fbdcc2" stop-opacity=".85"/>
+      </linearGradient>
+      <linearGradient id="s3refl" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff2dc" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#fff2dc" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="s3sand" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbe6cf"/>
+        <stop offset="1" stop-color="#f1cba4"/>
+      </linearGradient>
+      <path id="s3mtpath" d="M-10,566 C30,560 70,552 100,530 C120,515 130,495 142,480 Q148,468 158,470 Q164,458 174,462 Q182,450 192,456 Q202,446 212,452 Q222,442 233,450 Q244,442 254,450 Q264,444 274,452 Q284,450 292,462 C304,478 312,505 316,530 C318,545 320,556 324,566 Z"/>
+      <clipPath id="s3clip"><use href="#s3mtpath"/></clipPath>
+      <filter id="s3b1"><feGaussianBlur stdDeviation="1"/></filter>
+      <filter id="s3b3"><feGaussianBlur stdDeviation="3"/></filter>
+      <filter id="s3b6"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+
+    <!-- 天空:淡藍到粉橘的柔和漸層 -->
+    <rect width="390" height="570" fill="url(#s3sky)"/>
+    <circle cx="195" cy="566" r="260" fill="url(#s3glow)"/>
+    <circle cx="195" cy="566" r="56" fill="#fff9ec" opacity=".96"/>
+    <circle cx="195" cy="566" r="74" fill="#fff9ec" opacity=".4" filter="url(#s3b6)"/>
+
+    <!-- 雲:柔霧狀 -->
+    <g filter="url(#s3b6)" fill="#fff">
+      <ellipse cx="70" cy="410" rx="70" ry="10" opacity=".7"/>
+      <ellipse cx="335" cy="392" rx="62" ry="9" opacity=".65"/>
+      <ellipse cx="200" cy="330" rx="90" ry="8" opacity=".35"/>
+    </g>
+    <g filter="url(#s3b6)" fill="#fde0c4" opacity=".8">
+      <ellipse cx="80" cy="420" rx="66" ry="6"/>
+      <ellipse cx="340" cy="402" rx="56" ry="5"/>
+    </g>
+
+    <!-- 海 -->
+    <rect y="566" width="390" height="290" fill="url(#s3sea)"/>
+    <g filter="url(#s3b6)">
+      <rect x="172" y="566" width="46" height="150" fill="url(#s3refl)"/>
+    </g>
+    <g filter="url(#s3b3)" opacity=".7">
+      <rect x="170" y="582" width="90" height="3" fill="#fff6e6"/>
+      <rect x="150" y="606" width="130" height="2.5" fill="#fff0d8"/>
+      <rect x="128" y="636" width="170" height="2" fill="#fff0d8" opacity=".7"/>
+    </g>
+    <g stroke="#fff" stroke-width="1.2" opacity=".28" fill="none">
+      <path d="M0,622 Q50,616 100,622 T200,622 T300,622 T400,622"/>
+      <path d="M0,656 Q60,649 120,656 T240,656 T360,656 T480,656"/>
+      <path d="M0,694 Q70,686 140,694 T280,694 T420,694"/>
+    </g>
+
+    <!-- 水線柔光 -->
+    <path d="M-10,567 Q60,563 140,567 T300,567 T420,567" stroke="#fff" stroke-width="3" fill="none" opacity=".55" filter="url(#s3b1)"/>
+
+    <!-- 前景:柔和沙灘與浪花 -->
+    <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766 L400,860 L-10,860Z" fill="url(#s3sand)"/>
+    <path d="M-10,780 C60,764 140,772 200,782 C270,794 340,770 400,766" stroke="#fff" stroke-width="6" fill="none" opacity=".75" filter="url(#s3b3)"/>
+    <path d="M-10,768 C60,752 140,760 200,770 C270,782 340,758 400,754" stroke="#fff" stroke-width="2" fill="none" opacity=".5" filter="url(#s3b1)"/>
+  </svg>
+
+  <svg class="deco" viewBox="0 0 390 844">
+    <defs>
+      <radialGradient id="og" cx=".35" cy=".3" r=".8">
+        <stop offset="0" stop-color="#ffd27a"/><stop offset=".45" stop-color="#ff8f1c"/><stop offset="1" stop-color="#cf5200"/>
+      </radialGradient>
+      <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#4aa35a"/><stop offset="1" stop-color="#1b5a2a"/>
+      </linearGradient>
+      <g id="orange">
+        <circle r="26" fill="url(#og)"/>
+        <ellipse cx="-9" cy="-10" rx="9" ry="5" fill="#fff" opacity=".35" transform="rotate(-30 -9 -10)"/>
+        <circle cx="0" cy="-24" r="4.5" fill="#2f7a3f"/>
+        <path d="M-5,-24 L0,-30 L5,-24" stroke="#2f7a3f" stroke-width="2" fill="none"/>
+      </g>
+      <g id="leafg">
+        <path d="M0,0 Q16,-14 40,-4 Q18,12 0,0Z" fill="url(#leaf)"/>
+        <path d="M2,0 Q20,-4 38,-4" stroke="#b9e8bf" stroke-width=".8" fill="none" opacity=".6"/>
+      </g>
+      <filter id="sh"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#401a00" flood-opacity=".35"/></filter>
+    </defs>
+    <!-- 右上橘枝 -->
+    <g filter="url(#sh)">
+      <path d="M410,14 Q350,26 300,64 T236,104" stroke="#4a2f1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <use href="#leafg" transform="translate(372,24) rotate(-15) scale(1.05)"/>
+      <use href="#leafg" transform="translate(340,44) rotate(60) scale(1.1)"/>
+      <use href="#leafg" transform="translate(308,62) rotate(-20) scale(1.15)"/>
+      <use href="#leafg" transform="translate(270,84) rotate(65) scale(1.05)"/>
+      <use href="#orange" transform="translate(330,70) scale(.85)"/>
+      <use href="#orange" transform="translate(270,90) scale(.6)"/>
+      <use href="#orange" transform="translate(378,76) scale(.62)"/>
+    </g>
+    <!-- 左下橘子 -->
+    <g filter="url(#sh)">
+      <path d="M-10,742 Q40,752 96,790" stroke="#4a2f1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <use href="#leafg" transform="translate(8,748) rotate(-10) scale(1.1)"/>
+      <use href="#leafg" transform="translate(54,764) rotate(65) scale(1.1)"/>
+      <use href="#leafg" transform="translate(80,780) rotate(-30) scale(1)"/>
+      <use href="#orange" transform="translate(38,800) scale(.9)"/>
+      <use href="#orange" transform="translate(98,812) scale(.7)"/>
+    </g>
+    <g filter="url(#sh)">
+      <path d="M410,760 Q370,770 330,800" stroke="#4a2f1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <use href="#leafg" transform="translate(396,764) rotate(190) scale(1.1)"/>
+      <use href="#leafg" transform="translate(362,780) rotate(120) scale(1)"/>
+      <use href="#orange" transform="translate(352,806) scale(.8)"/>
+    </g>
+  </svg>
+
+  <div class="text">
+    <div class="t-year">2027 · 丁未年</div>
+    <div class="t-h1">羊羊得億</div>
+    <div class="t-h2">林家春節濟州島之旅</div>
+    <div class="t-rule"></div>
+    <div class="t-date">2027.02.08 — 02.11</div>
+  </div>
+  <div class="hint">向左滑動 翻頁 ›</div>
+</div>
+
+<!-- ===== 航班頁 ===== -->
+<div class="phone flight">
+ <div class="inner">
+  <div class="eyebrow">FLIGHT</div>
+  <h3>航班資訊</h3>
+
+  <div class="card">
+    <div class="head"><span class="pill">去程</span><span class="d">2027年02月08日(一)</span></div>
+    <div class="route">
+      <div class="pt"><div class="code">TPE</div><div class="city">台北桃園</div>
+        <div class="time">--:--</div><div class="tm">第 ? 航廈 · 出發</div></div>
+      <div class="mid"><div class="line"></div><div class="no">航班 --</div></div>
+      <div class="pt r"><div class="code">CJU</div><div class="city">濟州島</div>
+        <div class="time">--:--</div><div class="tm">抵達</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="head"><span class="pill">回程</span><span class="d">2027年02月11日(四)</span></div>
+    <div class="route">
+      <div class="pt"><div class="code">CJU</div><div class="city">濟州島</div>
+        <div class="time">--:--</div><div class="tm">出發</div></div>
+      <div class="mid"><div class="line"></div><div class="no">航班 --</div></div>
+      <div class="pt r"><div class="code">TPE</div><div class="city">台北桃園</div>
+        <div class="time">--:--</div><div class="tm">第 ? 航廈 · 抵達</div></div>
+    </div>
+  </div>
+
+  <div class="card ticket">
+    <div class="t">電子機票</div>
+    <div class="s">輸入你們這一組的代碼,就會顯示夫妻兩人的電子機票。</div>
+    <div class="field"><div class="in">請輸入機票代碼</div><div class="btn">查看</div></div>
+    <div class="locked">
+      <div><b>🔒</b>旅客 1</div>
+      <div><b>🔒</b>旅客 2</div>
+    </div>
+  </div>
+ </div>
+</div>
+
+</body>
+</html>
