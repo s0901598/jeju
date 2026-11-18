@@ -413,3 +413,7 @@ html,body{touch-action:manipulation}
 /* 封面:深色日期在副標題下方,淺琥珀漸層底;文字區以畫面正中央為基準,和背景圖一起移動 */
 [data-theme=dark] .t-date{background:linear-gradient(135deg,#ffeccb,#ffc47a);border:1.5px solid rgba(255,255,255,.7);color:#7a3a00;text-shadow:none;box-shadow:0 8px 22px rgba(255,150,50,.4);backdrop-filter:blur(6px)}
 .cover .text{top:calc(50% - 228px * var(--cs,1))}
+
+/* 機票頁(深色):框線恢復成原本的粗細,不要再加粗 */
+[data-theme=dark] #p-flight .fc{border-width:1.5px}
+[data-theme=dark] #p-flight .fc.ticket{border-width:2px}
