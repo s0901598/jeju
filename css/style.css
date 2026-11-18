@@ -449,3 +449,10 @@ html,body{touch-action:manipulation}
 [data-theme=dark] .tli .tm{color:#eaf2f8}
 [data-theme=dark] .tli.on .tm{color:#ffae5c}
 [data-theme=dark] .tli .dr{color:#c3d4e2}
+
+/* 垂直時間軸:圓點放回來(時間 → 圓點 → 直線) */
+.tli{--ln:calc(var(--P) - 50px)}
+.tli .d{display:block;left:calc(50% - 7px);top:44px}
+.tli::before{top:62px}
+.tli.hasdr::after{top:calc(62px + (var(--ln) - 30px) / 2 + 30px)}
+.tli .dr{top:calc(62px + (var(--ln) - 30px) / 2 + 6px)}
