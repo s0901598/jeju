@@ -1,4 +1,4 @@
-const PITCH=144;
+const PITCH=226;
 const $=s=>document.querySelector(s);
 const pager=$('#pager'),navEl=$('#nav'),tabsEl=$('#tabs');
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
@@ -79,7 +79,6 @@ DAYS.forEach(d=>{
    <div class="body">
      <div class="tl">${d.stops.map((s,i)=>`<div class="tli${i===0?' on':''}${i===d.stops.length-1?' last':''}" data-i="${i}"><span class="tm">${s.t}</span><span class="d"></span>${s.dr?`<span class="dr">${s.dr}</span>`:''}</div>`).join('')}<div class="sp"></div></div>
      <div class="cards">${d.stops.map((s,i)=>{const [tn,tc]=TYPE[s.ty];return `<div class="card${i===0?' on':''}" data-i="${i}">
-        <div class="badge-l">${String.fromCharCode(65+i)}</div>
         <div class="cb"><div class="r1"><span class="nm">${s.name}</span><span class="ty" style="background:${tc}">${tn}</span></div>
         <div class="ko"><span class="kt">${s.ko||''}</span>${btn('copy',s.ko||s.name,'複製地點名稱')}${s.ko?btn('play',s.ko,'播放韓文發音'):''}</div>
         <div class="ad"><span class="at">📍 ${s.addr}</span>${btn('copy',s.addr,'複製地址')}</div>
@@ -101,7 +100,7 @@ DAYS.forEach(d=>{
     if(src&&src!==a&&performance.now()-ts<150)return;
     src=a;ts=performance.now();b.scrollTop=a.scrollTop;
     setActive(Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH))));
-    if(a.scrollTop>PITCH*.5)pg.classList.add('compact');else if(a.scrollTop<PITCH*.3)pg.classList.remove('compact');},{passive:true});
+    if(a.scrollTop>6)pg.classList.add('compact');else if(a.scrollTop<=1)pg.classList.remove('compact');},{passive:true});
   link(tl,cards);link(cards,tl);
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>tl.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
@@ -165,6 +164,7 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
   if(tgt){tgt.style.scrollBehavior='auto';tgt.scrollTop=i*PITCH}
   if(q.get('compact'))pg.classList.add('compact');
   if(q.get('open'))setTimeout(()=>{const m=pg.querySelector('.map,.ovmap');m&&m.click();if(q.get('pick'))setTimeout(()=>{const c=document.querySelector(`.mf-chp[data-i="${q.get('pick')}"]`);c&&c.click()},300);if(q.get('mode')==='B')setTimeout(()=>document.querySelector('.mf-mode')?.click(),500)},150);
+  if(q.get('st')&&tgt)tgt.scrollTop=+q.get('st');
   if(q.get('sy'))pg.scrollTop=+q.get('sy');
   if(q.get('f')){const b=document.querySelector(`.fpill[data-f="${q.get('f')}"]`);if(b)b.click()}
   setTimeout(()=>{pager.style.scrollBehavior='';quiet=false},400);},60)}else{setTimeout(()=>quiet=false,400)}

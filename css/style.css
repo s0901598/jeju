@@ -357,3 +357,52 @@ html[data-theme=dark],[data-theme=dark] body{background:#112840}
 .barr svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 path.glow{animation:flick 3.6s infinite}path.mid{animation:flick 3.6s infinite .05s}path.core{animation:flick 3.6s infinite .1s}
 path.flow{stroke-dasharray:3 11;animation:flow 1.1s linear infinite}
+
+/* ================= v4 預覽:封面文字、行程卡放大、字色鮮明 ================= */
+:root{--P:226px}
+/* 封面:深色用「羊年大吉」,日期放到海上 */
+.h-d{display:none}
+.t-date.d{display:none}
+[data-theme=dark] .h-l{display:none}[data-theme=dark] .h-d{display:inline}
+[data-theme=dark] .t-date.l{display:none}
+[data-theme=dark] .t-date.d{display:inline-block;position:absolute;left:50%;top:77%;transform:translateX(-50%);white-space:nowrap;
+  background:rgba(10,30,48,.55);border:1.5px solid rgba(255,196,120,.75);color:#ffe2ad;backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(0,0,0,.35);text-shadow:0 0 10px rgba(255,150,50,.5)}
+[data-theme=dark] .t-year{color:#ffc766;opacity:1;font-weight:700;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+/* 行程卡:放大、拉高行距、按鈕加大加寬 */
+.card{height:212px;margin-bottom:14px;padding:14px 16px;gap:12px;opacity:1;transform:none;border-radius:20px}
+.card .badge-l{width:38px;height:38px;font-size:17px}
+.card .cb{gap:6px}
+.card .nm{font-size:21px}
+.card .ty{font-size:12px;padding:3px 10px}
+.card .ko{font-size:16px;font-weight:700;color:#1e4260;line-height:1.35;min-height:44px;margin-top:0;gap:10px}
+.card .ko .kt,.card .ad .at{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .ad{font-size:14.5px;color:#2f526f;line-height:1.4;min-height:44px;margin-top:0;gap:10px}
+.card .ib{width:40px;height:40px}.card .ib svg{width:18px;height:18px}
+.card .ft{gap:10px}
+.card .nt{font-size:14px;color:#2f526f;white-space:normal;line-height:1.35}
+.card .go{height:42px;padding:0 20px;font-size:15px;display:flex;align-items:center;border-width:2px}
+.tli .tm{font-size:16px;color:#23455f}
+.tli .dr{top:150px;font-size:12.5px;color:#456781}
+[data-theme=dark] .card .ko{color:#f4f9fd}
+[data-theme=dark] .card .ad,[data-theme=dark] .card .nt{color:#dde9f3}
+[data-theme=dark] .card .nm{color:#fff}
+[data-theme=dark] .tli .tm{color:#eaf2f8}
+[data-theme=dark] .tli .dr{color:#bccfdf}
+/* 總覽標籤:沒選中的也要鮮明 */
+.fpill{background:rgba(var(--rgb),.22);color:#0f2f4a}
+.fpill em{color:#0f2f4a;opacity:.8}
+[data-theme=dark] .fpill{background:rgba(var(--rgb),.5);color:#fff}
+[data-theme=dark] .fpill em{color:#fff;opacity:.95}
+.chip{background:rgba(var(--rgb),.2);color:#0f2f4a}
+.chip em{color:#0f2f4a;opacity:.75}
+[data-theme=dark] .chip{background:rgba(var(--rgb),.45);color:#fff}
+[data-theme=dark] .chip em{color:#fff;opacity:.95}
+
+.tli .dr{white-space:nowrap;letter-spacing:0;font-size:12px;width:62px}
+
+/* ================= v5:地圖放大鈕縮小、鎖定雙擊放大、卡片拿掉字母 ================= */
+.mexpand{width:26px;height:26px;right:8px;bottom:8px}
+.mexpand svg{width:12px;height:12px}
+html,body{touch-action:manipulation}
+.card{gap:0}
+.day .map{transition:height .22s ease}
