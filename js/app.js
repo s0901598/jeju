@@ -44,6 +44,19 @@ document.addEventListener('click',async e=>{
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
 
+
+/* 電腦用滑鼠:按住時間軸 / 行程卡往上下拖動就能捲動(手機用手指本來就能滑) */
+function dragScroll(el){
+  let down=false,moved=false,sy=0,st=0;
+  el.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0||e.target.closest('input,button,a'))return;down=true;moved=false;sy=e.clientY;st=el.scrollTop});
+  el.addEventListener('pointermove',e=>{if(!down)return;const dy=e.clientY-sy;
+    if(!moved&&Math.abs(dy)>5){moved=true;el.style.scrollSnapType='none';el.style.scrollBehavior='auto';el.classList.add('dragging');try{el.setPointerCapture(e.pointerId)}catch(_){}}
+    if(moved)el.scrollTop=st-dy});
+  const end=()=>{if(!down)return;down=false;if(moved){el.classList.remove('dragging');el.style.scrollSnapType='';
+    el.scrollTo({top:Math.max(0,Math.round(el.scrollTop/PITCH))*PITCH,behavior:'smooth'})}};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true)}
+
 /* ---------- 住宿頁 ---------- */
 $('#stayList').innerHTML=STAYS.map(s=>`
   <div class="fc stay"><div class="head"><span class="pill">第 ${s.n} 晚</span><span class="dt">${s.date}</span><span class="rgchip">${s.region}部</span></div>
@@ -107,6 +120,7 @@ DAYS.forEach(d=>{
     setActive(Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH))));
     if(a.scrollTop>6)pg.classList.add('compact');else if(a.scrollTop<=1)pg.classList.remove('compact');},{passive:true});
   link(tl,cards);link(cards,tl);
+  dragScroll(tl);dragScroll(cards);
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>tl.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });
