@@ -429,8 +429,9 @@ html,body{touch-action:manipulation}
 .map .jm,.ovmap .jm{cursor:grab}
 
 /* 小地圖外框(每日頁、總覽頁) */
-.map,.ovmap{border:2px solid rgba(255,140,40,.65)}
-[data-theme=dark] .map,[data-theme=dark] .ovmap{border-color:rgba(255,205,150,.7)}
+/* 外框顏色與粗細,和下方行程卡一樣(淺色 1px 淡橘、深色 2.5px 淺杏) */
+.map,.ovmap{border:1px solid rgba(255,150,50,.28)}
+[data-theme=dark] .map,[data-theme=dark] .ovmap{border:2.5px solid rgba(255,205,150,.5)}
 
 /* ================= 垂直時間軸:時間在上、直線往下連到下一個時間 ================= */
 .tl{width:76px}
@@ -467,3 +468,15 @@ html,body{touch-action:manipulation}
 /* 滑鼠拖動捲動時的游標與避免選取文字 */
 .tl,.cards{cursor:grab}
 .tl.dragging,.cards.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+
+/* 總覽頁標籤:縮小到中間大小(不要太大,也不要太小) */
+.filters{gap:8px;margin:12px 0 6px}
+.fpill{height:38px;padding:0 15px 0 6px;font-size:14.5px;gap:7px}
+.fpill i{width:26px;height:26px;font-size:12.5px}
+.fpill em{font-size:12px}
+.fpill.all{padding-left:16px}
+.chips{gap:6px}
+.chip{height:30px;padding:0 12px 0 4px;font-size:13px;gap:6px}
+.chip i{width:22px;height:22px;font-size:11px}
+.chip em{font-size:11px}
+.rgc h4{font-size:18px}.rgc h4 small{font-size:12px}
