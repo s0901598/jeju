@@ -427,3 +427,7 @@ html,body{touch-action:manipulation}
 .mreset.on{display:grid}
 .ovmap .mreset{width:34px;height:34px;left:10px;bottom:10px;font-size:17px}
 .map .jm,.ovmap .jm{cursor:grab}
+
+/* 小地圖外框(每日頁、總覽頁) */
+.map,.ovmap{border:2px solid rgba(255,140,40,.65)}
+[data-theme=dark] .map,[data-theme=dark] .ovmap{border-color:rgba(255,205,150,.7)}
