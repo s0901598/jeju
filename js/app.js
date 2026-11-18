@@ -83,11 +83,10 @@ pages.forEach((p,i)=>{
   t.onclick=()=>pager.scrollTo({left:i*pager.clientWidth});navEl.appendChild(t);});
 let cur=0,quiet=true;
 pager.addEventListener('scroll',()=>{
-  const i=Math.round(pager.scrollLeft/pager.clientWidth);if(i===cur)return;const back=i<cur;cur=i;
+  const i=Math.round(pager.scrollLeft/pager.clientWidth);if(i===cur)return;cur=i;
   [...navEl.children].forEach((t,k)=>t.classList.toggle('on',k===i));
   navEl.classList.toggle('off',i===0);
   const on=navEl.children[i];if(on)navEl.scrollTo({left:on.offsetLeft-navEl.clientWidth/2+on.offsetWidth/2,behavior:'smooth'});
-  if(!quiet){const r=$('#roll');r.classList.remove('go','back');void r.getBoundingClientRect();if(back)r.classList.add('back');r.classList.add('go');}
 },{passive:true});
 navEl.classList.add('off');
 
