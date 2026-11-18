@@ -79,7 +79,7 @@ DAYS.forEach(d=>{
    <div class="dh"><h2>Day ${d.n}<small>${d.date} 週${d.wk} · ${d.title}</small></h2></div>
    <div class="map"><div class="mhost"></div><span class="badge r">範例</span><button class="mreset" aria-label="回到全景">◎</button><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>
    <div class="body">
-     <div class="tl">${d.stops.map((s,i)=>`<div class="tli${i===0?' on':''}${i===d.stops.length-1?' last':''}" data-i="${i}"><span class="tm">${s.t}</span><span class="d"></span>${s.dr?`<span class="dr">${s.dr}</span>`:''}</div>`).join('')}<div class="sp"></div></div>
+     <div class="tl">${d.stops.map((s,i)=>`<div class="tli${i===0?' on':''}${i===d.stops.length-1?' last':''}${d.stops[i+1]&&d.stops[i+1].dr?' hasdr':''}" data-i="${i}"><span class="tm">${s.t}</span>${d.stops[i+1]&&d.stops[i+1].dr?`<span class="dr">${d.stops[i+1].dr}</span>`:''}</div>`).join('')}<div class="sp"></div></div>
      <div class="cards">${d.stops.map((s,i)=>{const [tn,tc]=TYPE[s.ty];return `<div class="card${i===0?' on':''}" data-i="${i}">
         <div class="cb"><div class="r1"><span class="nm">${s.name}</span><span class="ty" style="background:${tc}">${tn}</span></div>
         <div class="ko"><span class="kt">${s.ko||'韓文待填'}</span>${s.ko?btn('copy',s.ko,'複製韓文名稱')+btn('play',s.ko,'播放韓文發音'):''}</div>

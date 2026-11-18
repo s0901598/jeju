@@ -431,3 +431,21 @@ html,body{touch-action:manipulation}
 /* 小地圖外框(每日頁、總覽頁) */
 .map,.ovmap{border:2px solid rgba(255,140,40,.65)}
 [data-theme=dark] .map,[data-theme=dark] .ovmap{border-color:rgba(255,205,150,.7)}
+
+/* ================= 垂直時間軸:時間在上、直線往下連到下一個時間 ================= */
+.tl{width:76px}
+.tli{--ln:calc(var(--P) - 32px)}
+.tli .d{display:none}
+.tli .tm{left:0;right:0;width:100%;top:15px;height:24px;line-height:24px;text-align:center;font-size:16px;font-weight:700;color:#23455f;
+  transition:all .25s}
+.tli.on .tm{color:var(--orange-d);transform:scale(1.1);text-shadow:0 0 12px rgba(255,138,31,.6)}
+/* 直線:沒有車程時是一整條;有車程時,在中間斷開放車程文字 */
+.tli::before{content:"";position:absolute;left:calc(50% - 1px);top:44px;bottom:auto;height:var(--ln);width:2px;border-radius:2px;background:rgba(255,138,31,.45)}
+.tli.hasdr::before{height:calc((var(--ln) - 30px) / 2)}
+.tli.hasdr::after{content:"";position:absolute;left:calc(50% - 1px);top:calc(44px + (var(--ln) - 30px) / 2 + 30px);height:calc((var(--ln) - 30px) / 2);width:2px;border-radius:2px;background:rgba(255,138,31,.45)}
+.tli.last::before,.tli.last::after{display:none}
+.tli .dr{left:0;right:0;width:100%;text-align:center;top:calc(44px + (var(--ln) - 30px) / 2 + 6px);line-height:18px;font-size:12px;font-weight:600;color:#456781;white-space:nowrap;letter-spacing:0}
+[data-theme=dark] .tli::before,[data-theme=dark] .tli.hasdr::after{background:rgba(255,200,140,.6)}
+[data-theme=dark] .tli .tm{color:#eaf2f8}
+[data-theme=dark] .tli.on .tm{color:#ffae5c}
+[data-theme=dark] .tli .dr{color:#c3d4e2}
