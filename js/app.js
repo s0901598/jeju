@@ -45,17 +45,33 @@ document.addEventListener('click',async e=>{
 },true);
 
 
-/* 電腦用滑鼠:按住時間軸 / 行程卡往上下拖動就能捲動(手機用手指本來就能滑) */
-function dragScroll(el){
-  let down=false,moved=false,sy=0,st=0;
-  el.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0||e.target.closest('input,button,a'))return;down=true;moved=false;sy=e.clientY;st=el.scrollTop});
-  el.addEventListener('pointermove',e=>{if(!down)return;const dy=e.clientY-sy;
-    if(!moved&&Math.abs(dy)>5){moved=true;el.style.scrollSnapType='none';el.style.scrollBehavior='auto';el.classList.add('dragging');try{el.setPointerCapture(e.pointerId)}catch(_){}}
-    if(moved)el.scrollTop=st-dy});
-  const end=()=>{if(!down)return;down=false;if(moved){el.classList.remove('dragging');el.style.scrollSnapType='';
-    el.scrollTo({top:Math.max(0,Math.round(el.scrollTop/PITCH))*PITCH,behavior:'smooth'})}};
-  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
-  el.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true)}
+/* 行程卡的上下翻動:由程式控制,不靠瀏覽器自己的捲動慣性。
+   手指(或滑鼠)按住拖動時,畫面跟著手走;放開時最多只翻一張,不會衝到最後一張。 */
+function cardPager(cards){
+  const n=()=>cards.querySelectorAll('.card').length;
+  const go=i=>cards.scrollTo({top:Math.max(0,Math.min(n()-1,i))*PITCH,behavior:'smooth'});
+  let down=false,moved=false,sy=0,st=0,hist=[];
+  cards.addEventListener('pointerdown',e=>{if(e.button!==0&&e.pointerType==='mouse')return;if(e.target.closest('input,a'))return;
+    down=true;moved=false;sy=e.clientY;st=cards.scrollTop;hist=[[performance.now(),e.clientY]]});
+  cards.addEventListener('pointermove',e=>{if(!down)return;const dy=e.clientY-sy;
+    if(!moved&&Math.abs(dy)>6){moved=true;cards.classList.add('dragging');try{cards.setPointerCapture(e.pointerId)}catch(_){}}
+    if(moved){cards.style.scrollBehavior='auto';cards.scrollTop=st-dy;hist.push([performance.now(),e.clientY]);if(hist.length>5)hist.shift()}});
+  const end=e=>{if(!down)return;down=false;cards.classList.remove('dragging');cards.style.scrollBehavior='';
+    if(!moved)return;
+    const a=hist[0],b=hist[hist.length-1],dt=Math.max(1,b[0]-a[0]),v=(b[1]-a[1])/dt;   // 向上滑 v 為負
+    const start=Math.round(st/PITCH);
+    let idx;
+    if(e&&e.type==='pointercancel')idx=Math.round(cards.scrollTop/PITCH);
+    else if(Math.abs(v)>0.35)idx=start+(v<0?1:-1);                 // 快速一滑:只翻一張
+    else idx=Math.round(cards.scrollTop/PITCH);                    // 慢慢拖:停在最近的一張
+    go(idx)};
+  cards.addEventListener('pointerup',end);cards.addEventListener('pointercancel',end);
+  cards.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
+  /* 電腦滾輪 / 觸控板:一次滾動手勢只翻一張 */
+  let lock=false,lt=0;
+  cards.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;e.preventDefault();
+    clearTimeout(lt);lt=setTimeout(()=>lock=false,160);if(lock||Math.abs(e.deltaY)<4)return;lock=true;
+    go(Math.round(cards.scrollTop/PITCH)+(e.deltaY>0?1:-1))},{passive:false})}
 
 /* ---------- 住宿頁 ---------- */
 $('#stayList').innerHTML=STAYS.map(s=>`
@@ -120,7 +136,7 @@ DAYS.forEach(d=>{
     setActive(Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH))));
     if(a.scrollTop>6)pg.classList.add('compact');else if(a.scrollTop<=1)pg.classList.remove('compact');},{passive:true});
   link(cards,tl);   // 時間軸只跟著行程卡走,自己不能被拖動
-  dragScroll(cards);
+  cardPager(cards);
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });

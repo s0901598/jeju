@@ -487,3 +487,12 @@ html,body{touch-action:manipulation}
 /* 時間軸不能被拖動、不能捲動:只跟著右邊行程卡自動對應(點時間軸的某一站仍可跳過去) */
 .tl{overflow-y:hidden;scroll-snap-type:none;cursor:default;touch-action:none}
 .tl.dragging{cursor:default}
+
+/* 行程卡:垂直方向由程式翻動(一次一張);橫向仍交給瀏覽器,可以左右滑換頁 */
+.cards{overflow-y:hidden;scroll-snap-type:none;touch-action:pan-x;overscroll-behavior:contain;cursor:grab}
+.cards.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+.cards .card,.tl .tli{scroll-snap-stop:normal}
+
+/* 在行程卡、時間軸上橫向滑動,也要能切換到前後頁(只擋上下方向的傳遞,不擋左右) */
+.tl,.cards{overscroll-behavior-x:auto;overscroll-behavior-y:contain}
+.tl{touch-action:pan-x}
