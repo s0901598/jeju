@@ -1,15 +1,16 @@
 /* 小卡的詳細資訊:營業時間(顯示「Day 幾那天」或「今天」,點開看整週)、特色關鍵字、菜單 / 票價 */
 function spotInfo(s){
   const f=s.info;if(!f)return '';let o='';
-  const price=p=>/^[0-9,]+$/.test(p)?'₩'+p:p;
+  const price=p=>{if(!/^[0-9,]+$/.test(p))return p;const w=+p.replace(/,/g,''),t=w*KRW2TWD,r=t>=50?Math.round(t/5)*5:Math.round(t);return '₩'+p+'<small class="tw">約 NT$'+r+'</small>'};
+  const nm=n=>ZH[n]?ZH[n]+' <small class="ko">'+n+'</small>':n;
   if(f.h){
     const d1=s.days&&s.days.length?s.days[0]:0,wk=d1?DAYS[d1-1].wk:'一二三四五六日日'[(new Date().getDay()+6)%7];
     const wi=WKS.indexOf(wk),lab=d1?`Day ${d1}(週${wk})`:`今天(週${wk})`,t=f.h[wi],off=t==='公休';
     o+=`<div class="sp-sec"><button class="sp-tg" data-tg="h"><span class="ic">🕒</span><span class="tx"><b>${lab}</b> <span class="${off?'off':''}">${t}</span></span><i>▾</i></button>
      <div class="sp-pop" hidden>${[...WKS].map((w,i)=>`<div class="${i===wi?'cur':''}"><span>週${w}</span><span class="${f.h[i]==='公休'?'off':''}">${f.h[i]}</span></div>`).join('')}<p>${f.hn||'時間取自 Naver(2026/11),春節期間可能調整'}</p></div></div>`}
-  if(f.kw&&f.kw.length)o+=`<div class="sp-kw">${f.kw.map(k=>`<span>#${k}</span>`).join('')}</div>`;
-  if(f.m&&f.m.length)o+=`<div class="sp-sec"><button class="sp-tg" data-tg="m"><span class="ic">${f.ml==='票價'?'🎫':f.ml==='停車費'?'🅿️':'🍴'}</span><span class="tx"><b>${f.ml||'菜單'}</b> <span class="mm">${f.m[0][0]} ${price(f.m[0][1])}${f.m.length>1?' …':''}</span></span><i>▾</i></button>
-     <div class="sp-pop" hidden>${f.m.map(([n,p])=>`<div><span>${n}</span><span>${price(p)}</span></div>`).join('')}</div></div>`;
+  if(f.kw&&f.kw.length)o+=`<div class="sp-kw">${f.kw.map(k=>`<span>#${ZH[k]||k}${ZH[k]?` <small class="ko">${k}</small>`:''}</span>`).join('')}</div>`;
+  if(f.m&&f.m.length)o+=`<div class="sp-sec"><button class="sp-tg" data-tg="m"><span class="ic">${f.ml==='票價'?'🎫':f.ml==='停車費'?'🅿️':'🍴'}</span><span class="tx"><b>${f.ml||'菜單'}</b> <span class="mm">${ZH[f.m[0][0]]||f.m[0][0]} ${price(f.m[0][1])}${f.m.length>1?' …':''}</span></span><i>▾</i></button>
+     <div class="sp-pop" hidden>${f.m.map(([n,p])=>`<div><span>${nm(n)}</span><span>${price(p)}</span></div>`).join('')}</div></div>`;
   return o}
 
 /* 地點小卡:點地圖上的點(或清單的列)時,從下方升起。照片、名稱、韓文、地址、複製、導航 */
