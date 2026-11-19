@@ -42,7 +42,7 @@ document.addEventListener('click',async e=>{
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
   else if(e.target.closest('.sp-x')){e.stopPropagation();dismissSpot(e.target.closest('.spot'))}
-  else if(e.target.closest('.sp-img img')){e.stopPropagation();const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lbox';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
+  else if(e.target.closest('.sp-img img')){e.stopPropagation();if(window.__spotDragT&&performance.now()-window.__spotDragT<350)return;const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lbox';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
 
@@ -111,11 +111,22 @@ $('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r
 document.addEventListener('touchmove',e=>{const t=e.target;if(t.closest&&(t.closest('.spot,.lbox')||((t.classList.contains('app')||t.classList.contains('mf'))&&document.querySelector('.spot'))))e.preventDefault()},{passive:false});
 /* 點壓黑的背景也會關閉小卡 */
 document.addEventListener('click',e=>{const t=e.target;if((t.classList.contains('app')||t.classList.contains('mf'))&&t.querySelector(':scope > .spot')){e.stopPropagation();dismissSpot(t.querySelector(':scope > .spot'))}},true);
-{let el=null,y0=0,dy=0,t0=0;
- document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x'))return;el=s;y0=e.clientY;dy=0;t0=performance.now();el.style.animation='none';el.style.transition='none'});
- document.addEventListener('pointermove',e=>{if(!el)return;dy=Math.max(0,e.clientY-y0);el.style.transform=`translateY(${dy}px)`;el.style.opacity=String(1-Math.min(.6,dy/400))});
- const end=()=>{if(!el)return;const s=el,v=dy/Math.max(1,performance.now()-t0);el=null;s.style.transition='transform .2s,opacity .2s';
-   if(dy>70||(dy>25&&v>.5)){dismissSpot(s)}else{s.style.transform='';s.style.opacity=''}};
+{let el=null,x0=0,y0=0,dx=0,dy=0,t0=0,axis=null,tr=null,idx=0,n=1,w=1,moved=false;
+ const setSlide=(i,anim)=>{tr.style.transition=anim?'transform .28s ease':'none';tr.style.transform=`translateX(${-i*100}%)`;
+   const sp=tr.closest('.sp-img');sp.querySelectorAll('.sp-dots i').forEach((d,k)=>d.classList.toggle('on',k===i));const c=sp.querySelector('.sp-cnt');if(c)c.textContent=(i+1)+'/'+n};
+ document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x'))return;
+   el=s;x0=e.clientX;y0=e.clientY;dx=dy=0;t0=performance.now();axis=null;moved=false;el.style.animation='none';el.style.transition='none';
+   tr=e.target.closest('.sp-img')?el.querySelector('.sp-track'):null;if(tr){n=tr.children.length;idx=+tr.dataset.i||0;w=tr.clientWidth||1;if(n<2)tr=null}});
+ document.addEventListener('pointermove',e=>{if(!el)return;dx=e.clientX-x0;dy=e.clientY-y0;
+   if(!axis&&(Math.abs(dx)>8||Math.abs(dy)>8)){axis=(tr&&Math.abs(dx)>Math.abs(dy))?'x':'y'}
+   if(axis)moved=true;
+   if(axis==='x'){let o=dx;if((idx===0&&dx>0)||(idx===n-1&&dx<0))o=dx*.35;tr.style.transition='none';tr.style.transform=`translateX(calc(${-idx*100}% + ${o}px))`}
+   else if(axis==='y'){const d=Math.max(0,dy);el.style.transform=`translateY(${d}px)`;el.style.opacity=String(1-Math.min(.6,d/400))}});
+ const end=()=>{if(!el)return;const s=el,v=Math.max(0,dy)/Math.max(1,performance.now()-t0);el=null;
+   if(moved){window.__spotDragT=performance.now()}
+   if(axis==='x'){let i=idx;if(dx<-40||dx<-w*.2)i=Math.min(n-1,idx+1);else if(dx>40||dx>w*.2)i=Math.max(0,idx-1);tr.dataset.i=i;setSlide(i,true);return}
+   s.style.transition='transform .2s,opacity .2s';
+   if(axis==='y'&&(dy>70||(dy>25&&v>.5))){dismissSpot(s)}else{s.style.transform='';s.style.opacity=''}};
  document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
 pager.addEventListener('scroll',()=>closeSpot(),{passive:true});
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});

@@ -565,3 +565,12 @@ html,body{touch-action:manipulation}
 .spot.closing{animation:none;pointer-events:none}
 .app:has(> .spot.closing)::after,.mf:has(> .spot.closing)::after{animation:dimOut .26s ease forwards}
 @keyframes dimOut{from{opacity:1}to{opacity:0}}
+
+/* 照片可左右滑動(多張時) */
+.sp-img{overflow:hidden}
+.sp-track{position:absolute;inset:0;display:flex;transform:translateX(0)}
+.sp-track img{position:static;inset:auto;flex:0 0 100%;width:100%;height:100%;object-fit:cover}
+.sp-dots{position:absolute;left:0;right:0;bottom:52px;z-index:2;display:flex;justify-content:center;gap:5px;pointer-events:none}
+.sp-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);transition:.2s}
+.sp-dots i.on{background:#fff;width:16px;border-radius:3px}
+.sp-cnt{position:absolute;left:10px;top:9px;z-index:3;background:rgba(0,0,0,.45);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;pointer-events:none}

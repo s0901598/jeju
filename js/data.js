@@ -30,6 +30,8 @@ const P={
  tteok:{ty:'food',name:'老奶奶橘子麻糬(偶來市場內)',ko:'할머니떡집 오메기떡',addr:'제주특별자치도 서귀포시 중앙로42번길 24',lon:126.5642,lat:33.2486,img:'img/tteok.jpg'},
  daewon:{ty:'food',name:'鮑魚海鮮鍋(大元家)',ko:'대원가',addr:'제주특별자치도 제주시 도남로16길 15',lon:126.5269,lat:33.4915,img:'img/daewon.jpg'}
 };
+const MORE={"airport":1,"bagel":3,"blackpork":1,"camellia":2,"cheonjiyeon":1,"daewon":1,"dodu":1,"dongmun":3,"haejigae":3,"halla":1,"hill1100":3,"jusang":3,"malhouse":2,"olle":3,"rainbow":2,"sanbang":2,"seongsan":2,"seopji":3,"sorang":2,"tteok":2,"woljip":3,"woojin":2,"yongdu":2};
+Object.entries(MORE).forEach(([k,n])=>{P[k].imgs=[P[k].img,...Array.from({length:n},(_,i)=>`img/${k}_${i+2}.jpg`)]});
 const S=(k,o)=>({...P[k],...o});
 const DAYS=[
  {n:1,date:'02.08',wk:'一',title:'抵達濟州',rg:['北'],stops:[
