@@ -627,3 +627,16 @@ html,body{touch-action:manipulation}
 .fx-q button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;border-radius:12px;border:1px solid rgba(255,138,31,.35);background:transparent;color:inherit;cursor:pointer;font-family:inherit}
 .fx-q button b{font-size:12.5px}.fx-q button span{font-size:10px;color:var(--muted)}
 .app:has(#nav.off) .fxbtn{display:none}
+/* 匯率計算機放大:佔畫面 2/3 高,垂直置中 */
+.spot.fxc{top:17%;bottom:17%;display:flex;flex-direction:column}
+.fxc .fx-h{padding:20px 56px 8px 20px}.fxc .fx-h b{font-size:20px}.fxc .fx-h span{font-size:12px}
+.fxc .fx-b{flex:1;display:flex;flex-direction:column;justify-content:center;padding:6px 20px 22px}
+.fxc .fx-r{padding:10px 10px 10px 16px;border-radius:18px}
+.fxc .fx-r input,.fxc .fx-r output{font-size:34px}
+.fxc .fx-r select{font-size:15px;padding:11px 8px}
+.fxc .fx-sw{width:46px;height:36px;margin:10px auto;font-size:20px}
+.fxc .fx-rate{font-size:14px;margin:18px 2px 0}
+.fxc .fx-q{margin-top:20px;gap:8px}
+.fxc .fx-q button{padding:11px 2px}.fxc .fx-q button b{font-size:13.5px}.fxc .fx-q button span{font-size:10.5px}
+.spot.fxc{--panel:#fff}[data-theme=dark] .spot.fxc{--panel:#1e3c5c}
+.fxc .fx-q:before{content:attr(data-u) ' ≈';grid-column:1/-1;font-size:11px;color:var(--muted);margin-bottom:-2px}

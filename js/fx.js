@@ -23,8 +23,8 @@ function fxUpdate(){
   document.getElementById('fxOut').textContent=fxFmt(fxConv(a,f,t),t);
   const r=fxConv(1,f,t),r2=fxConv(1,t,f);
   document.getElementById('fxRate').innerHTML=`1 ${f} ≈ <b>${fxR(r)}</b> ${t}<br>1 ${t} ≈ <b>${fxR(r2)}</b> ${f}`;
-  const base=f==='TWD'?[100,500,1000,3000,5000]:f==='KRW'?[1000,5000,10000,30000,50000]:[1,10,50,100,500];
-  document.getElementById('fxQ').innerHTML=base.map(v=>`<button data-v="${v}"><b>${fxFmt(v,f)}</b><span>${fxFmt(fxConv(v,f,t),t)} ${t}</span></button>`).join('')}
+  const tn=document.getElementById('fxQ');tn.dataset.u=t;const base=f==='TWD'?[100,500,1000,3000,5000]:f==='KRW'?[1000,5000,10000,30000,50000]:[1,10,50,100,500];
+  document.getElementById('fxQ').innerHTML=base.map(v=>`<button data-v="${v}"><b>${fxFmt(v,f)}</b><span>${fxFmt(fxConv(v,f,t),t)}</span></button>`).join('')}
 function openFx(){
   if(typeof closeSpot==='function')closeSpot();
   document.querySelector('.app > .spot')?.remove();
