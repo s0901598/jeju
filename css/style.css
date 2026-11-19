@@ -607,3 +607,21 @@ html,body{touch-action:manipulation}
 
 .spot .sp-img{transition:height .25s}
 .spot.ex .sp-img{height:140px}
+
+/* ---- 匯率計算機 ---- */
+.fxbtn{right:56px;font-size:17px;line-height:1}
+.tabs{margin-right:104px}
+[data-theme=dark] .fxbtn{color:#ffc27a}
+.spot.fxc{bottom:14px}
+.fxc input,.fxc select{user-select:text;-webkit-user-select:text;touch-action:manipulation}
+.fx-h{padding:14px 52px 6px 16px}.fx-h b{display:block;font-size:17px}.fx-h span{font-size:11px;color:var(--muted)}
+.fx-b{padding:4px 16px 18px}
+.fx-r{display:flex;gap:8px;align-items:center;background:rgba(255,138,31,.08);border:1px solid rgba(255,138,31,.3);border-radius:14px;padding:6px 8px 6px 12px}
+.fx-r input,.fx-r output{flex:1;min-width:0;font-size:26px;font-weight:800;border:0;background:transparent;color:inherit;outline:0;padding:4px 0;font-family:inherit}
+.fx-r.out{background:rgba(255,138,31,.16)}.fx-r.out output{color:var(--orange-d)}
+.fx-r select{flex:none;max-width:44%;font-size:14px;font-weight:700;border:1px solid rgba(255,138,31,.4);border-radius:10px;background:var(--panel);color:inherit;padding:8px 6px}
+.fx-sw{display:block;margin:6px auto;width:38px;height:30px;border-radius:999px;border:1px solid rgba(255,138,31,.5);background:var(--panel);color:var(--orange-d);font-size:17px;cursor:pointer;padding:0}
+.fx-rate{margin:12px 2px 0;font-size:12.5px;color:var(--muted);line-height:1.6}.fx-rate b{color:inherit}
+.fx-q{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
+.fx-q button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;border-radius:12px;border:1px solid rgba(255,138,31,.35);background:transparent;color:inherit;cursor:pointer;font-family:inherit}
+.fx-q button b{font-size:12.5px}.fx-q button span{font-size:10px;color:var(--muted)}

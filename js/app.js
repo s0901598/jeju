@@ -140,7 +140,7 @@ document.addEventListener('click',e=>{const t=e.target;if((t.classList.contains(
 {let el=null,x0=0,y0=0,dx=0,dy=0,t0=0,axis=null,tr=null,idx=0,n=1,w=1,moved=false;
  const setSlide=(i,anim)=>{tr.style.transition=anim?'transform .28s ease':'none';tr.style.transform=`translateX(${-i*100}%)`;
    const sp=tr.closest('.sp-img');sp.querySelectorAll('.sp-dots i').forEach((d,k)=>d.classList.toggle('on',k===i));const c=sp.querySelector('.sp-cnt');if(c)c.textContent=(i+1)+'/'+n};
- document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x,.sp-tg'))return;
+ document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x,.sp-tg,.fxc input,.fxc select,.fxc button:not(.sp-x)'))return;
    el=s;x0=e.clientX;y0=e.clientY;dx=dy=0;t0=performance.now();axis=null;moved=false;el.style.animation='none';el.style.transition='none';
    tr=e.target.closest('.sp-img')?el.querySelector('.sp-track'):null;if(tr){n=tr.children.length;idx=+tr.dataset.i||0;w=tr.clientWidth||1;if(n<2)tr=null}});
  document.addEventListener('pointermove',e=>{if(!el)return;dx=e.clientX-x0;dy=e.clientY-y0;
