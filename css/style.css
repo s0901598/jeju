@@ -554,3 +554,9 @@ html,body{touch-action:manipulation}
 /* 小卡開著時,背後的頁面不能捲動 */
 .app:has(.spot) .pg.v,.app:has(.lbox) .pg.v{overflow-y:hidden}
 .spot,.lbox{overscroll-behavior:none}
+
+/* 小卡開著:背景壓黑、整個背景不能操作(點背景會關閉小卡) */
+.app:has(> .spot)::after,.mf:has(> .spot)::after{content:'';position:absolute;inset:0;z-index:590;background:rgba(0,0,0,.66);animation:dimIn .25s}
+.mf:has(> .spot)::after{z-index:520}
+.app:has(> .spot) .pager,.mf:has(> .spot) .mf-host{pointer-events:none}
+@keyframes dimIn{from{opacity:0}to{opacity:1}}
