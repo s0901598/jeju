@@ -640,3 +640,8 @@ html,body{touch-action:manipulation}
 .fxc .fx-q button{padding:11px 2px}.fxc .fx-q button b{font-size:13.5px}.fxc .fx-q button span{font-size:10.5px}
 .spot.fxc{--panel:#fff}[data-theme=dark] .spot.fxc{--panel:#1e3c5c}
 .fxc .fx-q:before{content:attr(data-u) ' ≈';grid-column:1/-1;font-size:11px;color:var(--muted);margin-bottom:-2px}
+/* 匯率計算機改成從底部升起、佔 85% 高,內容可上下滑 */
+.spot.fxc{top:auto;bottom:0;left:0;right:0;height:85%;border-radius:24px 24px 0 0;border-bottom:0}
+.fxc .fx-b{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+.fxc .fx-b>:first-child{margin-top:auto}.fxc .fx-b>:last-child{margin-bottom:auto}
+.fxc .fx-b>:first-child{margin-top:14px}.fxc .fx-b>:last-child{margin-bottom:0}
