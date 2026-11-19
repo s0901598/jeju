@@ -41,6 +41,7 @@ document.addEventListener('click',async e=>{
     if(!t||/待填/.test(t)){toast('這個還沒填,沒有可複製的內容');return}
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
+  else if(e.target.closest('.sp-tg')){e.stopPropagation();const b=e.target.closest('.sp-tg'),sec=b.parentElement,pop=sec.querySelector('.sp-pop'),open=pop.hidden;sec.closest('.spot').querySelectorAll('.sp-pop').forEach(p=>{p.hidden=true;p.parentElement.classList.remove('open')});if(open){pop.hidden=false;sec.classList.add('open')}sec.closest('.spot').classList.toggle('ex',open)}
   else if(e.target.closest('.sp-x')){e.stopPropagation();dismissSpot(e.target.closest('.spot'))}
   else if(e.target.closest('.sp-img img')){e.stopPropagation();if(window.__spotDragT&&performance.now()-window.__spotDragT<350)return;openLightbox(e.target.closest('.sp-img img'))}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
@@ -139,7 +140,7 @@ document.addEventListener('click',e=>{const t=e.target;if((t.classList.contains(
 {let el=null,x0=0,y0=0,dx=0,dy=0,t0=0,axis=null,tr=null,idx=0,n=1,w=1,moved=false;
  const setSlide=(i,anim)=>{tr.style.transition=anim?'transform .28s ease':'none';tr.style.transform=`translateX(${-i*100}%)`;
    const sp=tr.closest('.sp-img');sp.querySelectorAll('.sp-dots i').forEach((d,k)=>d.classList.toggle('on',k===i));const c=sp.querySelector('.sp-cnt');if(c)c.textContent=(i+1)+'/'+n};
- document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x'))return;
+ document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x,.sp-tg'))return;
    el=s;x0=e.clientX;y0=e.clientY;dx=dy=0;t0=performance.now();axis=null;moved=false;el.style.animation='none';el.style.transition='none';
    tr=e.target.closest('.sp-img')?el.querySelector('.sp-track'):null;if(tr){n=tr.children.length;idx=+tr.dataset.i||0;w=tr.clientWidth||1;if(n<2)tr=null}});
  document.addEventListener('pointermove',e=>{if(!el)return;dx=e.clientX-x0;dy=e.clientY-y0;

@@ -582,3 +582,25 @@ html,body{touch-action:manipulation}
 .lb-cnt{position:absolute;top:18px;left:0;right:0;text-align:center;color:#fff;font-size:13px;font-weight:700;opacity:.85;pointer-events:none}
 .lb-hint{position:absolute;bottom:22px;left:0;right:0;text-align:center;color:#fff;opacity:.7;font-size:12px;pointer-events:none}
 .lbox{background:rgba(0,0,0,.94)}
+
+/* 小卡:營業時間 / 關鍵字 / 菜單 */
+.spot .sp-sec{margin-top:2px;border-top:1px dashed rgba(232,112,10,.25)}
+.spot .sp-tg{width:100%;display:flex;align-items:center;gap:7px;background:none;border:0;padding:7px 0 5px;font:inherit;color:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.spot .sp-tg .ic{flex:none;font-size:14px}
+.spot .sp-tg .tx{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot .sp-tg .tx b{color:var(--orange-d);font-weight:800;margin-right:3px}
+.spot .sp-tg .mm{color:var(--muted)}
+.spot .sp-tg i{flex:none;font-style:normal;font-size:11px;color:var(--muted);transition:transform .2s}
+.spot .sec.open i,.spot .sp-sec.open .sp-tg i{transform:rotate(180deg)}
+.spot .off{color:#d94a3a;font-weight:700}
+.spot .sp-pop{padding:2px 0 6px 21px;font-size:12.5px}
+.spot .sp-pop[hidden]{display:none}
+.spot .sp-pop>div{display:flex;justify-content:space-between;gap:10px;padding:2px 0}
+.spot .sp-pop>div span:first-child{color:var(--muted)}
+.spot .sp-pop>div.cur{font-weight:800}.spot .sp-pop>div.cur span:first-child{color:var(--orange-d)}
+.spot .sp-pop p{margin:4px 0 0;font-size:11px;color:var(--muted)}
+.spot .sp-kw{display:flex;gap:6px;overflow:hidden;white-space:nowrap;padding:3px 0 2px;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.spot .sp-kw span{flex:none;font-size:11.5px;color:var(--orange-d);background:rgba(255,138,31,.12);border-radius:999px;padding:1px 8px}
+
+.spot .sp-img{transition:height .25s}
+.spot.ex .sp-img{height:140px}
