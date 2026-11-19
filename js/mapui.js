@@ -2,8 +2,8 @@
 function spotCard(s,cls){
   const t=TYPE[s.ty]||TYPE.spot,nt=(s.days&&s.days.length?'Day '+s.days.join('、')+(s.note?' · ':''):'')+(s.note||'');
   return `<div class="spot ${cls||''}"><button class="sp-x" aria-label="關閉">✕</button>
-   <div class="sp-img"><span class="sp-em">${t[2]}</span>${s.img?`<img src="${s.img}" alt="" loading="lazy" style="object-position:${s.pos||'50% 40%'}" onerror="this.remove()">`:''}</div>
-   <div class="sp-b"><div class="r1"><span class="nm">${s.name}</span><span class="ty" style="background:${t[1]}">${t[0]}</span></div>
+   <div class="sp-img"><span class="sp-em">${t[2]}</span>${s.img?`<img src="${s.img}" alt="" loading="lazy" style="object-position:${s.pos||'50% 40%'}" onerror="this.remove()">`:''}<div class="r1"><span class="nm">${s.name}</span><span class="ty" style="background:${t[1]}">${t[0]}</span></div></div>
+   <div class="sp-b">
     <div class="ko"><span class="kt">${s.ko||'韓文待填'}</span>${s.ko?btn('copy',s.ko,'複製韓文名稱')+btn('play',s.ko,'播放韓文發音'):''}</div>
     <div class="ad"><span class="at">📍 ${s.addr}</span>${btn('copy',s.addr,'複製地址')}</div>
     <div class="ft"><span class="nt">${nt||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}
