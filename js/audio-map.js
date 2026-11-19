@@ -1,6 +1,6 @@
 /* 由 tools/gen-audio.py 產生,請勿手改 */
 const AUDIO={
- "1100고지 휴게소": "audio/a25a2a43d5.m4a",
+ "1100고지습지": "audio/bfb42c4060.m4a",
  "BHC치킨 제주탑동점": "audio/ae6245977d.m4a",
  "대원가": "audio/0a1bab7a21.m4a",
  "도두동 무지개해안도로": "audio/dd02c04576.m4a",
@@ -23,6 +23,7 @@ const AUDIO={
  "주상절리대": "audio/cfe626af56.m4a",
  "천지연폭포": "audio/1feab8bac1.m4a",
  "카멜리아힐": "audio/6d4c54328b.m4a",
+ "할머니떡집 오메기떡": "audio/6246db1139.m4a",
  "해지개": "audio/0b2b3abcd1.m4a",
  "흑돼지거리": "audio/af64ac3abb.m4a"
 };

@@ -9,8 +9,8 @@ const P={
  seongsan:{ty:'spot',name:'城山日出峰',ko:'성산일출봉',addr:'제주특별자치도 서귀포시 성산읍 일출로 284-12',lon:126.9408,lat:33.4589,img:'img/seongsan.jpg'},
  seopji:{ty:'spot',name:'涉地可支',ko:'섭지코지',addr:'제주특별자치도 서귀포시 성산읍 섭지코지로',lon:126.9308,lat:33.4238,img:'img/seopji.jpg'},
  cheonjiyeon:{ty:'spot',name:'天地淵瀑布',ko:'천지연폭포',addr:'제주특별자치도 서귀포시 천지동 666-2',lon:126.5544,lat:33.2470,img:'img/cheonjiyeon.jpg'},
- jusang:{ty:'spot',name:'柱狀節理帶',ko:'주상절리대',addr:'제주특별자치도 서귀포시 이어도로 36-30',lon:126.4256,lat:33.2377},
- sanbang:{ty:'spot',name:'山房山',ko:'산방산',addr:'제주특별자치도 서귀포시 안덕면 사계리',lon:126.3134,lat:33.2416},
+ jusang:{ty:'spot',name:'柱狀節理帶',ko:'주상절리대',addr:'제주특별자치도 서귀포시 이어도로 36-30',lon:126.4261,lat:33.2380,img:'img/jusang.jpg'},
+ sanbang:{ty:'spot',name:'山房山',ko:'산방산',addr:'제주특별자치도 서귀포시 안덕면 사계리',lon:126.3134,lat:33.2416,img:'img/sanbang.jpg'},
  yongdu:{ty:'spot',name:'龍頭岩',ko:'용두암',addr:'제주특별자치도 제주시 용두암길 15',lon:126.5117,lat:33.5161,img:'img/yongdu.jpg'},
  haejigae:{ty:'food',name:'Haejigae 日落咖啡廳',ko:'해지개',addr:'제주특별자치도 제주시 애월읍 애월북서길 52',lon:126.3090,lat:33.4642,img:'img/haejigae.jpg'},
  jamae:{ty:'food',name:'姐妹麵條(黑豬肉麵)',ko:'자매국수',addr:'제주특별자치도 제주시 항골남길 46',lon:126.4592,lat:33.4986,img:'img/jamae.jpg'},
@@ -20,13 +20,14 @@ const P={
  bagel:{ty:'food',name:'倫敦貝果博物館',ko:'런던베이글뮤지엄 제주',addr:'제주특별자치도 제주시 구좌읍 동복로 85',lon:126.7154,lat:33.5535,img:'img/bagel.jpg'},
  camellia:{ty:'spot',name:'Camelia Forest 山茶花森林',ko:'카멜리아힐',addr:'제주특별자치도 서귀포시 안덕면 병악로 166',lon:126.3684,lat:33.2901,img:'img/camellia.jpg'},
  sorang:{ty:'food',name:'韓牛燒肉 소랑해',ko:'소랑해 신제주 본점',addr:'제주특별자치도 제주시 수덕9길 86-4 1층',lon:126.4699,lat:33.4831,img:'img/sorang.jpg'},
- udo:{ty:'spot',name:'牛島(天津港)',ko:'우도 천진항',addr:'제주특별자치도 제주시 우도면 연평리 1737-15',lon:126.9503,lat:33.4919},
- hill1100:{ty:'spot',name:'1100 高地(賞雪)',ko:'1100고지 휴게소',addr:'제주특별자치도 서귀포시 1100로(地址待確認)',lon:126.4620,lat:33.3622},
- halla:{ty:'spot',name:'漢拏山(城板岳登山口)',ko:'성판악탐방안내소',addr:'제주특별자치도 제주시 조천읍 516로 1865',lon:126.6191,lat:33.3850},
+ udo:{ty:'spot',name:'牛島(天津港)',ko:'우도 천진항',addr:'제주특별자치도 제주시 우도면 연평리 1737-15',lon:126.9503,lat:33.4919,img:'img/udo.jpg'},
+ hill1100:{ty:'spot',name:'1100 高地(賞雪)',ko:'1100고지습지',addr:'제주특별자치도 서귀포시 1100로 1555',lon:126.4621,lat:33.3579,img:'img/hill1100.jpg'},
+ halla:{ty:'spot',name:'漢拏山(城板岳登山口)',ko:'성판악탐방안내소',addr:'제주특별자치도 제주시 조천읍 516로 1865',lon:126.6191,lat:33.3850,img:'img/halla.jpg'},
  rainbow:{ty:'spot',name:'道頭彩虹海岸道路',ko:'도두동 무지개해안도로',addr:'제주특별자치도 제주시 도두일동 1734',lon:126.4715,lat:33.5091,img:'img/rainbow.jpg'},
- dodu:{ty:'spot',name:'道頭峰',ko:'도두봉',addr:'제주특별자치도 제주시 도두항길 4-17',lon:126.4683,lat:33.5080},
- blackpork:{ty:'food',name:'黑豬肉一條街',ko:'흑돼지거리',addr:'제주특별자치도 제주시 건입동',lon:126.5268,lat:33.5158},
+ dodu:{ty:'spot',name:'道頭峰',ko:'도두봉',addr:'제주특별자치도 제주시 도두항길 4-17',lon:126.4683,lat:33.5080,img:'img/dodu.jpg'},
+ blackpork:{ty:'food',name:'黑豬肉一條街',ko:'흑돼지거리',addr:'제주특별자치도 제주시 건입동',lon:126.5268,lat:33.5158,img:'img/blackpork.jpg'},
  woojin:{ty:'food',name:'解酒湯(友珍)',ko:'우진해장국',addr:'제주특별자치도 제주시 서사로 11',lon:126.5199,lat:33.5115,img:'img/woojin.jpg'},
+ tteok:{ty:'food',name:'老奶奶橘子麻糬(偶來市場內)',ko:'할머니떡집 오메기떡',addr:'제주특별자치도 서귀포시 중앙로42번길 24',lon:126.5642,lat:33.2486,img:'img/tteok.jpg'},
  daewon:{ty:'food',name:'鮑魚海鮮鍋(大元家)',ko:'대원가',addr:'제주특별자치도 제주시 도남로16길 15',lon:126.5269,lat:33.4915,img:'img/daewon.jpg'}
 };
 const S=(k,o)=>({...P[k],...o});
@@ -53,7 +54,7 @@ const DAYS=[
   S('airport',{t:'14:00',note:'辦理登機',dr:'車程10分',lab:'l'})]}
 ];
 /* 還沒排進行程、但想放在總覽地圖上的地點(Alice 蒐集 + 熱門推薦) */
-const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon'].map(k=>S(k,{note:'候選地點(尚未排進行程)'}));
+const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'候選地點(尚未排進行程)'}));
 
 /* 住宿(三晚,範例) */
 const STAYS=[
