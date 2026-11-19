@@ -611,7 +611,8 @@ html,body{touch-action:manipulation}
 /* ---- 匯率計算機 ---- */
 .fxbtn{right:56px;font-size:17px;line-height:1}
 .tabs{margin-right:104px}
-[data-theme=dark] .fxbtn{color:#ffc27a}
+.fxbtn,[data-theme=dark] .fxbtn{background:linear-gradient(135deg,#ffa133,#ee6a0a);border-color:transparent;box-shadow:0 6px 14px rgba(230,120,30,.35)}
+.fxbtn .fxi{display:block;filter:brightness(0) invert(1)}
 .spot.fxc{bottom:14px}
 .fxc input,.fxc select{user-select:text;-webkit-user-select:text;touch-action:manipulation}
 .fx-h{padding:14px 52px 6px 16px}.fx-h b{display:block;font-size:17px}.fx-h span{font-size:11px;color:var(--muted)}
