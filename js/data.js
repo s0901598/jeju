@@ -12,7 +12,7 @@ const P={
  jusang:{ty:'spot',name:'柱狀節理帶',ko:'주상절리대',addr:'제주특별자치도 서귀포시 이어도로 36-30',lon:126.4261,lat:33.2380,img:'img/jusang.jpg'},
  sanbang:{ty:'spot',name:'山房山',ko:'산방산',addr:'제주특별자치도 서귀포시 안덕면 사계리',lon:126.3134,lat:33.2416,img:'img/sanbang.jpg'},
  yongdu:{ty:'spot',name:'龍頭岩',ko:'용두암',addr:'제주특별자치도 제주시 용두암길 15',lon:126.5117,lat:33.5161,img:'img/yongdu.jpg'},
- haejigae:{ty:'food',name:'Haejigae 日落咖啡廳',ko:'해지개',addr:'제주특별자치도 제주시 애월읍 애월북서길 52',lon:126.3090,lat:33.4642,img:'img/haejigae.jpg'},
+ haejigae:{ty:'food',name:'Haejigae 日落咖啡廳',ko:'해지개',addr:'제주특별자치도 제주시 애월읍 애월북서길 52',lon:126.3090,lat:33.4642,img:'img/haejigae.jpg',pos:'50% 18%'},
  jamae:{ty:'food',name:'姐妹麵條(黑豬肉麵)',ko:'자매국수',addr:'제주특별자치도 제주시 항골남길 46',lon:126.4592,lat:33.4986,img:'img/jamae.jpg'},
  woljip:{ty:'food',name:'月高家黑豬肉',ko:'월고집',addr:'제주특별자치도 제주시 구좌읍 월정1길 16-1',lon:126.7911,lat:33.5533,img:'img/woljip.jpg'},
  malhouse:{ty:'spot',name:'海邊小馬燈塔',ko:'이호테우 말등대',addr:'제주특별자치도 제주시 이호일동 375-43',lon:126.4521,lat:33.5019,img:'img/malhouse.jpg'},
@@ -25,7 +25,7 @@ const P={
  halla:{ty:'spot',name:'漢拏山(城板岳登山口)',ko:'성판악탐방안내소',addr:'제주특별자치도 제주시 조천읍 516로 1865',lon:126.6191,lat:33.3850,img:'img/halla.jpg'},
  rainbow:{ty:'spot',name:'道頭彩虹海岸道路',ko:'도두동 무지개해안도로',addr:'제주특별자치도 제주시 도두일동 1734',lon:126.4715,lat:33.5091,img:'img/rainbow.jpg'},
  dodu:{ty:'spot',name:'道頭峰',ko:'도두봉',addr:'제주특별자치도 제주시 도두항길 4-17',lon:126.4683,lat:33.5080,img:'img/dodu.jpg'},
- blackpork:{ty:'food',name:'黑豬肉一條街',ko:'흑돼지거리',addr:'제주특별자치도 제주시 건입동',lon:126.5268,lat:33.5158,img:'img/blackpork.jpg'},
+ blackpork:{ty:'food',name:'黑豬肉一條街',ko:'흑돼지거리',addr:'제주특별자치도 제주시 건입동',lon:126.5268,lat:33.5158,img:'img/blackpork.jpg',pos:'50% 35%'},
  woojin:{ty:'food',name:'解酒湯(友珍)',ko:'우진해장국',addr:'제주특별자치도 제주시 서사로 11',lon:126.5199,lat:33.5115,img:'img/woojin.jpg'},
  tteok:{ty:'food',name:'老奶奶橘子麻糬(偶來市場內)',ko:'할머니떡집 오메기떡',addr:'제주특별자치도 서귀포시 중앙로42번길 24',lon:126.5642,lat:33.2486,img:'img/tteok.jpg'},
  daewon:{ty:'food',name:'鮑魚海鮮鍋(大元家)',ko:'대원가',addr:'제주특별자치도 제주시 도남로16길 15',lon:126.5269,lat:33.4915,img:'img/daewon.jpg'}
@@ -54,7 +54,7 @@ const DAYS=[
   S('airport',{t:'14:00',note:'辦理登機',dr:'車程10分',lab:'l'})]}
 ];
 /* 還沒排進行程、但想放在總覽地圖上的地點(Alice 蒐集 + 熱門推薦) */
-const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'候選地點(尚未排進行程)'}));
+const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'候選地點'}));
 
 /* 住宿(三晚,範例) */
 const STAYS=[

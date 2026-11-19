@@ -42,6 +42,7 @@ document.addEventListener('click',async e=>{
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
   else if(e.target.closest('.sp-x')){e.stopPropagation();e.target.closest('.spot').remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)}
+  else if(e.target.closest('.sp-img img')){e.stopPropagation();const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lb';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
 
@@ -102,6 +103,13 @@ function renderOverview(){
   $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
     Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r)showSpot(OV[+r.dataset.o])});
+/* 小卡往下滑可以關閉 */
+{let el=null,y0=0,dy=0,t0=0;
+ document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x'))return;el=s;y0=e.clientY;dy=0;t0=performance.now();el.style.animation='none';el.style.transition='none'});
+ document.addEventListener('pointermove',e=>{if(!el)return;dy=Math.max(0,e.clientY-y0);el.style.transform=`translateY(${dy}px)`;el.style.opacity=String(1-Math.min(.6,dy/400))});
+ const end=()=>{if(!el)return;const s=el,v=dy/Math.max(1,performance.now()-t0);el=null;s.style.transition='transform .2s,opacity .2s';
+   if(dy>70||(dy>25&&v>.5)){s.style.transform='translateY(110%)';s.style.opacity='0';setTimeout(()=>{s.remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)},200)}else{s.style.transform='';s.style.opacity=''}};
+ document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
 pager.addEventListener('scroll',()=>closeSpot(),{passive:true});
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});
 renderOverview();
