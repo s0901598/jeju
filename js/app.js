@@ -103,7 +103,8 @@ function renderOverview(){
   $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
     Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r)showSpot(OV[+r.dataset.o])});
-/* 小卡往下滑可以關閉 */
+/* 小卡往下滑可以關閉(iPhone Safari 對 touch-action 支援不完整,所以另外用 touchmove 擋住背後頁面的捲動) */
+document.addEventListener('touchmove',e=>{if(e.target.closest&&e.target.closest('.spot,.lbox'))e.preventDefault()},{passive:false});
 {let el=null,y0=0,dy=0,t0=0;
  document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x'))return;el=s;y0=e.clientY;dy=0;t0=performance.now();el.style.animation='none';el.style.transition='none'});
  document.addEventListener('pointermove',e=>{if(!el)return;dy=Math.max(0,e.clientY-y0);el.style.transform=`translateY(${dy}px)`;el.style.opacity=String(1-Math.min(.6,dy/400))});

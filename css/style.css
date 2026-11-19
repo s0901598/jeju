@@ -550,3 +550,7 @@ html,body{touch-action:manipulation}
 .sp-img .nm{color:#fff;font-size:20px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 .sp-img .sp-em{margin-bottom:30px}
 .sp-b{padding-top:9px}
+
+/* 小卡開著時,背後的頁面不能捲動 */
+.app:has(.spot) .pg.v,.app:has(.lbox) .pg.v{overflow-y:hidden}
+.spot,.lbox{overscroll-behavior:none}
