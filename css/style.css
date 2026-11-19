@@ -515,3 +515,25 @@ html,body{touch-action:manipulation}
 [data-theme=dark] .rdy{background:rgba(255,255,255,.1)}
 [data-theme=dark] .seg{background:#2f5071;border-color:rgba(255,205,150,.5)}
 [data-theme=dark] .seg button{color:#eaf3fa}[data-theme=dark] .seg button.on{color:#fff}
+
+/* ===== 地點小卡(總覽頁點地圖上的點 / 清單的列時升起) ===== */
+.spot{position:absolute;left:10px;right:10px;bottom:10px;z-index:600;border-radius:22px;background:var(--panel);color:var(--plateTx);overflow:hidden;
+  box-shadow:0 -4px 26px rgba(0,0,0,.32);border:1.5px solid rgba(255,138,31,.4);animation:spUp .26s cubic-bezier(.2,.9,.3,1)}
+@keyframes spUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.spot.in-mf{bottom:68px}
+.spot .sp-x{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:14px;line-height:1;cursor:pointer;padding:0}
+.sp-img{position:relative;height:118px;background:linear-gradient(135deg,#ffc27a,#ff8a3d);display:grid;place-items:center}
+.sp-img .sp-em{font-size:44px}
+.sp-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sp-b{padding:10px 14px 12px}
+.spot .r1{display:flex;align-items:center;gap:8px}
+.spot .nm{font-family:"Songti TC",serif;font-weight:900;font-size:19px;min-width:0}
+.spot .ty{flex:none;font-size:11px;font-weight:700;color:#fff;padding:2px 9px;border-radius:999px}
+.spot .ko,.spot .ad{display:flex;align-items:center;gap:8px;margin-top:7px}
+.spot .ko .kt{font-size:15px;font-weight:700;flex:1;min-width:0}
+.spot .ad .at{font-size:13px;color:var(--muted);flex:1;min-width:0;line-height:1.35}
+.spot .ib{width:34px;height:34px}.spot .ib svg{width:16px;height:16px}
+.spot .ft{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.spot .nt{font-size:12px;color:var(--muted);flex:1;min-width:0}
+.spot .go{height:38px;padding:0 18px;font-size:14px;display:flex;align-items:center;border-width:2px}
+.rdot{font-size:14px}

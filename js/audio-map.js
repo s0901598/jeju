@@ -1,12 +1,28 @@
 /* 由 tools/gen-audio.py 產生,請勿手改 */
 const AUDIO={
- "동문시장": "audio/7c4396ab1d.m4a",
- "매일올레시장": "audio/fcf614e016.m4a",
+ "1100고지 휴게소": "audio/a25a2a43d5.m4a",
+ "BHC치킨 제주탑동점": "audio/ae6245977d.m4a",
+ "대원가": "audio/0a1bab7a21.m4a",
+ "도두동 무지개해안도로": "audio/dd02c04576.m4a",
+ "도두봉": "audio/776a2d9aa5.m4a",
+ "동문재래시장": "audio/4851ad730c.m4a",
+ "런던베이글뮤지엄 제주": "audio/e3b4a27621.m4a",
  "산방산": "audio/d2c0fff2ef.m4a",
+ "서귀포매일올레시장": "audio/16bae83dbc.m4a",
  "섭지코지": "audio/31d1b5cd25.m4a",
  "성산일출봉": "audio/497e75e7bc.m4a",
+ "성판악탐방안내소": "audio/95f5180cc0.m4a",
+ "소랑해 신제주 본점": "audio/45b84242ab.m4a",
  "용두암": "audio/a06cf11dcc.m4a",
+ "우도 천진항": "audio/df25653f87.m4a",
+ "우진해장국": "audio/89589012f6.m4a",
+ "월고집": "audio/1b0c16e8b8.m4a",
+ "이호테우 말등대": "audio/139b121006.m4a",
+ "자매국수": "audio/cba0791b2e.m4a",
  "제주국제공항": "audio/6311495126.m4a",
  "주상절리대": "audio/cfe626af56.m4a",
- "천지연폭포": "audio/1feab8bac1.m4a"
+ "천지연폭포": "audio/1feab8bac1.m4a",
+ "카멜리아힐": "audio/6d4c54328b.m4a",
+ "해지개": "audio/0b2b3abcd1.m4a",
+ "흑돼지거리": "audio/af64ac3abb.m4a"
 };

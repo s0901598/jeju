@@ -36,7 +36,7 @@ function LMap(host,o){
     items.push({m:L.marker([l.lat,l.lon],{interactive:false,keyboard:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="blm" style="--c:${c}"><i>${ic}</i><span>${l.n}</span></div>`})}).addTo(map),lv:l.lv,r:11,stop:false})});
   const api={onStop:null};
   points.forEach((s,i)=>{const t=TYPE[s.ty]||TYPE.spot;
-    const face=badge==='letter'?`<b>${String.fromCharCode(65+i)}</b>`:`<b style="background:${t[1]}">${s.ty==='airport'?'✈':t[2]}</b>`;
+    const face=badge==='letter'?`<b>${String.fromCharCode(65+i)}</b>`:`<b style="background:${t[1]}">${t[2]}</b>`;
     const m=L.marker([s.lat,s.lon],{keyboard:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="bsp${i===sel?' sel':''}">${face}<span>${s.name}</span></div>`})}).addTo(map);
     m.on('click',()=>api.onStop&&api.onStop(i));items.push({m,lv:0,r:14,stop:true})});
   /* 標籤自動避開(同 A) */

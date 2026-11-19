@@ -41,6 +41,7 @@ document.addEventListener('click',async e=>{
     if(!t||/待填/.test(t)){toast('這個還沒填,沒有可複製的內容');return}
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
+  else if(e.target.closest('.sp-x')){e.stopPropagation();e.target.closest('.spot').remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
 
@@ -85,19 +86,23 @@ $('#stayList').innerHTML=STAYS.map(s=>`
 const cv=k=>{const c=TYPE[k][1],n=parseInt(c.slice(1),16);return `--c:${c};--rgb:${n>>16},${(n>>8)&255},${n&255}`};
 const OV=overviewPoints();let ovFilter='all',ovRegion='全部',ovJM=null,ovPts=OV;
 const REG=['東','南','西','北'];
-const rowHTML=s=>`<div class="rrow"><i class="rdot" style="background:${TYPE[s.ty][1]}">${s.ty==='airport'?'✈':TYPE[s.ty][2]}</i><span class="rnm">${s.name}</span><em class="rdy">D${s.days.join('、')}</em></div>`;
+const rowHTML=s=>`<div class="rrow" data-o="${OV.indexOf(s)}"><i class="rdot" style="background:${TYPE[s.ty][1]}">${TYPE[s.ty][2]}</i><span class="rnm">${s.name}</span><em class="rdy">${s.days.length?'D'+s.days.join('、'):'候選'}</em></div>`;
 const openOv=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
+const closeSpot=()=>{const o=document.querySelector('.app > .spot');if(!o)return false;o.remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1);return true};
+function showSpot(s){if(!s)return;document.querySelector('.app > .spot')?.remove();document.querySelector('.app').insertAdjacentHTML('beforeend',spotCard(s));const i=ovPts.indexOf(s);ovJM&&ovJM.setActive&&ovJM.setActive(i)}
 function renderOverview(){
   const pts=ovFilter==='all'?OV:OV.filter(s=>s.ty===ovFilter);
   const byR=(l,r)=>l.filter(s=>regionOf(s.lon,s.lat)===r);const sel=ovRegion!=='全部'?ovRegion:'';const mp=sel?byR(pts,sel):pts;
   ovPts=mp;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:mp,route:false,badge:'type',interactive:true,small:true,fit:sel?'points':'island',regions:!sel});
-  const rs2=$('#ovReset');rs2.classList.remove('on');ovJM.onTouched=t=>rs2.classList.toggle('on',t);ovJM.onTap=openOv;ovJM.onStop=()=>openOv();
+  const rs2=$('#ovReset');rs2.classList.remove('on');ovJM.onTouched=t=>rs2.classList.toggle('on',t);ovJM.onTap=()=>{if(!closeSpot())openOv()};ovJM.onStop=i=>showSpot(ovPts[i]);closeSpot();
   const tabs=['全部',...REG].map(r=>`<button data-r="${r}" class="${ovRegion===r?'on':''}">${r==='全部'?'全部':r+'部'}<em>${r==='全部'?pts.length:byR(pts,r).length}</em></button>`).join('');
   const body=sel?(byR(pts,sel).map(rowHTML).join('')||'<div class="empty">這個區域沒有安排</div>')
     :REG.map(r=>{const l=byR(pts,r);return l.length?`<div class="rgp"><h4>${r}部 <small>${l.length}</small></h4>${l.map(rowHTML).join('')}</div>`:''}).join('')||'<div class="empty">沒有安排</div>';
   $('#rgList').innerHTML=`<div class="seg">${tabs}</div><div class="rows">${body}</div>`;
   $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
-    Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${k==='airport'?'✈':g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
+    Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
+$('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r)showSpot(OV[+r.dataset.o])});
+pager.addEventListener('scroll',()=>closeSpot(),{passive:true});
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});
 renderOverview();
 $('#ovMap .mexpand').onclick=e=>{e.stopPropagation();openOv()};$('#ovReset').onclick=e=>{e.stopPropagation();ovJM&&ovJM.home()};
@@ -204,6 +209,7 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
   if(q.get('open'))setTimeout(()=>{const m=pg.querySelector('.map,.ovmap');m&&m.click();if(q.get('pick'))setTimeout(()=>{const c=document.querySelector(`.mf-chp[data-i="${q.get('pick')}"]`);c&&c.click()},300);if(q.get('mode')==='B')setTimeout(()=>document.querySelector('.mf-mode')?.click(),500)},150);
   if(q.get('st')&&tgt)tgt.scrollTop=+q.get('st');
   if(q.get('sy'))pg.scrollTop=+q.get('sy');
+  if(q.get('spot'))setTimeout(()=>showSpot(ovPts[+q.get('spot')]),400);
   if(q.get('f')){const b=document.querySelector(`.fpill[data-f="${q.get('f')}"]`);if(b)b.click()}
   setTimeout(()=>{pager.style.scrollBehavior='';quiet=false},400);},60)}else{setTimeout(()=>quiet=false,400)}
 

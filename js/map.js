@@ -13,6 +13,7 @@ function inPoly(x,y,P){let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){co
 function regionOf(lon,lat){const dx=wx(lon)-HX,dy=wy(lat)-HY;if(Math.abs(dy)>=SLOPE*Math.abs(dx))return dy<0?'北':'南';return dx>0?'東':'西'}
 function overviewPoints(){const seen=new Map();
   DAYS.forEach(d=>d.stops.forEach(s=>{const k=s.name+s.lon+s.lat;if(!seen.has(k))seen.set(k,{...s,days:[d.n]});else seen.get(k).days.push(d.n)}));
+  CANDIDATES.forEach(s=>{const k=s.name+s.lon+s.lat;if(!seen.has(k))seen.set(k,{...s,days:[]})});
   return [...seen.values()]}
 
 /* 靜態風景:山丘、橘園、漢拿山(固定種子,每次長一樣) */
@@ -52,7 +53,7 @@ function JMap(host,o){
   const stops=points.map((s,i)=>{const w=s.name.length*12+14,t=TYPE[s.ty]||TYPE.spot;
     const face=badge==='letter'
       ?`<circle r="13" fill="url(#${id}og)" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${String.fromCharCode(65+i)}</text>`
-      :`<circle r="12" fill="${t[1]}" stroke="#fff" stroke-width="2.2"/><text y="4.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${s.ty==='airport'?'✈':t[2]}</text>`;
+      :`<circle r="12" fill="${t[1]}" stroke="#fff" stroke-width="2.2"/><text y="4.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${t[2]}</text>`;
     return `<g class="jk jstop${i===o.active?' on':''}" data-i="${i}" data-x="${P[i][0].toFixed(1)}" data-y="${P[i][1].toFixed(1)}" data-pw="${w}" data-r="14">
      <circle class="jring" r="17" fill="none" stroke="#ff8a1f" stroke-width="2.6"/>
      <g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${s.name}</text></g>${face}</g>`}).join('');
@@ -104,11 +105,13 @@ function JMap(host,o){
       const cand=[[r+4,-ph/2],[-r-4-pw,-ph/2],[-pw/2,r+3],[-pw/2,-r-3-ph],[r,r],[-r-pw,r],[r,-r-ph],[-r-pw,-r-ph]];let best=null,bp=1e9;
       cand.forEach(([dx,dy])=>{const rc={x:x+dx,y:y+dy,w:pw,h:ph};let p=0;if(rc.x<4||rc.x+pw>w-4||rc.y<4||rc.y+ph>h-4)p+=60;placed.forEach(q=>p+=hit(rc,q));if(p<bp){bp=p;best=[dx,dy,rc]}});
       if(!must&&bp>0){g.style.display='none';return}
-      g.style.display='';pl.setAttribute('transform',`translate(${best[0]},${best[1]})`);placed.push(best[2]);if(!must)placed.push(circ(g))};
+      if(must&&declutter&&bp>0&&!g.classList.contains('on')){g.style.display='';pl.style.display='none';return}
+      pl.style.display='';g.style.display='';pl.setAttribute('transform',`translate(${best[0]},${best[1]})`);placed.push(best[2]);if(!must)placed.push(circ(g))};
     stopEls.forEach(g=>put(g,true));
     [1,2,3].forEach(lv=>lmEls.filter(g=>+g.dataset.lv===lv).forEach(g=>{const ok=lv===1||(lv===2&&v.ppu>=.9)||(lv===3&&v.ppu>=1.7);if(!ok){g.style.display='none';return}put(g,false)}))}
   let raf=0,needFull=false,idleT=0;
   const sched=full=>{needFull=needFull||full;if(!raf)raf=requestAnimationFrame(()=>{raf=0;const f=needFull;needFull=false;apply(f)});if(!full){clearTimeout(idleT);idleT=setTimeout(()=>apply(true),140)}};
+  const declutter=!route&&points.length>12;
   const refit=()=>{v=fitView();v.ppu*=zoomBias;basePpu=v.ppu;apply()};
   const ro=new ResizeObserver(()=>{if(!touched)refit();else apply()});ro.observe(host);refit();
   const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;sched(true)};
@@ -116,7 +119,7 @@ function JMap(host,o){
   const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
   const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{const t=fitView();t.ppu*=zoomBias;basePpu=t.ppu;fly(t);setTouched(false)},
     focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,onTap:null,onTouched:null,
-    setActive:i=>stopEls.forEach(g=>g.classList.toggle('on',+g.dataset.i===i)),
+    setActive:i=>stopEls.forEach(g=>{const on=+g.dataset.i===i;g.classList.toggle('on',on);if(on){const p=g.querySelector('.jp');if(p)p.style.display=''}}),
     destroy:()=>{ro.disconnect();flying++;cancelAnimationFrame(raf);clearTimeout(idleT);svg.remove()}};
   if(interactive){
     const ptr=new Map();let moved=0,downEl=null,start=[0,0],mode='';
