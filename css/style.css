@@ -645,3 +645,11 @@ html,body{touch-action:manipulation}
 .fxc .fx-b{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-bottom:calc(28px + env(safe-area-inset-bottom))}
 .fxc .fx-b>:first-child{margin-top:auto}.fxc .fx-b>:last-child{margin-bottom:auto}
 .fxc .fx-b>:first-child{margin-top:14px}.fxc .fx-b>:last-child{margin-bottom:0}
+
+/* 速查按鈕(帶幣別符號)+ 其他貨幣清單 */
+.fxc .fx-q{margin-top:10px}
+.fxc .fx-q:before{content:attr(data-t);font-size:12px;color:var(--muted);margin-bottom:0}
+.fxc .fx-q button b{font-size:13px}.fxc .fx-q button span{font-size:11px;color:var(--orange-d);font-weight:700}
+.fx-all{margin-top:22px}.fx-all h4{margin:0 0 6px;font-size:13px;color:var(--muted);font-weight:700}
+.fx-all .r{display:flex;align-items:center;gap:10px;padding:11px 2px;border-top:1px dashed rgba(255,138,31,.35);font-size:15px}
+.fx-all .r span.n{flex:1}.fx-all .r span.n small{color:var(--muted);margin-left:6px;font-size:11px}.fx-all .r b{font-size:17px}
