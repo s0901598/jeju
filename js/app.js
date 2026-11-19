@@ -41,7 +41,7 @@ document.addEventListener('click',async e=>{
     if(!t||/待填/.test(t)){toast('這個還沒填,沒有可複製的內容');return}
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
-  else if(e.target.closest('.sp-x')){e.stopPropagation();e.target.closest('.spot').remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)}
+  else if(e.target.closest('.sp-x')){e.stopPropagation();dismissSpot(e.target.closest('.spot'))}
   else if(e.target.closest('.sp-img img')){e.stopPropagation();const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lbox';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
@@ -89,7 +89,11 @@ const OV=overviewPoints();let ovFilter='all',ovRegion='全部',ovJM=null,ovPts=O
 const REG=['東','南','西','北'];
 const rowHTML=s=>`<div class="rrow" data-o="${OV.indexOf(s)}"><i class="rdot" style="background:${TYPE[s.ty][1]}">${TYPE[s.ty][2]}</i><span class="rnm">${s.name}</span><em class="rdy">${s.days.length?'D'+s.days.join('、'):'候選'}</em></div>`;
 const openOv=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
-const closeSpot=()=>{const o=document.querySelector('.app > .spot');if(!o)return false;o.remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1);return true};
+/* 關閉小卡:小卡往下滑出、壓黑的背景慢慢變亮,結束後才真的移除 */
+function dismissSpot(el){if(!el||el.classList.contains('closing'))return;el.classList.add('closing');
+  el.style.transition='transform .26s ease,opacity .26s ease';el.style.transform='translateY(110%)';el.style.opacity='0';
+  ovJM&&ovJM.setActive&&ovJM.setActive(-1);setTimeout(()=>el.remove(),270)}
+const closeSpot=()=>{const o=document.querySelector('.app > .spot:not(.closing)');if(!o)return false;dismissSpot(o);return true};
 function showSpot(s){if(!s)return;document.querySelector('.app > .spot')?.remove();document.querySelector('.app').insertAdjacentHTML('beforeend',spotCard(s));const i=ovPts.indexOf(s);ovJM&&ovJM.setActive&&ovJM.setActive(i)}
 function renderOverview(){
   const pts=ovFilter==='all'?OV:OV.filter(s=>s.ty===ovFilter);
@@ -106,12 +110,12 @@ $('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r
 /* 小卡往下滑可以關閉(iPhone Safari 對 touch-action 支援不完整,所以另外用 touchmove 擋住背後頁面的捲動) */
 document.addEventListener('touchmove',e=>{const t=e.target;if(t.closest&&(t.closest('.spot,.lbox')||((t.classList.contains('app')||t.classList.contains('mf'))&&document.querySelector('.spot'))))e.preventDefault()},{passive:false});
 /* 點壓黑的背景也會關閉小卡 */
-document.addEventListener('click',e=>{const t=e.target;if((t.classList.contains('app')||t.classList.contains('mf'))&&t.querySelector(':scope > .spot')){e.stopPropagation();t.querySelector(':scope > .spot').remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)}},true);
+document.addEventListener('click',e=>{const t=e.target;if((t.classList.contains('app')||t.classList.contains('mf'))&&t.querySelector(':scope > .spot')){e.stopPropagation();dismissSpot(t.querySelector(':scope > .spot'))}},true);
 {let el=null,y0=0,dy=0,t0=0;
  document.addEventListener('pointerdown',e=>{const s=e.target.closest('.spot');if(!s||e.target.closest('.ib,a.go,.sp-x'))return;el=s;y0=e.clientY;dy=0;t0=performance.now();el.style.animation='none';el.style.transition='none'});
  document.addEventListener('pointermove',e=>{if(!el)return;dy=Math.max(0,e.clientY-y0);el.style.transform=`translateY(${dy}px)`;el.style.opacity=String(1-Math.min(.6,dy/400))});
  const end=()=>{if(!el)return;const s=el,v=dy/Math.max(1,performance.now()-t0);el=null;s.style.transition='transform .2s,opacity .2s';
-   if(dy>70||(dy>25&&v>.5)){s.style.transform='translateY(110%)';s.style.opacity='0';setTimeout(()=>{s.remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)},200)}else{s.style.transform='';s.style.opacity=''}};
+   if(dy>70||(dy>25&&v>.5)){dismissSpot(s)}else{s.style.transform='';s.style.opacity=''}};
  document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
 pager.addEventListener('scroll',()=>closeSpot(),{passive:true});
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('.fpill');if(!b)return;ovFilter=b.dataset.f;renderOverview()});
