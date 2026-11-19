@@ -82,7 +82,7 @@ const DAYS=[
 ];
 DAYS.forEach(d=>d.stops.forEach(s=>{s.days=[d.n]}));
 /* 還沒排進行程、但想放在總覽地圖上的地點(Alice 蒐集 + 熱門推薦) */
-const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'候選地點'}));
+const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'推薦行程'}));
 
 /* 住宿(三晚,範例) */
 const STAYS=[

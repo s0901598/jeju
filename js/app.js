@@ -88,7 +88,7 @@ $('#stayList').innerHTML=STAYS.map(s=>`
 const cv=k=>{const c=TYPE[k][1],n=parseInt(c.slice(1),16);return `--c:${c};--rgb:${n>>16},${(n>>8)&255},${n&255}`};
 const OV=overviewPoints();let ovFilter='all',ovRegion='全部',ovJM=null,ovPts=OV;
 const REG=['東','南','西','北'];
-const rowHTML=s=>`<div class="rrow" data-o="${OV.indexOf(s)}"><i class="rdot" style="background:${TYPE[s.ty][1]}">${TYPE[s.ty][2]}</i><span class="rnm">${s.name}</span><em class="rdy">${s.days.length?'D'+s.days.join('、'):'候選'}</em></div>`;
+const rowHTML=s=>`<div class="rrow" data-o="${OV.indexOf(s)}"><i class="rdot" style="background:${TYPE[s.ty][1]}">${TYPE[s.ty][2]}</i><span class="rnm">${s.name}</span><em class="rdy">${s.days.length?'D'+s.days.join('、'):'推薦行程'}</em></div>`;
 const openOv=()=>openMapFull({title:'濟州島總覽 · '+(ovFilter==='all'?'全部':TYPE[ovFilter][0]),points:ovPts,route:false,badge:'type',regions:true,fit:'island'});
 /* 關閉小卡:小卡往下滑出、壓黑的背景慢慢變亮,結束後才真的移除 */
 function dismissSpot(el){if(!el||el.classList.contains('closing'))return;el.classList.add('closing');
