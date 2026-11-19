@@ -42,7 +42,7 @@ document.addEventListener('click',async e=>{
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
   else if(e.target.closest('.sp-x')){e.stopPropagation();e.target.closest('.spot').remove();ovJM&&ovJM.setActive&&ovJM.setActive(-1)}
-  else if(e.target.closest('.sp-img img')){e.stopPropagation();const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lb';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
+  else if(e.target.closest('.sp-img img')){e.stopPropagation();const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lbox';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
 
