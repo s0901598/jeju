@@ -42,7 +42,7 @@ document.addEventListener('click',async e=>{
     toast(await copyText(t)?'已複製':'複製失敗,請長按文字手動複製')}
   else if(p){e.stopPropagation();speak(p.dataset.play,p)}
   else if(e.target.closest('.sp-x')){e.stopPropagation();dismissSpot(e.target.closest('.spot'))}
-  else if(e.target.closest('.sp-img img')){e.stopPropagation();if(window.__spotDragT&&performance.now()-window.__spotDragT<350)return;const im=e.target.closest('.sp-img img');const lb=document.createElement('div');lb.className='lbox';lb.innerHTML=`<img src="${im.src}" alt=""><span>點一下關閉</span>`;lb.onclick=()=>lb.remove();document.querySelector('.app').appendChild(lb)}
+  else if(e.target.closest('.sp-img img')){e.stopPropagation();if(window.__spotDragT&&performance.now()-window.__spotDragT<350)return;openLightbox(e.target.closest('.sp-img img'))}
   else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
 },true);
 
@@ -107,6 +107,31 @@ function renderOverview(){
   $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
     Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r)showSpot(OV[+r.dataset.o])});
+/* 放大看照片:多張時可左右滑動換張,點一下或往下滑關閉 */
+function openLightbox(im){
+  const tr=im.closest('.sp-track'),imgs=[...tr.children],urls=imgs.map(x=>x.src),n=urls.length;let idx=Math.max(0,imgs.indexOf(im));
+  const lb=document.createElement('div');lb.className='lbox';
+  lb.innerHTML=`<div class="lb-track">${urls.map(u=>`<img src="${u}" alt="">`).join('')}</div>${n>1?`<span class="lb-cnt"></span>`:''}<span class="lb-hint">${n>1?'左右滑動換張 · 點一下關閉':'點一下關閉'}</span>`;
+  document.querySelector('.app').appendChild(lb);
+  const t=lb.querySelector('.lb-track'),cnt=lb.querySelector('.lb-cnt');
+  const show=(anim)=>{t.style.transition=anim?'transform .28s ease':'none';t.style.transform=`translateX(${-idx*100}%)`;if(cnt)cnt.textContent=(idx+1)+' / '+n};
+  show(false);
+  let x0=0,y0=0,dx=0,dy=0,axis=null,down=false,moved=false;
+  lb.addEventListener('pointerdown',e=>{down=true;x0=e.clientX;y0=e.clientY;dx=dy=0;axis=null;moved=false});
+  lb.addEventListener('pointermove',e=>{if(!down)return;dx=e.clientX-x0;dy=e.clientY-y0;
+    if(!axis&&(Math.abs(dx)>8||Math.abs(dy)>8))axis=(n>1&&Math.abs(dx)>Math.abs(dy))?'x':'y';
+    if(axis)moved=true;
+    if(axis==='x'){let o=dx;if((idx===0&&dx>0)||(idx===n-1&&dx<0))o=dx*.35;t.style.transition='none';t.style.transform=`translateX(calc(${-idx*100}% + ${o}px))`}
+    else if(axis==='y'){const d=Math.max(0,dy);t.style.transform=`translateX(${-idx*100}%) translateY(${d}px)`;lb.style.background=`rgba(0,0,0,${.9-Math.min(.6,d/400)})`}});
+  const end=()=>{if(!down)return;down=false;
+    if(axis==='x'){if(dx<-40)idx=Math.min(n-1,idx+1);else if(dx>40)idx=Math.max(0,idx-1);show(true)}
+    else if(axis==='y'){if(dy>80){close()}else{lb.style.background='';show(true)}}};
+  const close=()=>{const sp=document.querySelector('.spot .sp-track');if(sp&&n>1){sp.dataset.i=idx;sp.style.transition='none';sp.style.transform=`translateX(${-idx*100}%)`;const s=sp.closest('.sp-img');s.querySelectorAll('.sp-dots i').forEach((d,k)=>d.classList.toggle('on',k===idx));const c=s.querySelector('.sp-cnt');if(c)c.textContent=(idx+1)+'/'+n}
+    lb.remove()};
+  lb.addEventListener('pointerup',end);lb.addEventListener('pointercancel',end);
+  lb.addEventListener('click',()=>{if(!moved)close();moved=false});
+  window.__spotDragT=performance.now();
+}
 /* 小卡往下滑可以關閉(iPhone Safari 對 touch-action 支援不完整,所以另外用 touchmove 擋住背後頁面的捲動) */
 document.addEventListener('touchmove',e=>{const t=e.target;if(t.closest&&(t.closest('.spot,.lbox')||((t.classList.contains('app')||t.classList.contains('mf'))&&document.querySelector('.spot'))))e.preventDefault()},{passive:false});
 /* 點壓黑的背景也會關閉小卡 */

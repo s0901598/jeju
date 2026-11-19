@@ -574,3 +574,11 @@ html,body{touch-action:manipulation}
 .sp-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);transition:.2s}
 .sp-dots i.on{background:#fff;width:16px;border-radius:3px}
 .sp-cnt{position:absolute;left:10px;top:9px;z-index:3;background:rgba(0,0,0,.45);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;pointer-events:none}
+
+/* 放大看照片(可滑動) */
+.lbox{display:block;touch-action:none}
+.lb-track{position:absolute;inset:0;display:flex}
+.lb-track img{flex:0 0 100%;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;border-radius:0;padding:56px 0 64px;box-sizing:border-box;-webkit-user-drag:none;user-select:none}
+.lb-cnt{position:absolute;top:18px;left:0;right:0;text-align:center;color:#fff;font-size:13px;font-weight:700;opacity:.85;pointer-events:none}
+.lb-hint{position:absolute;bottom:22px;left:0;right:0;text-align:center;color:#fff;opacity:.7;font-size:12px;pointer-events:none}
+.lbox{background:rgba(0,0,0,.94)}
