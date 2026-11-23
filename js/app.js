@@ -54,7 +54,8 @@ function cardPager(cards){
   const n=()=>cards.querySelectorAll('.card').length;
   const go=i=>cards.scrollTo({top:Math.max(0,Math.min(n()-1,i))*PITCH,behavior:'smooth'});
   let down=false,moved=false,sy=0,st=0,hist=[];
-  cards.addEventListener('pointerdown',e=>{if(e.button!==0&&e.pointerType==='mouse')return;if(e.target.closest('input,a'))return;
+  cards.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;   // 手指觸控交給瀏覽器原生捲動(比較順);滑鼠才用程式拖動
+    if(e.button!==0)return;if(e.target.closest('input,a'))return;
     down=true;moved=false;sy=e.clientY;st=cards.scrollTop;hist=[[performance.now(),e.clientY]]});
   cards.addEventListener('pointermove',e=>{if(!down)return;const dy=e.clientY-sy;
     if(!moved&&Math.abs(dy)>6){moved=true;cards.classList.add('dragging');try{cards.setPointerCapture(e.pointerId)}catch(_){}}

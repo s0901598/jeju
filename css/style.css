@@ -683,3 +683,9 @@ html,body{touch-action:manipulation}
 [data-theme=dark] .fx .head .dt{color:#ffb15a}
 [data-theme=dark] .fx .fmid .no.up{color:#c5d5e2}
 
+
+/* 手機/平板(手指):行程卡改用瀏覽器原生捲動 + 吸附,每次最多停一張,不經過 JS,滑起來才順 */
+@media (pointer:coarse){
+  .cards{overflow-y:auto;scroll-snap-type:y mandatory;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+  .cards .card{scroll-snap-stop:always}
+}
