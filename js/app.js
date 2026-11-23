@@ -223,6 +223,11 @@ function tryCode(code,silent){
 $('#codeBtn').onclick=()=>tryCode(codeIn.value);
 codeIn.addEventListener('keydown',e=>{if(e.key==='Enter')tryCode(codeIn.value)});
 relink.onclick=()=>{store.del('jeju-code');codeIn.value='';msg.textContent='';lockSlots()};
+/* 航班日期頁籤:切換 2/7~2/10 與 2/8~2/11 */
+document.querySelectorAll('#flSeg button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#flSeg button').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});
+  $('#flA').hidden=b.dataset.g!=='a';$('#flB').hidden=b.dataset.g!=='b';
+});
 lockSlots();{const saved=store.get('jeju-code');if(saved){codeIn.value=saved;tryCode(saved,true)}}
 
 /* ---------- 頁籤 + 翻頁橘子 ---------- */

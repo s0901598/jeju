@@ -716,3 +716,14 @@ html,body{touch-action:manipulation}
 [data-theme=dark] .gf-c,[data-theme=dark] .gf-box{background:rgba(255,255,255,.08)}
 [data-theme=dark] .gf-t em{color:#ff9a7e;background:rgba(255,120,90,.16)}
 [data-theme=dark] .gf-go{color:#ffc98a}
+
+/* 航班日期頁籤(2/7~2/10 / 2/8~2/11) */
+.fl-seg{display:flex;gap:4px;background:rgba(22,57,90,.1);border-radius:18px;padding:4px;margin:0 0 14px}
+.fl-seg button{flex:1;border:0;background:transparent;border-radius:14px;padding:8px 0 7px;color:var(--navy);font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.fl-seg b{display:block;font-size:16px;letter-spacing:.04em}
+.fl-seg small{display:block;font-size:11px;opacity:.7;margin-top:2px}
+.fl-seg button.on{background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;box-shadow:0 4px 10px rgba(230,120,30,.35)}
+.fl-grp[hidden]{display:none}
+[data-theme=dark] .fl-seg{background:rgba(255,255,255,.1)}
+[data-theme=dark] .fl-seg button{color:#d6e3ee}
+[data-theme=dark] .fl-seg button.on{color:#fff}
