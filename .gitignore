@@ -1,3 +1,6 @@
 .DS_Store
 node_modules/
 *.log
+
+# 電子機票明文資料(姓名、登機證圖)— 絕對不要進 git
+tools/private/

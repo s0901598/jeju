@@ -207,18 +207,86 @@ if(window.ResizeObserver){const ro2=new ResizeObserver(fitSpacers);document.quer
 
 /* ---------- 資訊頁:出發前清單(勾選會記在這支手機) ---------- */
 const doneSet=new Set(JSON.parse(store.get('jeju-check')||'[]'));
-$('#checklist').innerHTML=CHECKLIST.map((t,i)=>`<label class="ck"><input type="checkbox" data-i="${i}"${doneSet.has(i)?' checked':''}><span>${t}</span></label>`).join('');
+const CK_IC={
+ passport:['#dbe7f5','<rect x="9" y="5" width="22" height="30" rx="3" fill="#1f4b7a" stroke="#143555" stroke-width="1.5"/><circle cx="20" cy="17" r="5.5" stroke="#ffd58a" stroke-width="1.6"/><path d="M14.5 17h11M20 11.5c-2 2.5-2 8.5 0 11M20 11.5c2 2.5 2 8.5 0 11" stroke="#ffd58a" stroke-width="1.2"/><path d="M14 28h12" stroke="#ffd58a" stroke-width="1.8"/>'],
+ arrival:['#fde3c4','<rect x="11" y="4" width="18" height="32" rx="4" fill="#fff" stroke="#16395a" stroke-width="1.8"/><g fill="#16395a"><rect x="14" y="10" width="5" height="5"/><rect x="21" y="10" width="5" height="5"/><rect x="14" y="17" width="5" height="5"/><rect x="22" y="19" width="3" height="3"/></g><circle cx="29" cy="29" r="6.5" fill="#2e9e5b"/><path d="M25.8 29l2.2 2.2 4-4.2" stroke="#fff" stroke-width="2"/>'],
+ keta:['#e3f1dc','<path d="M20 5l12 4v9c0 8-5 13-12 17C13 31 8 26 8 18V9z" fill="#fff" stroke="#2e7d4a" stroke-width="1.8"/><path d="M14.5 19.5l4 4 7-8" stroke="#2e7d4a" stroke-width="2.4"/>'],
+ esim:['#d6ecf6','<path d="M12 5h12l6 6v22a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="#fff" stroke="#1d6e93" stroke-width="1.8"/><rect x="15" y="17" width="10" height="10" rx="1.5" fill="#1d6e93"/><path d="M15 22h10M20 17v10" stroke="#fff" stroke-width="1"/>'],
+ ins:['#f6dde3','<path d="M20 5l12 4v9c0 8-5 13-12 17C13 31 8 26 8 18V9z" fill="#fff" stroke="#c0405f" stroke-width="1.8"/><path d="M20 13v12M14 19h12" stroke="#c0405f" stroke-width="3"/>'],
+ car:['#e9e4f7','<path d="M7 24l3-9a3 3 0 0 1 3-2h14a3 3 0 0 1 3 2l3 9v6H7z" fill="#fff" stroke="#5b46a8" stroke-width="1.8"/><path d="M11 20h18" stroke="#5b46a8" stroke-width="1.6"/><circle cx="13" cy="30" r="3" fill="#5b46a8"/><circle cx="27" cy="30" r="3" fill="#5b46a8"/>'],
+ money:['#fff0c2','<rect x="5" y="9" width="24" height="16" rx="3" fill="#fff" stroke="#b07a00" stroke-width="1.8"/><path d="M5 15h24" stroke="#b07a00" stroke-width="3"/><circle cx="29" cy="27" r="7" fill="#ffc83d" stroke="#b07a00" stroke-width="1.6"/><path d="M25.8 24.5l1.6 5 1.6-3.5 1.6 3.5 1.6-5M25 27h8" stroke="#7a5200" stroke-width="1.2"/>'],
+ bag:['#e0efe6','<rect x="8" y="12" width="24" height="21" rx="4" fill="#fff" stroke="#2e7d5a" stroke-width="1.8"/><path d="M15 12V9a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3M14 18v10M26 18v10" stroke="#2e7d5a" stroke-width="1.8"/>']};
+const ckIcon=k=>{const c=CK_IC[k];return c?`<span class="ic" style="background:${c[0]}"><svg viewBox="0 0 40 40" width="30" height="30" fill="none" stroke-linecap="round" stroke-linejoin="round">${c[1]}</svg></span>`:''};
+$('#checklist').innerHTML=CHECKLIST.map((it,i)=>`<label class="ck"><input type="checkbox" data-i="${i}"${doneSet.has(i)?' checked':''}>${ckIcon(it.k)}<span class="ckt"><b>${it.t}</b>${it.s?`<small>${it.s}</small>`:''}</span></label>`).join('');
 $('#checklist').addEventListener('change',e=>{const i=+e.target.dataset.i;e.target.checked?doneSet.add(i):doneSet.delete(i);store.set('jeju-check',JSON.stringify([...doneSet]))});
 
 /* ---------- 機票:輸入代碼(目前只有範例代碼,尚未加密) ---------- */
 const codeIn=$('#code'),msg=$('#codeMsg'),slots=$('#slots'),relink=$('#relink');
-function lockSlots(){slots.innerHTML='<div><b>🔒</b>旅客 1</div><div><b>🔒</b>旅客 2</div>';relink.style.display='none'}
-function tryCode(code,silent){
-  code=(code||'').trim().toUpperCase();
-  if(code===DEMO_CODE){
-    slots.innerHTML=[1,2].map(n=>`<div class="open"><b>旅客 ${n}</b>電子機票(範例)<br>正式版會顯示機票圖檔</div>`).join('');
-    msg.textContent='';store.set('jeju-code',code);relink.style.display='block';return true;}
-  if(!silent)msg.textContent=code?'找不到這組代碼,請再確認':'請先輸入代碼';
+const tix=$('#tix');
+const escT=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* 沒有真的碼圖時,顯示範例用的假 QR / 條碼(不能掃)。真的碼圖放在加密資料 legs[].qr / bar */
+function sampleQR(seed,n){n=n||25;let s=seed;const r=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;let d='';
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const f=(i<8&&j<8)||(i<8&&j>=n-8)||(j<8&&i>=n-8);if(!f&&r()<.48)d+=`M${i} ${j}h1v1h-1z`}
+  [[0,0],[n-7,0],[0,n-7]].forEach(([x,y])=>{for(let i=0;i<7;i++)for(let j=0;j<7;j++)if(i==0||i==6||j==0||j==6||(i>1&&i<5&&j>1&&j<5))d+=`M${x+i} ${y+j}h1v1h-1z`});
+  return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><path d="${d}" fill="#111"/></svg>`}
+function sampleBar(seed){let s=seed;const r=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;let x=0,d='';
+  while(x<200){const w=[1,1,2,3][Math.floor(r()*4)|0];if(r()<.55)d+=`<rect x="${x}" width="${w}" height="40"/>`;x+=w+[1,2][Math.floor(r()*2)|0]}
+  return `<svg viewBox="0 0 200 40" preserveAspectRatio="none" shape-rendering="crispEdges" fill="#111">${d}</svg>`}
+const tQR=(pi,li,n)=>{const l=TK.legs[li];return l.qr?`<img src="${l.qr}" alt="QR code">`:sampleQR(pi*7+li*13+5,n)};
+const tBar=(pi,li)=>{const l=TK.legs[li];return l.bar?`<img src="${l.bar}" alt="條碼">`:sampleBar(pi*11+li*17+3)};
+let TK=null,txPax=0;
+function txRender(){
+  const T=TK,P=T.pax[txPax];
+  tix.innerHTML=`<div class="tx-seg fl-seg">${T.pax.map((p,i)=>`<button type="button" data-p="${i}" class="${i===txPax?'on':''}"><b>${escT(p)}</b><small>旅客 ${i+1}</small></button>`).join('')}</div>
+  <div class="tx-cnt">這組代碼共 ${T.pax.length} 位旅客,每人 ${T.legs.length} 張(去程、回程)</div>
+  <div class="tx-tip">📱 登機前先打開這頁,把螢幕亮度調高,櫃檯或登機口出示 QR code 或條碼給機組人員掃描。</div>
+  ${T.legs.map((l,i)=>`<div class="tb" data-l="${i}"><div class="tbh"><span>${l.tag} · ${l.from} → ${l.to}</span><span>${l.flt}</span></div>
+   <div class="tbn"><small>PASSENGER</small><b>${escT(P)}</b></div>
+   <div class="tbm"><div><b>${l.from}</b><small>${l.date}</small></div><div class="tbt">✈ ${l.time}</div><div style="text-align:right"><b>${l.to}</b><small>${l.air}</small></div></div>
+   <div class="tbc"><div class="tbq">${tQR(txPax,i)}</div><div class="tbb">${tBar(txPax,i)}<small>條碼</small></div></div>
+   <div class="tbs">點一下放大${l.qr?'':' · 目前是範例圖案,不能掃'}</div></div>`).join('')}`;
+}
+function txOpen(li){
+  const T=TK;let cur=li;
+  const ov=document.createElement('div');ov.className='tx-full';
+  const draw=()=>{const l=T.legs[cur];ov.innerHTML=`<div class="txf"><button class="txx" aria-label="關閉">✕</button>
+   <div class="txk">${l.tag} · ${l.flt} ${l.air}${l.qr?'':' <em>範例</em>'}</div><h4>${l.from} → ${l.to}</h4>
+   <small>PASSENGER</small><div class="txn">${escT(T.pax[txPax])}</div>
+   <p>${l.date} · ${l.time} · ${l.note}</p>
+   <div class="txq">${tQR(txPax,cur,25)}</div><div class="txb">${tBar(txPax,cur)}</div>
+   <div class="txh">📱 請把螢幕亮度調到最亮</div>
+   <div class="txnav"><button data-d="-1"${cur===0?' disabled':''}>‹ 上一張</button><span>${escT(T.pax[txPax])} · ${l.tag}</span><button data-d="1"${cur===T.legs.length-1?' disabled':''}>下一張 ›</button></div></div>`};
+  draw();
+  ov.addEventListener('click',e=>{
+    if(e.target===ov||e.target.closest('.txx')){ov.remove();return}
+    const b=e.target.closest('.txnav button');if(b&&!b.disabled){cur+=+b.dataset.d;draw()}});
+  document.body.appendChild(ov);
+}
+tix.addEventListener('click',e=>{
+  const s=e.target.closest('.tx-seg button');if(s){txPax=+s.dataset.p;txRender();return}
+  const c=e.target.closest('.tb');if(c)txOpen(+c.dataset.l)});
+function lockSlots(){TK=null;slots.style.display='';tix.innerHTML='';slots.innerHTML='<div><b>🔒</b>旅客 1</div><div><b>🔒</b>旅客 2</div>';relink.style.display='none'}
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function tixDecrypt(code){
+  if(!code||!window.TICKET_BLOBS||!window.crypto||!crypto.subtle)return null;
+  const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(code.toUpperCase()),'PBKDF2',false,['deriveKey']);
+  for(const b of TICKET_BLOBS){
+    try{
+      const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64d(b.s),iterations:600000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+      const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(b.i)},key,b64d(b.c));
+      return JSON.parse(new TextDecoder().decode(pt));
+    }catch(e){}}
+  return null;}
+let tryBusy=false;
+async function tryCode(code,silent){
+  code=(code||'').trim();
+  if(tryBusy)return false;
+  if(!code){if(!silent)msg.textContent='請先輸入代碼';return false}
+  if(!(window.crypto&&crypto.subtle)){if(!silent)msg.textContent='這個瀏覽器不支援解鎖,請改用最新版 Safari 或 Chrome';return false}
+  tryBusy=true;if(!silent)msg.textContent='解鎖中…';
+  const T=await tixDecrypt(code);tryBusy=false;
+  if(T){TK=T;slots.style.display='none';txPax=0;txRender();msg.textContent='';store.set('jeju-code',code);relink.style.display='block';return true}
+  if(!silent)msg.textContent='找不到這組代碼,請再確認';
   return false;}
 $('#codeBtn').onclick=()=>tryCode(codeIn.value);
 codeIn.addEventListener('keydown',e=>{if(e.key==='Enter')tryCode(codeIn.value)});

@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#fff1da">
 <script>(function(){var t="light";try{t=localStorage.getItem("jeju-theme")||"light"}catch(e){}var m=location.search.match(/theme=(dark|light)/);if(m)t=m[1];document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light")})()</script>
 <title>羊羊得億 · 林家濟州島之旅</title>
-<link rel="stylesheet" href="css/style.css?v=202611231918">
+<link rel="stylesheet" href="css/style.css?v=202611231952">
 </head>
 <body>
 <!-- 共用的 SVG 定義 -->
@@ -327,10 +327,11 @@
       <div class="fl-note0">韓國時間比台灣快 1 小時,以上為當地時間</div>
       <div class="fc ticket">
         <div class="t">電子機票</div>
-        <div class="s">輸入你們這一組的代碼,就會顯示夫妻兩人的電子機票。<br>(目前是範例,試試代碼 DEMO)</div>
+        <div class="s">輸入你們這一組的代碼,就會顯示夫妻兩人的電子機票。</div>
         <div class="field"><input id="code" placeholder="請輸入機票代碼" autocomplete="off" autocapitalize="characters"><button id="codeBtn">查看</button></div>
         <div class="msg" id="codeMsg"></div>
         <div class="locked" id="slots"></div>
+        <div id="tix"></div>
         <div class="relink" id="relink">換一組代碼</div>
       </div>
     </section>
@@ -354,9 +355,12 @@
     <!-- 資訊 -->
     <section class="pg v" id="p-info" data-nav="資訊">
       <div class="eyebrow">INFO</div><h3>實用資訊</h3>
-      <div class="fc"><h5>緊急聯絡</h5>
-        <div class="sos"><div><b>112</b><span>警察</span></div><div><b>119</b><span>消防 / 救護</span></div><div><b>1330</b><span>旅遊諮詢</span></div></div>
-        <div class="note-sm">出發前請再確認各號碼是否有異動。</div></div>
+      <div class="fc ar"><h5>入境前先填「電子入境卡」 <span class="free">免費</span></h5>
+        <div class="st"><span class="n">1</span><span>入境前 3 天內,到韓國官網線上填寫<small>2/7 入境 → 2/4 起可填;2/8 入境 → 2/5 起可填。每位旅客各填一份。</small></span></div>
+        <div class="st"><span class="n">2</span><span>送出後,把確認畫面(QR code)截圖存手機<small>送出後 72 小時內沒入境,就會失效,要重填。</small></span></div>
+        <div class="st"><span class="n">3</span><span>入境審查時出示給海關人員<small>官網免費,不要用付費的代辦網站。</small></span></div>
+        <a class="go2" href="https://www.e-arrivalcard.go.kr/" target="_blank" rel="noopener">前往官網 e-arrivalcard.go.kr ›</a>
+        <div class="warn"><b>⚠️ K-ETA(電子旅行許可)</b><br>台灣旅客免申請的公告只到 <b>2026/12/31</b>。你們 2027/2 出發,目前還沒公告延長,出發前請再查一次(韓國法務部 / 外交部領事事務局)。</div></div>
       <div class="fc"><h5>出發前確認</h5><div id="checklist"></div></div>
       <div class="fc"><h5>小提醒</h5>
         <div class="tips">・幣別:韓元(KRW)<br>・時差:韓國比台灣快 1 小時<br>・電壓:220V,插頭為兩孔圓頭<br>・2 月偏冷,早晚風大,帶防風外套與暖暖包</div></div>
@@ -373,15 +377,16 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="js/data.js?v=202611231918"></script>
-<script src="js/audio-map.js?v=202611231918"></script>
-<script src="js/coast.js?v=202611231918"></script>
-<script src="js/landmarks.js?v=202611231918"></script>
-<script src="js/map.js?v=202611231918"></script>
-<script src="js/lmap.js?v=202611231918"></script>
-<script src="js/mapui.js?v=202611231918"></script>
-<script src="js/fx.js?v=202611231918"></script>
-<script src="js/gift.js?v=202611231918"></script>
-<script src="js/app.js?v=202611231918"></script>
+<script src="js/data.js?v=202611231952"></script>
+<script src="js/audio-map.js?v=202611231952"></script>
+<script src="js/coast.js?v=202611231952"></script>
+<script src="js/landmarks.js?v=202611231952"></script>
+<script src="js/map.js?v=202611231952"></script>
+<script src="js/lmap.js?v=202611231952"></script>
+<script src="js/mapui.js?v=202611231952"></script>
+<script src="js/fx.js?v=202611231952"></script>
+<script src="js/gift.js?v=202611231952"></script>
+<script src="js/ticket.enc.js?v=202611231952"></script>
+<script src="js/app.js?v=202611231952"></script>
 </body>
 </html>
