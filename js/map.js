@@ -47,7 +47,7 @@ function JMap(host,o){
       const x=.25*a[0]+.5*cx+.25*b[0],y=.25*a[1]+.5*cy+.25*b[1],ang=Math.atan2(dy,dx)*180/Math.PI;
       arrows+=`<g class="jk" data-x="${x.toFixed(1)}" data-y="${y.toFixed(1)}" data-rot="${ang.toFixed(1)}"><path d="M-6,-6 L7,0 L-6,6 L-3,0Z" fill="#fff6e0" stroke="#e5600a" stroke-width="1.6" stroke-linejoin="round"/></g>`}}
   const names=new Set(points.map(s=>s.name));
-  const lms=LANDMARKS.filter(l=>!names.has(l.n)).map(l=>{const [ic,c]=KIND[l.k],w=l.n.length*12+14;
+  const lms=LANDMARKS.filter(l=>!route&&!names.has(l.n)).map(l=>{const [ic,c]=KIND[l.k],w=l.n.length*12+14;
     return `<g class="jk jlm" data-x="${wx(l.lon).toFixed(1)}" data-y="${wy(l.lat).toFixed(1)}" data-lv="${l.lv}" data-pw="${w}" data-r="11"><g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${l.n}</text></g>
       <circle r="10.5" fill="#fff" stroke="${c}" stroke-width="2.2"/><text y="4.2" text-anchor="middle" font-size="11">${ic}</text></g>`}).join('');
   const stops=points.map((s,i)=>{const w=s.name.length*12+14,t=TYPE[s.ty]||TYPE.spot;
@@ -55,8 +55,9 @@ function JMap(host,o){
       ?`<circle r="13" fill="url(#${id}og)" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${String.fromCharCode(65+i)}</text>`
       :`<circle r="12" fill="${t[1]}" stroke="#fff" stroke-width="2.2"/><text y="4.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${t[2]}</text>`;
     return `<g class="jk jstop${i===o.active?' on':''}" data-i="${i}" data-x="${P[i][0].toFixed(1)}" data-y="${P[i][1].toFixed(1)}" data-pw="${w}" data-r="14">
-     <circle class="jring" r="17" fill="none" stroke="#ff8a1f" stroke-width="2.6"/>
-     <g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${s.name}</text></g>${face}</g>`}).join('');
+     <line class="jl" x1="0" y1="0" x2="0" y2="0" stroke="#fff" stroke-width="2.4" stroke-linecap="round" display="none"/><circle class="jd" r="3.2" fill="#ff8a1f" stroke="#fff" stroke-width="1.6" display="none"/>
+     <g class="jo"><circle class="jring" r="17" fill="none" stroke="#ff8a1f" stroke-width="2.6"/>
+     <g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${s.name}</text></g>${face}</g></g>`}).join('');
   svg.innerHTML=`<defs>
     <linearGradient id="${id}sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sea1)"/><stop offset="1" stop-color="var(--sea2)"/></linearGradient>
     <linearGradient id="${id}land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--land1)"/><stop offset="1" stop-color="var(--land2)"/></linearGradient>
@@ -96,7 +97,15 @@ function JMap(host,o){
     mks.forEach(g=>g.setAttribute('transform',`translate(${g.dataset.x},${g.dataset.y}) rotate(${g.dataset.rot||0}) scale(${inv})`));
     if(full===false)return;   // 拖動中只移動畫面,不重排標籤(手指停下來才排)
     /* 標籤自動避開:先排行程點,再依重要程度排地標;放不下的地標就先隱藏 */
-    const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2,sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2,placed=[];
+    const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2+(+g.dataset.ox||0),sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2+(+g.dataset.oy||0),placed=[];
+    /* 每日地圖:徽章靠太近就推開(約 34px),用細線連回真正位置;總覽地圖不動 */
+    if(route){const bx=stopEls.map(g=>(+g.dataset.x-v.cx)*v.ppu+w/2),by=stopEls.map(g=>(+g.dataset.y-v.cy)*v.ppu+h/2),qx=bx.slice(),qy=by.slice(),MD=34;
+     for(let it=0;it<40;it++){let mv=false;for(let i=0;i<qx.length;i++)for(let j=i+1;j<qx.length;j++){let dx=qx[j]-qx[i],dy=qy[j]-qy[i],d=Math.hypot(dx,dy);
+       if(d<MD){if(d<.5){dx=Math.cos(i*2.4+j);dy=Math.sin(i*2.4+j);d=1}const k=(MD-d)/2/d;qx[i]-=dx*k;qy[i]-=dy*k;qx[j]+=dx*k;qy[j]+=dy*k;mv=true}}if(!mv)break}
+     stopEls.forEach((g,i)=>{const ox=qx[i]-bx[i],oy=qy[i]-by[i],mv=Math.hypot(ox,oy)>1.5;g.dataset.ox=mv?ox:0;g.dataset.oy=mv?oy:0;
+       const jo=g.querySelector('.jo'),ln=g.querySelector('.jl'),dt=g.querySelector('.jd');
+       jo.setAttribute('transform',mv?`translate(${ox},${oy})`:'');
+       ln.setAttribute('display',mv?'':'none');dt.setAttribute('display',mv?'':'none');if(mv){ln.setAttribute('x2',ox);ln.setAttribute('y2',oy)}})}
     const hit=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
     const circ=g=>{const r=+g.dataset.r;return{x:sx(g)-r,y:sy(g)-r,w:2*r,h:2*r}};
     stopEls.forEach(g=>placed.push(circ(g)));
@@ -111,7 +120,7 @@ function JMap(host,o){
     [1,2,3].forEach(lv=>lmEls.filter(g=>+g.dataset.lv===lv).forEach(g=>{const ok=lv===1||(lv===2&&v.ppu>=.9)||(lv===3&&v.ppu>=1.7);if(!ok){g.style.display='none';return}put(g,false)}))}
   let raf=0,needFull=false,idleT=0;
   const sched=full=>{needFull=needFull||full;if(!raf)raf=requestAnimationFrame(()=>{raf=0;const f=needFull;needFull=false;apply(f)});if(!full){clearTimeout(idleT);idleT=setTimeout(()=>apply(true),140)}};
-  const declutter=!route&&points.length>12;
+  const declutter=route?points.length>5:points.length>12;
   const refit=()=>{v=fitView();v.ppu*=zoomBias;basePpu=v.ppu;apply()};
   const ro=new ResizeObserver(()=>{if(!touched)refit();else apply()});ro.observe(host);refit();
   const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;sched(true)};

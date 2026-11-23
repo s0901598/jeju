@@ -18,7 +18,6 @@ const AUDIO={
  "성산일출봉": "audio/497e75e7bc.m4a",
  "성판악탐방안내소": "audio/95f5180cc0.m4a",
  "소랑해 신제주 본점": "audio/45b84242ab.m4a",
- "애월카페거리": "audio/b17deec174.m4a",
  "용두암": "audio/a06cf11dcc.m4a",
  "우도 천진항": "audio/df25653f87.m4a",
  "우진해장국": "audio/89589012f6.m4a",

@@ -12,7 +12,7 @@ const P={
  jusang:{ty:'spot',name:'柱狀節理帶',ko:'주상절리대',addr:'제주특별자치도 서귀포시 이어도로 36-30',lon:126.4261,lat:33.2380,img:'img/jusang.jpg'},
  sanbang:{ty:'spot',name:'山房山',ko:'산방산',addr:'제주특별자치도 서귀포시 안덕면 사계리',lon:126.3134,lat:33.2416,img:'img/sanbang.jpg'},
  yongdu:{ty:'spot',name:'龍頭岩',ko:'용두암',addr:'제주특별자치도 제주시 용두암길 15',lon:126.5117,lat:33.5161,img:'img/yongdu.jpg'},
- haejigae:{ty:'food',name:'Haejigae 日落咖啡廳',ko:'해지개',addr:'제주특별자치도 제주시 애월읍 애월북서길 52',lon:126.3090,lat:33.4642,img:'img/haejigae.jpg',pos:'50% 18%'},
+ haejigae:{ty:'food',name:'Haejigae 咖啡廳',ko:'해지개',addr:'제주특별자치도 제주시 애월읍 애월북서길 52',lon:126.3090,lat:33.4642,img:'img/haejigae.jpg',pos:'50% 18%'},
  jamae:{ty:'food',name:'姐妹麵條(黑豬肉麵)',ko:'자매국수',addr:'제주특별자치도 제주시 항골남길 46',lon:126.4592,lat:33.4986,img:'img/jamae.jpg'},
  woljip:{ty:'food',name:'月高家黑豬肉',ko:'월고집',addr:'제주특별자치도 제주시 구좌읍 월정1길 16-1',lon:126.7911,lat:33.5533,img:'img/woljip.jpg'},
  malhouse:{ty:'spot',name:'海邊小馬燈塔',ko:'이호테우 말등대',addr:'제주특별자치도 제주시 이호일동 375-43',lon:126.4521,lat:33.5019,img:'img/malhouse.jpg'},
@@ -30,9 +30,8 @@ const P={
  tteok:{ty:'food',name:'老奶奶橘子麻糬(偶來市場內)',ko:'할머니떡집 오메기떡',addr:'제주특별자치도 서귀포시 중앙로42번길 24',lon:126.5642,lat:33.2486,img:'img/tteok.jpg'},
  daewon:{ty:'food',name:'鮑魚海鮮鍋(大元家)',ko:'대원가',addr:'제주특별자치도 제주시 도남로16길 15',lon:126.5269,lat:33.4915,img:'img/daewon.jpg'},
  crab:{ty:'food',name:'最棒帝王蟹(엉아크랩)',ko:'제주대게엉아크랩쭈이빵',addr:'제주특별자치도 제주시 연동7길 42',lon:126.4906,lat:33.4863},
- minsok:{ty:'food',name:'民俗馬鈴薯排骨湯(本店)',ko:'민속감자탕',addr:'제주특별자치도 제주시 삼무로9길 26',lon:126.4946,lat:33.4914},
+ minsok:{ty:'food',name:'民俗馬鈴薯排骨湯',ko:'민속감자탕',addr:'제주특별자치도 제주시 삼무로9길 26',lon:126.4946,lat:33.4914},
  hallim:{ty:'spot',name:'翰林公園',ko:'한림공원',addr:'제주특별자치도 제주시 한림읍 한림로 300',lon:126.2403,lat:33.3894},
- aewol:{ty:'spot',name:'涯月咖啡街',ko:'애월카페거리',addr:'제주특별자치도 제주시 애월읍 애월북서길 56-1',lon:126.3094,lat:33.4632},
  jeongbang:{ty:'spot',name:'正房瀑布',ko:'정방폭포',addr:'제주특별자치도 서귀포시 칠십리로214번길 37',lon:126.5716,lat:33.2449},
  manjang:{ty:'spot',name:'萬丈窟',ko:'만장굴',addr:'제주특별자치도 제주시 구좌읍 만장굴길 182',lon:126.7714,lat:33.5284},
  samda:{ty:'food',name:'三多名家(自助精肉海鮮)',ko:'삼다명가',addr:'제주특별자치도 서귀포시 성산읍 섭지코지로25번길 34 1층',lon:126.9196,lat:33.4421},
@@ -104,6 +103,8 @@ const ZH={
 Object.entries(INFO).forEach(([k,v])=>{P[k].info=v});
 const MORE={"airport":1,"bagel":3,"blackpork":1,"camellia":2,"cheonjiyeon":1,"daewon":1,"dodu":1,"dongmun":3,"haejigae":3,"halla":1,"hill1100":3,"jusang":3,"malhouse":2,"olle":3,"rainbow":2,"sanbang":2,"seongsan":2,"seopji":3,"sorang":2,"tteok":2,"woljip":3,"woojin":2,"yongdu":2};
 Object.entries(MORE).forEach(([k,n])=>{P[k].imgs=[P[k].img,...Array.from({length:n},(_,i)=>`img/${k}_${i+2}.jpg`)]});
+/* 卡片底圖(水彩插圖,存在 img/ill/;還沒生的景點就沒有底圖) */
+['airport','crab','hallim','haejigae','minsok','hill1100','camellia'].forEach(k=>{P[k].ill=`img/ill/${k}.jpg`});
 const S=(k,o)=>({...P[k],...o});
 const DAYS=[
  {n:1,date:'02.08',wk:'一',title:'抵達・西部日落',rg:['北','西'],stops:[
@@ -111,8 +112,8 @@ const DAYS=[
   S('crab',{t:'13:00',note:'直接約吃帝王蟹見面;店名請出發前再核對',dr:'車程20分',lab:'d'}),
   {t:'14:30',ty:'stay',name:'飯店(待填)',ko:'',addr:'地址待填',lon:126.52,lat:33.505,note:'放行李',dr:'車程20分',lab:'r'},
   S('hallim',{t:'15:30',note:'打車前往;冬季 17:30 關園',dr:'打車約50分',lab:'l'}),
-  S('aewol',{t:'17:45',note:'看日落',dr:'車程20分',lab:'l'}),
-  S('minsok',{t:'19:30',note:'馬鈴薯排骨湯;週日公休',dr:'車程30分',lab:'u'})]},
+  S('haejigae',{t:'17:45',note:'看日落、喝咖啡',dr:'車程20分',lab:'l'}),
+  S('minsok',{t:'19:30',note:'本店;週日公休',dr:'車程30分',lab:'u'})]},
  {n:2,date:'02.09',wk:'二',title:'1100 高地・南部',rg:['南','西'],stops:[
   {t:'08:00',ty:'food',name:'早餐(待填)',ko:'',addr:'地址待填',lon:126.525,lat:33.51,note:'包車出發',lab:'r'},
   S('hill1100',{t:'09:00',note:'賞雪',dr:'車程35分',lab:'u'}),
