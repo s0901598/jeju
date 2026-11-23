@@ -136,7 +136,7 @@ const DAYS=[
   S('emart',{t:'13:30',note:'買紀念品(君悅附近)',dr:'車程15分',lab:'l'}),
   S('spa',{t:'14:30',note:'汗蒸幕',dr:'車程5分',lab:'d'}),
   {t:'17:30',ty:'food',name:'晚餐(待填)',ko:'',addr:'地址待填',lon:126.488,lat:33.487,note:'',lab:'l'},
-  S('airport',{t:'19:30',note:'君悅機場接送(航班時間待填)',dr:'車程15分',lab:'u'})]}
+  S('airport',{t:'20:00',note:'君悅機場接送(航班 22:40)',dr:'車程15分',lab:'u'})]}
 ];
 DAYS.forEach(d=>d.stops.forEach(s=>{s.days=[d.n]}));
 /* 還沒排進行程、但想放在總覽地圖上的地點(Alice 蒐集 + 熱門推薦) */
