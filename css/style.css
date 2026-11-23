@@ -770,3 +770,7 @@ html,body{touch-action:manipulation}
 [data-theme=dark] .st small,[data-theme=dark] .ck .ckt small{color:#a9bfd2}
 [data-theme=dark] .ck input:checked~.ckt{color:#6f879b}
 [data-theme=dark] .go2{background:#22405f;border:1.5px solid rgba(255,190,130,.7)}
+
+/* 修正跑版:頁面寬度不被內容撐開(名字較長的卡片,例如 Camelia Forest 山茶花森林,會讓整頁比螢幕寬) */
+.pg,.pg .body,.cards,.card,.card .cb{min-width:0}
+.pg{max-width:100%}

@@ -71,6 +71,21 @@ function cardPager(cards){
     go(idx)};
   cards.addEventListener('pointerup',end);cards.addEventListener('pointercancel',end);
   cards.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
+  /* 手指(iPhone):保留原生捲動的跟手感,但放開時立刻煞停慣性,最多只翻一張,不會衝到最後一張 */
+  if(window.matchMedia&&matchMedia('(pointer:coarse)').matches){
+    let tStart=0,tTop=0,tY0=0,tY=0,tT0=0,tOn=false,rt=null;
+    cards.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;clearTimeout(rt);cards.style.overflowY='';cards.style.scrollBehavior='';
+      tOn=true;tTop=cards.scrollTop;tY0=tY=e.touches[0].clientY;tT0=performance.now()},{passive:true});
+    cards.addEventListener('touchmove',e=>{if(tOn&&e.touches[0])tY=e.touches[0].clientY},{passive:true});
+    const tEnd=()=>{if(!tOn)return;tOn=false;
+      const dy=tY-tY0;if(Math.abs(dy)<8&&Math.abs(cards.scrollTop-tTop)<8)return;           // 單純點一下,不處理
+      const v=dy/Math.max(1,performance.now()-tT0),base=Math.round(tTop/PITCH);          // 向上滑 v 為負
+      let idx=Math.abs(v)>0.35?base+(v<0?1:-1):Math.round(cards.scrollTop/PITCH);
+      idx=Math.max(base-1,Math.min(base+1,idx));idx=Math.max(0,Math.min(n()-1,idx));
+      cards.style.overflowY='hidden';                                                       // 立刻煞停慣性
+      cards.scrollTo({top:idx*PITCH,behavior:'smooth'});
+      clearTimeout(rt);rt=setTimeout(()=>{cards.style.overflowY='';cards.style.scrollBehavior=''},450)};
+    cards.addEventListener('touchend',tEnd,{passive:true});cards.addEventListener('touchcancel',tEnd,{passive:true})}
   /* 電腦滾輪 / 觸控板:一次滾動手勢只翻一張 */
   let lock=false,lt=0;
   cards.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;e.preventDefault();
