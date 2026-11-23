@@ -193,7 +193,7 @@ DAYS.forEach(d=>{
   const link=(a,b)=>a.addEventListener('scroll',()=>{
     if(src&&src!==a&&performance.now()-ts<150)return;
     src=a;ts=performance.now();b.scrollTop=a.scrollTop;
-    setActive(Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH))));
+    const ni=Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH)));if(ni!==curIdx)setActive(ni);
     if(a.scrollTop>6)pg.classList.add('compact');else if(a.scrollTop<=1)pg.classList.remove('compact');},{passive:true});
   link(cards,tl);   // 時間軸只跟著行程卡走,自己不能被拖動
   cardPager(cards);
