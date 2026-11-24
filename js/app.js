@@ -208,7 +208,16 @@ DAYS.forEach(d=>{
   /* 時間軸 <-> 行程 雙向連動 */
   const tl=pg.querySelector('.tl'),cards=pg.querySelector('.cards');
   const CSS_TL=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));   // 瀏覽器支援「CSS 捲動連動」:時間軸跟著行程卡走,不需要 JS
-  if(tl&&CSS_TL){const setMax=()=>tl.style.setProperty('--tlmax',Math.max(0,cards.scrollHeight-cards.clientHeight)+'px');setMax();addEventListener('resize',setMax);if(window.ResizeObserver)new ResizeObserver(setMax).observe(cards);tl.classList.add('csstl')}
+  if(tl&&CSS_TL){const setMax=()=>{const M=Math.max(0,cards.scrollHeight-cards.clientHeight),N=d.stops.length,k=Math.min(N-1,Math.floor(M/PITCH)),mid=(k*PITCH+M)/2;
+      tl.style.setProperty('--tlmax',M+'px');
+      /* 每一站「亮起」的捲動範圍:前面的站各佔一張;滑到底時最後一張停在畫面下方,所以最後一站接手最底下那一段 */
+      tl.querySelectorAll('.tli').forEach((t,i)=>{let a,e;
+        if(i<k){a=i?(i-.5)*PITCH:0;e=(i+.5)*PITCH}
+        else if(i===k){a=k?(k-.5)*PITCH:0;e=k===N-1?M:mid}
+        else if(i===N-1){a=mid;e=M}
+        else{t.classList.add('nl');return}
+        t.classList.remove('nl');t.classList.toggle('lastlit',i===N-1&&i>k||(i===k&&k===N-1));
+        t.style.setProperty('--rs',a+'px');t.style.setProperty('--re',Math.max(e,a+1)+'px')})};setMax();addEventListener('resize',setMax);if(window.ResizeObserver)new ResizeObserver(setMax).observe(cards);tl.classList.add('csstl')}
   let src=null,ts=0;
   const setActive=i=>{curIdx=i;jm.setActive(i);
     pg.querySelectorAll('.tli').forEach((e,k)=>e.classList.toggle('on',k===i));

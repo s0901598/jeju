@@ -801,8 +801,8 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 /* 目前這站:每個圓點各自跟著行程卡的捲動位置亮起(捲到它那一張 ±半張時變橘色),不用 JS */
 .tl.csstl .tli .d::after,.tl.csstl .tli .tm::after{content:none}
 .tl.csstl .tli .d{overflow:visible}
-.tl.csstl .tli .d::before{content:"";display:block!important;position:absolute;inset:-2.5px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(255,138,31,.35),0 0 12px rgba(255,138,31,.8);opacity:0;animation:dotOn linear both;animation-timeline:--cards;animation-range:calc((var(--i) - .5) * 226px) calc((var(--i) + .5) * 226px)}
-.tl.csstl .tli .tm{animation:tmOn linear both;animation-timeline:--cards;animation-range:calc((var(--i) - .5) * 226px) calc((var(--i) + .5) * 226px)}
+.tl.csstl .tli .d::before{content:"";display:block!important;position:absolute;inset:-2.5px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(255,138,31,.35),0 0 12px rgba(255,138,31,.8);opacity:0;animation:dotOn linear both;animation-timeline:--cards;animation-range:var(--rs,0px) var(--re,1px)}
+.tl.csstl .tli .tm{animation:tmOn linear both;animation-timeline:--cards;animation-range:var(--rs,0px) var(--re,1px)}
 @keyframes dotOn{0%{opacity:0}1%,99%{opacity:1}100%{opacity:0}}
 @keyframes tmOn{0%{color:var(--muted)}1%,99%{color:var(--orange-d)}100%{color:var(--muted)}}
 .tl .tli .d,.tl .tli .tm{transition:none}
@@ -810,7 +810,15 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .tl .tli.on .tm{color:var(--muted);transform:none;text-shadow:none}
 .tl .tli.on .d::after{display:none;animation:none}
 /* 第一站:一開始就亮著,捲過半張才熄 */
-.tl.csstl .tli[data-i="0"] .d::before{animation-name:dotFirst;animation-range:0px 113px}
-.tl.csstl .tli[data-i="0"] .tm{animation-name:tmFirst;animation-range:0px 113px}
+.tl.csstl .tli[data-i="0"] .d::before{animation-name:dotFirst;animation-range:var(--rs,0px) var(--re,113px)}
+.tl.csstl .tli[data-i="0"] .tm{animation-name:tmFirst;animation-range:var(--rs,0px) var(--re,113px)}
 @keyframes dotFirst{0%,50%{opacity:1}51%,100%{opacity:0}}
 @keyframes tmFirst{0%,50%{color:var(--orange-d)}51%,100%{color:var(--muted)}}
+
+/* 滑到底時最後一站要一直亮著;卡片停不到的中間幾站不亮 */
+.tl.csstl .tli.lastlit .d::before{animation-name:dotLast}
+.tl.csstl .tli.lastlit .tm{animation-name:tmLast}
+.tl.csstl .tli.nl .d::before,.tl.csstl .tli.nl .tm{animation:none}
+.tl.csstl .tli.nl .d::before{opacity:0}
+@keyframes dotLast{0%{opacity:0}1%,100%{opacity:1}}
+@keyframes tmLast{0%{color:var(--muted)}1%,100%{color:var(--orange-d)}}
