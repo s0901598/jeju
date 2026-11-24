@@ -61,7 +61,7 @@ function fxCard(){
     <div class="fx-all" id="fxAll"></div>
    </div>
    <div class="fx-padw" id="fxPadW"><div class="fx-padh"><span>🧮 小算盤</span><button type="button" id="fxDone">完成 ▾</button></div>
-    <div class="fx-pad" id="fxPad">${[['AC','fn'],['±','fn'],['%','fn'],['÷','op'],['7'],['8'],['9'],['×','op'],['4'],['5'],['6'],['−','op'],['1'],['2'],['3'],['+','op'],['close','fn ic'],['0'],['.'],['=','op']].map(([k,c])=>`<button type="button" data-k="${k}" class="${c||''}" ${k==='close'?'aria-label="收起小算盤"':''}>${k==='close'?'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="5" y="2.5" width="14" height="19" rx="3"/><rect x="7.5" y="5" width="9" height="4" rx="1" fill="#6b6b6b"/><g fill="#6b6b6b"><circle cx="8.5" cy="12.5" r="1.1"/><circle cx="12" cy="12.5" r="1.1"/><circle cx="15.5" cy="12.5" r="1.1"/><circle cx="8.5" cy="16" r="1.1"/><circle cx="12" cy="16" r="1.1"/><circle cx="15.5" cy="16" r="1.1"/><circle cx="8.5" cy="19" r="1.1"/><circle cx="12" cy="19" r="1.1"/><circle cx="15.5" cy="19" r="1.1"/></g></svg>':k}</button>`).join('')}</div></div></div></div>`}
+    <div class="fx-pad" id="fxPad">${[['AC','fn'],['±','fn'],['%','fn'],['÷','op'],['7'],['8'],['9'],['×','op'],['4'],['5'],['6'],['−','op'],['1'],['2'],['3'],['+','op'],['⌫','ic'],['0'],['.'],['=','op']].map(([k,c])=>`<button type="button" data-k="${k}" class="${c||''}">${k}</button>`).join('')}</div></div></div></div>`}
 const fxR=n=>n>=100?Math.round(n).toLocaleString('en-US'):n>=1?n.toFixed(n>=10?1:2):n.toPrecision(3);
 function fxUpdate(){
   const v=fxEval(fxSt.expr),a=isFinite(v)?v:0,{from:f,to:t}=fxSt,hasOp=fxTok(fxSt.expr).some(k=>fxOps[k]);fxSt.amt=String(a);

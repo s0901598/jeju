@@ -940,3 +940,16 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .fx-padw .fx-pad .fn{font-size:22px}
 .fx-padw .fx-pad .op{font-size:32px}
 .fxc.padopen .fx-b{padding-bottom:calc(370px + env(safe-area-inset-bottom))}
+
+/* 小算盤上方一條細的「收起」列(底部左下角改放 ⌫) */
+.fx-padh{display:flex;justify-content:center;margin:-6px 0 4px}
+.fx-padh span{display:none}
+.fx-padh button{background:transparent;color:#a8a8ad;font-size:13px;padding:4px 18px}
+.fx-padw .fx-pad .ic{font-size:26px}
+.fxc.padopen .fx-b{padding-bottom:calc(396px + env(safe-area-inset-bottom))}
+.fx-padh{margin:-8px 0 2px}
+.fx-padh button{border:0!important;padding:2px 20px;line-height:1.2;font-size:12px}
+.fx-pad{gap:8px}
+.fx-padw .fx-pad button{max-width:56px}
+.fx-padw{padding-top:8px}
+.fxc.padopen .fx-b{padding-bottom:calc(350px + env(safe-area-inset-bottom))}
