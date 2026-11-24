@@ -128,10 +128,12 @@ function JMap(host,o){
   const ro=new ResizeObserver(()=>{if(!touched)refit();else apply()});ro.observe(host);refit();
   const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;sched(true)};
   let flying=0;
-  const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
+  const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply(k>=1);if(k<1)requestAnimationFrame(s)})(t0)};
   const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{const t=fitView();t.ppu*=zoomBias;basePpu=t.ppu;fly(t);setTouched(false)},
     focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,onTap:null,onTouched:null,
     setActive:i=>{api.setActive0(i);api.driveTo(i)},
+    /* 地圖移到第 i 站(保持目前縮放,至少放大到能看清楚附近) */
+    panTo:i=>{if(!P[i])return;fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,Math.min(basePpu*1.8,3.4))},520)},
     /* 橘子沿著道路滾到第 i 站(只在換站時動 0.3~0.9 秒) */
     driveTo:i=>{if(!car||!SEG.length)return;const from=carU,to=i;if(from===to)return;const t0=performance.now(),dur=Math.min(900,320+140*Math.abs(to-from)),tk=++carTk;
       (function st(n){if(tk!==carTk)return;const k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3);carU=from+(to-from)*e;carAt(carU);if(k<1)requestAnimationFrame(st)})(t0)},

@@ -904,3 +904,6 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .fx-padw .op{background:rgba(255,138,31,.14);color:var(--orange-d);font-size:24px}
 .fx-padw .fn{font-size:17px;color:var(--muted)}
 .fx-padw .eq{background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;border-color:transparent;font-size:26px}
+
+.day .map,.day .map *{touch-action:none}
+.day .map{overscroll-behavior:none}

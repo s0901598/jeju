@@ -231,7 +231,9 @@ DAYS.forEach(d=>{
   if(!matchMedia('(pointer:coarse)').matches){link(cards,CSS_TL?null:tl);cardPager(cards)}
   else if(tl&&!CSS_TL){let ft;cards.addEventListener('scroll',()=>{clearTimeout(ft);ft=setTimeout(()=>{tl.scrollTop=cards.scrollTop},120)},{passive:true})}   // 舊瀏覽器備案:停下來之後才讓時間軸跟上
   /* 地圖的「目前這站」:卡片經過畫面正中央時才換(只在換張的那一下執行,捲動中不跑程式) */
-  if(!HIDE_DAY_MAP&&window.IntersectionObserver){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const i=+en.target.dataset.i;if(i!==curIdx)setActive(i)}}),{root:cards,rootMargin:'-47% 0px -47% 0px'});cards.querySelectorAll('.card').forEach(c=>io.observe(c))}
+  let panT=0;   // 換站後等 0.15 秒再平移地圖(不跟手指滑動搶效能)
+  if(!HIDE_DAY_MAP){const mp=pg.querySelector('.map');if(mp)mp.addEventListener('touchmove',e=>{if(e.cancelable)e.preventDefault()},{passive:false})}   // 在地圖上拖動時,頁面本身不能跟著動
+  if(!HIDE_DAY_MAP&&window.IntersectionObserver){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const i=+en.target.dataset.i;if(i!==curIdx){setActive(i);clearTimeout(panT);panT=setTimeout(()=>jm.panTo&&jm.panTo(i),150)}}}),{root:cards,rootMargin:'-47% 0px -47% 0px'});cards.querySelectorAll('.card').forEach(c=>io.observe(c))}
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });
