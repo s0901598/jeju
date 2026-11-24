@@ -781,7 +781,5 @@ html,body{touch-action:manipulation}
 /* 滑動順暢:看不到的頁面、正在滑動時,暫停循環動畫 */
 .pg.off *,.pg.off *::before,.pg.off *::after,.pg.sc *,.pg.sc *::before,.pg.sc *::after,body.pscroll .pg *,body.pscroll .pg *::before,body.pscroll .pg *::after{animation-play-state:paused!important}
 
-/* ===== 滑動順暢測試(暫時):鎖住頁面不能被拖動;時間軸圓點脈衝與卡片過渡效果先關掉 ===== */
+/* ===== 滑動順暢測試(暫時):鎖住頁面不能被拖動;(時間軸已改由程式隱藏) ===== */
 html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:none}
-.tli.on .d::before,.tli.on .d::after{animation:none!important;display:none}
-.tli .d,.tli .tm,.card,.dh{transition:none!important}

@@ -178,6 +178,7 @@ $('#ovMap .mexpand').onclick=e=>{e.stopPropagation();openOv()};$('#ovReset').onc
 const infoPg=$('#p-info');
 /* 暫時關掉 Day 1~4 的地圖(排查滑動問題用)。要恢復,把下面這行改成 false 即可;總覽頁的地圖不受影響 */
 const HIDE_DAY_MAP=true;
+const HIDE_TIMELINE=true;   // 暫時隱藏時間軸(測試滑動順暢度);改成 false 就恢復
 DAYS.forEach(d=>{
   const letters=d.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ');
   const pg=document.createElement('section');pg.className='pg day';pg.dataset.nav='Day '+d.n;
@@ -194,6 +195,7 @@ DAYS.forEach(d=>{
    </div>`;
   pager.insertBefore(pg,infoPg);
   if(HIDE_DAY_MAP)pg.querySelector('.map').remove();
+  if(HIDE_TIMELINE)pg.querySelector('.tl').remove();
   const jm=HIDE_DAY_MAP?{setActive(){},home(){}}:JMap(pg.querySelector('.mhost'),{points:d.stops,route:true,badge:'letter',interactive:true,small:true,active:0});pg._jm=jm;
   let curIdx=0;
   const openDay=sel=>openMapFull({title:`Day ${d.n} · ${letters}`,points:d.stops,route:true,badge:'letter',sel});
@@ -212,7 +214,7 @@ DAYS.forEach(d=>{
     pg.querySelectorAll('.mk').forEach((e,k)=>e.classList.toggle('on',k===i));};
   const link=(a,b)=>a.addEventListener('scroll',()=>{
     if(src&&src!==a&&performance.now()-ts<150)return;
-    src=a;ts=performance.now();b.scrollTop=a.scrollTop;
+    src=a;ts=performance.now();if(b)b.scrollTop=a.scrollTop;
     const ni=Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH)));if(ni!==curIdx)setActive(ni);
     if(a.scrollTop>6)pg.classList.add('compact');else if(a.scrollTop<=1)pg.classList.remove('compact');},{passive:true});
   link(cards,tl);   // 時間軸只跟著行程卡走,自己不能被拖動
