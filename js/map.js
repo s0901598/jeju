@@ -89,7 +89,9 @@ function JMap(host,o){
   let v={cx:0,cy:0,ppu:1},touched=false,basePpu=1;
   let carU=o.active||0,carTk=0;
   const carAt=u=>{if(!car||!SEG.length)return;const si=Math.max(0,Math.min(SEG.length-1,Math.floor(u))),tt=Math.max(0,Math.min(1,u-si)),[A,C,B]=SEG[si],w=1-tt,
-    x=w*w*A[0]+2*w*tt*C[0]+tt*tt*B[0],y=w*w*A[1]+2*w*tt*C[1]+tt*tt*B[1];car.dataset.x=x;car.dataset.y=y;car.setAttribute('transform',`translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${(1/v.ppu).toFixed(4)})`)};
+    x=w*w*A[0]+2*w*tt*C[0]+tt*tt*B[0],y=w*w*A[1]+2*w*tt*C[1]+tt*tt*B[1];
+    /* 圓點靠太近會被推開(ox,oy,螢幕像素),橘子要跟著去顯示出來的圓點位置,才會貼合 */
+    const g0=stopEls[si],g1=stopEls[si+1]||g0,ox=((+g0.dataset.ox||0)*w+(+g1.dataset.ox||0)*tt)/v.ppu,oy=((+g0.dataset.oy||0)*w+(+g1.dataset.oy||0)*tt)/v.ppu;car.dataset.x=x+ox;car.dataset.y=y+oy;car.dataset.y=y;car.setAttribute('transform',`translate(${(x+ox).toFixed(1)},${(y+oy).toFixed(1)}) scale(${(1/v.ppu).toFixed(4)})`)};
   carAt(carU);const MINP=.3,MAXP=9;
   const setTouched=t=>{if(touched!==t){touched=t;if(api&&api.onTouched)api.onTouched(t)}};
   function apply(full=true){const w=W(),h=H();if(w<10||h<10)return;
@@ -102,13 +104,13 @@ function JMap(host,o){
     /* 標籤自動避開:先排行程點,再依重要程度排地標;放不下的地標就先隱藏 */
     const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2+(+g.dataset.ox||0),sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2+(+g.dataset.oy||0),placed=[];
     /* 每日地圖:徽章靠太近就推開(約 34px),用細線連回真正位置;總覽地圖不動 */
-    if(route){const bx=stopEls.map(g=>(+g.dataset.x-v.cx)*v.ppu+w/2),by=stopEls.map(g=>(+g.dataset.y-v.cy)*v.ppu+h/2),qx=bx.slice(),qy=by.slice(),MD=34;
+    if(route){const bx=stopEls.map(g=>(+g.dataset.x-v.cx)*v.ppu+w/2),by=stopEls.map(g=>(+g.dataset.y-v.cy)*v.ppu+h/2),qx=bx.slice(),qy=by.slice(),MD=21;
      for(let it=0;it<40;it++){let mv=false;for(let i=0;i<qx.length;i++)for(let j=i+1;j<qx.length;j++){let dx=qx[j]-qx[i],dy=qy[j]-qy[i],d=Math.hypot(dx,dy);
        if(d<MD){if(d<.5){dx=Math.cos(i*2.4+j);dy=Math.sin(i*2.4+j);d=1}const k=(MD-d)/2/d;qx[i]-=dx*k;qy[i]-=dy*k;qx[j]+=dx*k;qy[j]+=dy*k;mv=true}}if(!mv)break}
      stopEls.forEach((g,i)=>{const ox=qx[i]-bx[i],oy=qy[i]-by[i],mv=Math.hypot(ox,oy)>1.5;g.dataset.ox=mv?ox:0;g.dataset.oy=mv?oy:0;
        const jo=g.querySelector('.jo'),ln=g.querySelector('.jl'),dt=g.querySelector('.jd');
        jo.setAttribute('transform',mv?`translate(${ox},${oy})`:'');
-       ln.setAttribute('display',mv?'':'none');dt.setAttribute('display',mv?'':'none');if(mv){ln.setAttribute('x2',ox);ln.setAttribute('y2',oy)}})}
+       ln.setAttribute('display',mv?'':'none');dt.setAttribute('display',mv?'':'none');if(mv){ln.setAttribute('x2',ox);ln.setAttribute('y2',oy)}});carAt(carU)}
     const hit=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
     const circ=g=>{const r=+g.dataset.r;return{x:sx(g)-r,y:sy(g)-r,w:2*r,h:2*r}};
     stopEls.forEach(g=>placed.push(circ(g)));
