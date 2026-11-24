@@ -833,3 +833,30 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .day .glow,.day .mid,.day .core,.day .flow,.day .jring,.day .jstop.on .jring{animation:none!important}
 .day .flow{stroke-dasharray:3 11}
 .day .jstop.on .jring{opacity:1}
+
+/* ===== 伴手禮:推薦品項按鈕 + 彈窗 ===== */
+.gf-recbtn{display:block;width:100%;margin-top:7px;border:1.5px solid rgba(255,138,31,.65);background:#fff4e0;color:#b45a00;border-radius:999px;padding:6px 0;font-size:12.5px;font-weight:800;font-family:inherit;cursor:pointer;touch-action:manipulation}
+.gf-pop{position:fixed;inset:0;z-index:9500;background:rgba(10,24,40,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.gf-pb{position:relative;width:100%;max-width:360px;max-height:80vh;overflow:auto;background:#fffaf2;border-radius:22px;padding:16px 18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+[data-theme=dark] .gf-pb{background:#1b3550;color:#eaf3fb}
+.gf-px{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(0,0,0,.12);font-size:15px;cursor:pointer}
+.gf-pt{display:flex;gap:12px;align-items:center;margin:4px 34px 10px 0}
+.gf-pt .gf-ph{width:84px;height:84px;flex:none;border-radius:14px;font-size:34px}
+.gf-pt b{display:block;font-size:16px;color:var(--navy)}[data-theme=dark] .gf-pt b{color:#fff}
+.gf-pt small{font-size:12px;color:var(--muted)}
+.gf-pb h4{font-size:14px;color:#b45a00;margin:6px 0}
+.gf-pb ul{list-style:none;display:grid;gap:8px}
+.gf-pb li{background:#fff;border:1px solid rgba(255,138,31,.3);border-radius:12px;padding:9px 12px;font-size:14.5px;line-height:1.5;font-weight:600}
+[data-theme=dark] .gf-pb li{background:rgba(255,255,255,.08);color:#eaf3fb}
+
+/* ===== 電子機票:訂位代號 ===== */
+.pnr{background:rgba(255,255,255,.92);border:1px solid rgba(255,138,31,.35);border-radius:18px;padding:12px 14px;margin:10px 0;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.pnr h4{font-size:15px;color:var(--navy);display:flex;align-items:center;gap:6px}
+.pnr p.s{font-size:12px;color:var(--muted);margin:4px 0 8px;line-height:1.5}
+.pnr .who{font-size:12px;font-weight:800;color:var(--orange-d);margin:8px 0 4px}
+.pnr .row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px dashed rgba(255,138,31,.3)}
+.pnr .al{width:62px;font-size:13px;font-weight:800;color:var(--navy)}
+.pnr .cd{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:800;letter-spacing:.12em;color:#16395a}
+.pnr .bt{border:1.5px solid rgba(255,138,31,.6);background:#fff;color:var(--orange-d);border-radius:999px;font-size:12px;font-weight:800;padding:6px 10px;text-decoration:none;font-family:inherit;cursor:pointer}
+.pnr .bt.go{background:var(--orange);color:#fff;border-color:transparent}
+[data-theme=dark] .pnr{background:rgba(255,255,255,.07)}[data-theme=dark] .pnr h4,[data-theme=dark] .pnr .al,[data-theme=dark] .pnr .cd{color:#eaf3fb}
