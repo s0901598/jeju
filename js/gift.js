@@ -16,7 +16,7 @@ const G={
   {id:'pbaguette',s:'機場限定,約 ₩16,000',e:'🥜',bg:'#f6e4c8',zh:'Paris Baguette 濟州心意夾心餅(花生款)',ko:'제주마음샌드',w:'只在濟州機場 Paris Baguette 與機場租車中心分店買得到,約 ₩16,000;限購數量不一,早點買',rec:['花生口味(濟州牛島花生醬 + 奶油)','牛島限定的夾心餅這次沒去牛島,這個是本島替代方案'],tag:'Day 4 機場'},
   {id:'gwajeul',s:'濟州傳統韓果',e:'🍊',bg:'#ffe3b8',zh:'柑橘油蜜果',ko:'신효 귤향과즐 · 제주전통한과',w:'濟州傳統韓果,用濟州柑橘做,包裝上有橘子圖案。購買地點還沒查到,看到再買',rec:['找透明包裝、寫著「귤향과즐」(柑橘香韓果)的那款'],tag:'傳統零食'},
   {id:'osulloc',s:'200g 約 ₩8,500 起',e:'🍵',bg:'#e0efe6',zh:"O'sulloc 抹茶醬",ko:'',w:'機場免稅店、超市 · 200g 約 ₩8,500~12,000',tag:'Day 4 易買得'},
-  {id:'abebe',s:'東門市場旁,單顆 ₩2,900 起',e:'🍩',bg:'#ffe3b8',zh:'ABEBE BAKERY 甜甜圈',ko:'아베베 베이커리',w:'東門市場 12 號出口旁(동문로6길 4) · 10:00–21:00 · 單顆 ₩2,900~4,500。想吃!',rec:['牛島花生奶油甜甜圈:招牌(우도 땅콩 크림 도넛)','山房山地瓜奶油甜甜圈(산방산 고구마 크림 도넛)','朝天小米年糕紅豆麵包(조천 오메기 단팥빵)','賜來里奶油大栗子麵包(사려니 크림 왕밤빵)'],tag:'Day 4 東門市場'}],
+  {id:'abebe',menu:'img/gift/abebe-menu.webp',s:'東門市場旁,單顆 ₩2,900 起',e:'🍩',bg:'#ffe3b8',zh:'ABEBE BAKERY 甜甜圈',ko:'아베베 베이커리',w:'東門市場 12 號出口旁(동문로6길 4) · 10:00–21:00 · 單顆 ₩2,900~4,500。想吃!',rec:['牛島花生奶油甜甜圈:招牌 ₩2,900(우도 땅콩 크림 도넛)','山房山地瓜奶油甜甜圈 ₩2,900(산방산 고구마 크림 도넛)','朝天小米年糕紅豆麵包 ₩3,300(조천 오메기 품은 단팥빵)','賜來里奶油大栗子麵包 ₩3,300(사려니 크림 왕밤빵)'],tag:'Day 4 東門市場'}],
  oy:[
   {id:'oy-toner',e:'🧴',bg:'#d9edf7',zh:'Round Lab 1025 化妝水',ko:'라운드랩 1025 독도 토너',w:'溫和補水,韓國最暢銷'},
   {id:'oy-torriden',e:'💧',bg:'#d6e9fb',zh:'Torriden 玻尿酸精華',ko:'토리든 다이브인',w:'補水冠軍,面膜也熱門'},
@@ -55,7 +55,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('.gf-recbtn');
   if(b){const i=ALL().find(x=>x.id===b.dataset.id);if(!i)return;
     const ov=document.createElement('div');ov.className='gf-pop';
-    ov.innerHTML=`<div class="gf-pb"><button class="gf-px" aria-label="關閉">✕</button><div class="gf-pt">${ph(i,110)}<div><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small></div></div><h4>📍 哪裡買 / 資訊</h4><p class="gf-pw">${esc(i.w)}</p>${i.tag?`<p class="gf-ptag">${esc(i.tag)}</p>`:''}${i.rec?`<h4>👍 推薦品項</h4><ul>${i.rec.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}</div>`;
+    ov.innerHTML=`<div class="gf-pb"><button class="gf-px" aria-label="關閉">✕</button><div class="gf-pt">${ph(i,110)}<div><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small></div></div><h4>📍 哪裡買 / 資訊</h4><p class="gf-pw">${esc(i.w)}</p>${i.tag?`<p class="gf-ptag">${esc(i.tag)}</p>`:''}${i.rec?`<h4>👍 推薦品項</h4><ul>${i.rec.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}${i.menu?`<h4>📋 店內菜單(可對照韓文點)</h4><img class="gf-menu" src="${i.menu}" alt="" loading="lazy">`:''}</div>`;
     ov.onclick=ev=>{if(ev.target===ov||ev.target.closest('.gf-px'))ov.remove()};document.body.appendChild(ov);return}
 });
 document.addEventListener('click',e=>{const x=e.target.closest('.gf-seg button');if(!x)return;cur=+x.dataset.i;render();const p=document.getElementById('p-gift');if(p)p.scrollTop=0});

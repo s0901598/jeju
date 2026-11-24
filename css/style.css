@@ -972,3 +972,4 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 
 .gf-c .gf-t p{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
 .gf-c .gf-t b{font-size:13.5px}
+.gf-menu{display:block;width:100%;border-radius:12px;margin:2px 0 4px}
