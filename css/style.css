@@ -822,3 +822,14 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .tl.csstl .tli.nl .d::before{opacity:0}
 @keyframes dotLast{0%{opacity:0}1%,100%{opacity:1}}
 @keyframes tmLast{0%{color:var(--muted)}1%,100%{color:var(--orange-d)}}
+
+/* ===== 行程卡置中:卡片停在畫面正中間才算「目前這站」;地圖固定在卡片下方、靜止不動畫 ===== */
+.cards{padding-top:var(--pad,0px);padding-bottom:var(--pad,0px)}
+.cards .card{scroll-snap-align:center}
+.tl .tlin{margin-top:var(--pad,0px)}
+.day .map{height:190px;margin:10px 16px 14px;transition:none;order:3}
+.day.compact .map{height:190px}
+.day.compact .dh{padding-bottom:8px}
+.day .glow,.day .mid,.day .core,.day .flow,.day .jring,.day .jstop.on .jring{animation:none!important}
+.day .flow{stroke-dasharray:3 11}
+.day .jstop.on .jring{opacity:1}

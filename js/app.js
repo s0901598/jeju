@@ -177,14 +177,13 @@ $('#ovMap .mexpand').onclick=e=>{e.stopPropagation();openOv()};$('#ovReset').onc
 /* ---------- 每日頁 ---------- */
 const infoPg=$('#p-info');
 /* 暫時關掉 Day 1~4 的地圖(排查滑動問題用)。要恢復,把下面這行改成 false 即可;總覽頁的地圖不受影響 */
-const HIDE_DAY_MAP=true;
+const HIDE_DAY_MAP=false;
 const HIDE_TIMELINE=false;   // 暫時隱藏時間軸(測試滑動順暢度);改成 false 就恢復
 DAYS.forEach(d=>{
   const letters=d.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ');
   const pg=document.createElement('section');pg.className='pg day';pg.dataset.nav='Day '+d.n;
   pg.innerHTML=`
    <div class="dh"><h2>Day ${d.n}<small>${d.date} 週${d.wk} · ${d.title}</small></h2></div>
-   <div class="map"><div class="mhost"></div><span class="badge r">草案</span><button class="mreset" aria-label="回到全景">◎</button><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>
    <div class="body">
      <div class="tl"><div class="tlin">${d.stops.map((s,i)=>`<div class="tli${i===0?' on':''}${i===d.stops.length-1?' last':''}${d.stops[i+1]&&d.stops[i+1].dr?' hasdr':''}" data-i="${i}" style="--i:${i}"><span class="tm">${s.t}</span><span class="d"></span>${d.stops[i+1]&&d.stops[i+1].dr?`<span class="dr">${d.stops[i+1].dr}</span>`:''}</div>`).join('')}</div><div class="sp"></div></div>
      <div class="cards">${d.stops.map((s,i)=>{const [tn,tc]=TYPE[s.ty];return `<div class="card${i===0?' on':''}${s.ill?' hasill':''}" data-i="${i}">
@@ -192,7 +191,8 @@ DAYS.forEach(d=>{
         <div class="ko"><span class="kt">${s.ko||'韓文待填'}</span>${s.ko?btn('copy',s.ko,'複製韓文名稱')+btn('play',s.ko,'播放韓文發音'):''}</div>
         <div class="ad"><span class="at">📍 ${s.addr}</span>${btn('copy',s.addr,'複製地址')}</div>
         <div class="ft"><span class="nt"><span class="lb">內容：</span>${s.note||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"></div></div>
-   </div>`;
+   </div>
+   <div class="map"><div class="mhost"></div><span class="badge r">草案</span><button class="mreset" aria-label="回到全景">◎</button><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>`;
   pager.insertBefore(pg,infoPg);
   if(HIDE_DAY_MAP)pg.querySelector('.map').remove();
   if(HIDE_TIMELINE)pg.querySelector('.tl').remove();
@@ -208,16 +208,15 @@ DAYS.forEach(d=>{
   /* 時間軸 <-> 行程 雙向連動 */
   const tl=pg.querySelector('.tl'),cards=pg.querySelector('.cards');
   const CSS_TL=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));   // 瀏覽器支援「CSS 捲動連動」:時間軸跟著行程卡走,不需要 JS
-  if(tl&&CSS_TL){const setMax=()=>{const M=Math.max(0,cards.scrollHeight-cards.clientHeight),N=d.stops.length,k=Math.min(N-1,Math.floor(M/PITCH)),mid=(k*PITCH+M)/2;
+  if(tl){const setMax=()=>{const c1=cards.querySelector('.card'),CH=c1?c1.offsetHeight:212,pad=Math.max(0,(cards.clientHeight-CH)/2);
+      pg.style.setProperty('--pad',pad+'px');            /* 上下各留半個畫面,讓第一張、最後一張也能停在正中間 */
+      const M=Math.max(0,cards.scrollHeight-cards.clientHeight),N=d.stops.length;
       tl.style.setProperty('--tlmax',M+'px');
-      /* 每一站「亮起」的捲動範圍:前面的站各佔一張;滑到底時最後一張停在畫面下方,所以最後一站接手最底下那一段 */
-      tl.querySelectorAll('.tli').forEach((t,i)=>{let a,e;
-        if(i<k){a=i?(i-.5)*PITCH:0;e=(i+.5)*PITCH}
-        else if(i===k){a=k?(k-.5)*PITCH:0;e=k===N-1?M:mid}
-        else if(i===N-1){a=mid;e=M}
-        else{t.classList.add('nl');return}
-        t.classList.remove('nl');t.classList.toggle('lastlit',i===N-1&&i>k||(i===k&&k===N-1));
-        t.style.setProperty('--rs',a+'px');t.style.setProperty('--re',Math.max(e,a+1)+'px')})};setMax();addEventListener('resize',setMax);if(window.ResizeObserver)new ResizeObserver(setMax).observe(cards);tl.classList.add('csstl')}
+      /* 每一站「亮起」的捲動範圍:那一張停在正中間(捲動量 = 站序 × 一格高)前後各半格;最後一站到底都亮 */
+      tl.querySelectorAll('.tli').forEach((t,i)=>{const a=i?(i-.5)*PITCH:0,e=i===N-1?M:(i+.5)*PITCH;
+        t.classList.remove('nl');t.classList.toggle('lastlit',i===N-1);
+        t.style.setProperty('--rs',a+'px');t.style.setProperty('--re',Math.max(e,a+1)+'px')})};setMax();addEventListener('resize',setMax);if(window.ResizeObserver)new ResizeObserver(setMax).observe(cards);
+  if(CSS_TL)tl.classList.add('csstl')}
   let src=null,ts=0;
   const setActive=i=>{curIdx=i;jm.setActive(i);
     pg.querySelectorAll('.tli').forEach((e,k)=>e.classList.toggle('on',k===i));
@@ -231,6 +230,8 @@ DAYS.forEach(d=>{
   /* 手指(手機/平板):行程卡完全交給瀏覽器原生捲動 + CSS 吸附,不掛任何捲動程式(這樣最順);電腦才用程式處理滑鼠拖動、滾輪 */
   if(!matchMedia('(pointer:coarse)').matches){link(cards,CSS_TL?null:tl);cardPager(cards)}
   else if(tl&&!CSS_TL){let ft;cards.addEventListener('scroll',()=>{clearTimeout(ft);ft=setTimeout(()=>{tl.scrollTop=cards.scrollTop},120)},{passive:true})}   // 舊瀏覽器備案:停下來之後才讓時間軸跟上
+  /* 地圖的「目前這站」:卡片經過畫面正中央時才換(只在換張的那一下執行,捲動中不跑程式) */
+  if(!HIDE_DAY_MAP&&window.IntersectionObserver){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const i=+en.target.dataset.i;if(i!==curIdx)setActive(i)}}),{root:cards,rootMargin:'-47% 0px -47% 0px'});cards.querySelectorAll('.card').forEach(c=>io.observe(c))}
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });
