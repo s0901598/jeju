@@ -783,3 +783,7 @@ html,body{touch-action:manipulation}
 
 /* ===== 滑動順暢測試(暫時):鎖住頁面不能被拖動;(時間軸已改由程式隱藏) ===== */
 html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:none}
+
+/* ===== 行程卡改純原生捲動:不再墊高(最後一張就是到底);手指裝置沒有「目前這張」的程式切換,所以每張卡一樣亮 ===== */
+.sp{display:none!important}
+@media (pointer:coarse){.card{opacity:1;transform:none;transition:none}}

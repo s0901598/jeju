@@ -217,14 +217,12 @@ DAYS.forEach(d=>{
     src=a;ts=performance.now();if(b)b.scrollTop=a.scrollTop;
     const ni=Math.max(0,Math.min(d.stops.length-1,Math.round(a.scrollTop/PITCH)));if(ni!==curIdx)setActive(ni);
     if(a.scrollTop>6)pg.classList.add('compact');else if(a.scrollTop<=1)pg.classList.remove('compact');},{passive:true});
-  link(cards,tl);   // 時間軸只跟著行程卡走,自己不能被拖動
-  cardPager(cards);
+  /* 手指(手機/平板):行程卡完全交給瀏覽器原生捲動 + CSS 吸附,不掛任何捲動程式(這樣最順);電腦才用程式處理滑鼠拖動、滾輪 */
+  if(!matchMedia('(pointer:coarse)').matches){link(cards,tl);cardPager(cards)}
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });
-function fitSpacers(){document.querySelectorAll('.tl,.cards').forEach(l=>{l.querySelector('.sp').style.height=Math.max(0,l.clientHeight-PITCH)+'px'})}
-fitSpacers();addEventListener('resize',fitSpacers);
-if(window.ResizeObserver){const ro2=new ResizeObserver(fitSpacers);document.querySelectorAll('.cards').forEach(e=>ro2.observe(e))}
+/* 行程卡尾端不再墊高:滑到最後一張就是到底,下面不留空白 */
 
 /* ---------- 資訊頁:出發前清單(勾選會記在這支手機) ---------- */
 const doneSet=new Set(JSON.parse(store.get('jeju-check')||'[]'));
@@ -317,8 +315,7 @@ relink.onclick=()=>{store.del('jeju-code');codeIn.value='';msg.textContent='';lo
  const mark=()=>{const i=Math.round(pager.scrollLeft/(pager.clientWidth||1));pgs.forEach((q,k)=>q.classList.toggle('off',k!==i))};
  mark();addEventListener('resize',mark);
  let pt;pager.addEventListener('scroll',()=>{document.body.classList.add('pscroll');clearTimeout(pt);pt=setTimeout(()=>{document.body.classList.remove('pscroll');mark()},150)},{passive:true});
- pgs.forEach(q=>{const c=q.querySelector('.cards');if(!c)return;let t;const on=()=>{q.classList.add('sc');clearTimeout(t);t=setTimeout(()=>q.classList.remove('sc'),220)};
-   c.addEventListener('scroll',on,{passive:true});c.addEventListener('touchstart',on,{passive:true})})}
+ }
 
 /* 航班日期頁籤:切換 2/7~2/10 與 2/8~2/11 */
 document.querySelectorAll('#flSeg button').forEach(b=>b.onclick=()=>{
