@@ -787,3 +787,6 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 /* ===== 行程卡改純原生捲動:不再墊高(最後一張就是到底);手指裝置沒有「目前這張」的程式切換,所以每張卡一樣亮 ===== */
 .sp{display:none!important}
 @media (pointer:coarse){.card{opacity:1;transform:none;transition:none}}
+
+/* 手指:不強制每張都要停,依滑動力道決定滑幾張,放開後再吸附到最近的一張(滑起來是連續的,不會一格一格頓) */
+@media (pointer:coarse){.cards,.cards .card{scroll-snap-stop:normal}}
