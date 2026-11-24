@@ -176,6 +176,8 @@ $('#ovMap .mexpand').onclick=e=>{e.stopPropagation();openOv()};$('#ovReset').onc
 
 /* ---------- 每日頁 ---------- */
 const infoPg=$('#p-info');
+/* 暫時關掉 Day 1~4 的地圖(排查滑動問題用)。要恢復,把下面這行改成 false 即可;總覽頁的地圖不受影響 */
+const HIDE_DAY_MAP=true;
 DAYS.forEach(d=>{
   const letters=d.stops.map((_,i)=>String.fromCharCode(65+i)).join(' → ');
   const pg=document.createElement('section');pg.className='pg day';pg.dataset.nav='Day '+d.n;
@@ -191,12 +193,15 @@ DAYS.forEach(d=>{
         <div class="ft"><span class="nt"><span class="lb">內容：</span>${s.note||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"></div></div>
    </div>`;
   pager.insertBefore(pg,infoPg);
-  const jm=JMap(pg.querySelector('.mhost'),{points:d.stops,route:true,badge:'letter',interactive:true,small:true,active:0});pg._jm=jm;
+  if(HIDE_DAY_MAP)pg.querySelector('.map').remove();
+  const jm=HIDE_DAY_MAP?{setActive(){},home(){}}:JMap(pg.querySelector('.mhost'),{points:d.stops,route:true,badge:'letter',interactive:true,small:true,active:0});pg._jm=jm;
   let curIdx=0;
   const openDay=sel=>openMapFull({title:`Day ${d.n} · ${letters}`,points:d.stops,route:true,badge:'letter',sel});
+  if(!HIDE_DAY_MAP){
   jm.onTap=()=>openDay(curIdx);jm.onStop=i=>openDay(i);
   const rs=pg.querySelector('.mreset');jm.onTouched=t=>rs.classList.toggle('on',t);rs.onclick=e=>{e.stopPropagation();jm.home()};
   pg.querySelector('.mexpand').onclick=e=>{e.stopPropagation();openDay(curIdx)};
+  }
 
   /* 時間軸 <-> 行程 雙向連動 */
   const tl=pg.querySelector('.tl'),cards=pg.querySelector('.cards');
