@@ -790,3 +790,27 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 
 /* 手指:不強制每張都要停,依滑動力道決定滑幾張,放開後再吸附到最近的一張(滑起來是連續的,不會一格一格頓) */
 @media (pointer:coarse){.cards,.cards .card{scroll-snap-stop:normal}}
+
+/* ===== 時間軸:用 CSS 捲動連動,跟著行程卡走(沒有 JS、不在捲動時重排);目前這站用固定在上方的圓點表示 ===== */
+.body{timeline-scope:--cards}
+.cards{scroll-timeline:--cards y}
+.tl{position:relative;overflow:hidden}
+.tl .tlin{position:relative;will-change:transform}
+.tl.csstl .tlin{animation:tlmove linear both;animation-timeline:--cards}
+@keyframes tlmove{from{transform:translateY(0)}to{transform:translateY(calc(var(--tlmax,0px)*-1))}}
+/* 目前這站:每個圓點各自跟著行程卡的捲動位置亮起(捲到它那一張 ±半張時變橘色),不用 JS */
+.tl.csstl .tli .d::after,.tl.csstl .tli .tm::after{content:none}
+.tl.csstl .tli .d{overflow:visible}
+.tl.csstl .tli .d::before{content:"";display:block!important;position:absolute;inset:-2.5px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(255,138,31,.35),0 0 12px rgba(255,138,31,.8);opacity:0;animation:dotOn linear both;animation-timeline:--cards;animation-range:calc((var(--i) - .5) * 226px) calc((var(--i) + .5) * 226px)}
+.tl.csstl .tli .tm{animation:tmOn linear both;animation-timeline:--cards;animation-range:calc((var(--i) - .5) * 226px) calc((var(--i) + .5) * 226px)}
+@keyframes dotOn{0%{opacity:0}1%,99%{opacity:1}100%{opacity:0}}
+@keyframes tmOn{0%{color:var(--muted)}1%,99%{color:var(--orange-d)}100%{color:var(--muted)}}
+.tl .tli .d,.tl .tli .tm{transition:none}
+.tl .tli.on .d{background:#fff;border-color:#ffb06a;box-shadow:none;transform:none}
+.tl .tli.on .tm{color:var(--muted);transform:none;text-shadow:none}
+.tl .tli.on .d::after{display:none;animation:none}
+/* 第一站:一開始就亮著,捲過半張才熄 */
+.tl.csstl .tli[data-i="0"] .d::before{animation-name:dotFirst;animation-range:0px 113px}
+.tl.csstl .tli[data-i="0"] .tm{animation-name:tmFirst;animation-range:0px 113px}
+@keyframes dotFirst{0%,50%{opacity:1}51%,100%{opacity:0}}
+@keyframes tmFirst{0%,50%{color:var(--orange-d)}51%,100%{color:var(--muted)}}
