@@ -2,21 +2,21 @@
 (function(){
 const G={
  buy:[
-  {id:'juice',e:'🍊',bg:'#ffe3b8',zh:'石頭爺爺橘子汁',ko:'돌하르방 감귤주스',w:'超市、GS25、LOTTE Mart、東門市場、機場免稅店',rec:['橘子味:最順口,第一次買先選這個','青橘味:比較酸,不愛酸的先試喝再買'],tag:'Day 4 易買得'},
-  {id:'choco',e:'🍫',bg:'#ffd9c9',zh:'FRUNACK 柑橘巧克力',ko:'프루낵 감귤 초콜릿',w:'超市、免稅店、特產店',rec:['白巧克力款:最常見,12 入約 ₩8,000'],tag:'Day 4 易買得'},
-  {id:'mochiron',e:'😊',bg:'#fff0c7',zh:'Mochiron 達克瓦茲',ko:'모치론',w:'週二~五 10:00–18:00,週六到 17:00,日一公休',tag:'Day 4 牧官衙旁'},
-  {id:'umu',e:'🍮',bg:'#e6f2d9',zh:'Umu 海藻布丁',ko:'우무 푸딩',w:'機場出境大廳 08:00–20:30',rec:['卡士達:最穩的基本款','抹茶','巧克力','機場店另有限定口味(現場看)','放久會變稀,建議當天吃'],tag:'Day 4 機場'},
-  {id:'tteok',e:'🍡',bg:'#fde0e6',zh:'濟羅軒穀物年糕',ko:'제라헌',w:'東門市場內 08:30–21:30',tag:'Day 4 東門市場'},
-  {id:'mongle',e:'☁️',bg:'#dcebfb',zh:'mongle 雲朵餅乾',ko:'몽글',w:'機場附近伊湖洞店 09:00–18:00',tag:'要繞過去'},
-  {id:'ramen',e:'🍜',bg:'#f1e1d0',zh:'黑豬肉泡麵',ko:'흑돼지 라면',w:'便利商店、紀念品店、免稅店',tag:'Day 4 易買得'},
-  {id:'soju',e:'🍶',bg:'#dff0f6',zh:'漢拏山燒酒',ko:'한라산 소주',w:'便利商店、超市。酒類帶回台灣有限量,出發前確認',rec:['한라산 17:17 度,較順口','한라산 21:21 度,原味、較烈'],tag:'Day 4 易買得'},
-  {id:'starbucks',e:'☕',bg:'#dff0e6',zh:'濟州限定星巴克杯',ko:'',w:'₩30,000~76,000 · 濟州各星巴克門市',tag:'市區 / 機場'},
-  {id:'kakao',e:'🧸',bg:'#fff0c7',zh:'Kakao Friends 濟州限定',ko:'',w:'機場 JDC 免稅店 2 樓 · 鑰匙圈 ₩14,000 起、玩偶 ₩25,000~32,000',tag:'Day 4 機場'},
-  {id:'hallacookie',e:'🍪',bg:'#f1e1d0',zh:'HALLA COOKIE 漢拏山餅乾',ko:'한라산과자점',w:'西歸浦世界盃路 105 號 · 8 入禮盒約 ₩13,000',tag:'西歸浦'},
-  {id:'pbaguette',e:'🥜',bg:'#f6e4c8',zh:'Paris Baguette 濟州心意夾心餅(花生款)',ko:'제주마음샌드',w:'只在濟州機場 Paris Baguette 與機場租車中心分店買得到,約 ₩16,000;限購數量不一,早點買',rec:['花生口味(濟州牛島花生醬 + 奶油)','牛島限定的夾心餅這次沒去牛島,這個是本島替代方案'],tag:'Day 4 機場'},
-  {id:'gwajeul',e:'🍊',bg:'#ffe3b8',zh:'柑橘油蜜果',ko:'신효 귤향과즐 · 제주전통한과',w:'濟州傳統韓果,用濟州柑橘做,包裝上有橘子圖案。購買地點還沒查到,看到再買',rec:['找透明包裝、寫著 귤향과즐 的那款'],tag:'傳統零食'},
-  {id:'osulloc',e:'🍵',bg:'#e0efe6',zh:"O'sulloc 抹茶醬",ko:'',w:'機場免稅店、超市 · 200g 約 ₩8,500~12,000',tag:'Day 4 易買得'},
-  {id:'abebe',e:'🍩',bg:'#ffe3b8',zh:'ABEBE BAKERY 甜甜圈',ko:'아베베 베이커리',w:'東門市場 12 號出口旁(동문로6길 4) · 10:00–21:00 · 單顆 ₩2,900~4,500。想吃!',rec:['우도 땅콩 크림 도넛:招牌','산방산 고구마 크림 도넛','조천 오메기 단팥빵','사려니 크림 왕밤빵'],tag:'Day 4 東門市場'}],
+  {id:'juice',s:'橘子味最順口 · 超市、機場',e:'🍊',bg:'#ffe3b8',zh:'石頭爺爺橘子汁',ko:'돌하르방 감귤주스',w:'超市、GS25、LOTTE Mart、東門市場、機場免稅店',rec:['橘子味:天惠香柑橘果汁、漢拏峰柑橘果汁,最順口,第一次買先選這個','青橘味:比較酸,不愛酸的先試喝再買'],tag:'Day 4 易買得'},
+  {id:'choco',s:'12 入約 ₩8,000',e:'🍫',bg:'#ffd9c9',zh:'FRUNACK 柑橘巧克力',ko:'프루낵 감귤 초콜릿',w:'超市、免稅店、特產店',rec:['白巧克力款:最常見,12 入約 ₩8,000'],tag:'Day 4 易買得'},
+  {id:'mochiron',s:'週二~五 10:00–18:00',e:'😊',bg:'#fff0c7',zh:'Mochiron 達克瓦茲',ko:'모치론',w:'週二~五 10:00–18:00,週六到 17:00,日一公休',tag:'Day 4 牧官衙旁'},
+  {id:'umu',s:'機場出境 08:00–20:30',e:'🍮',bg:'#e6f2d9',zh:'Umu 海藻布丁',ko:'우무 푸딩',w:'機場出境大廳 08:00–20:30',rec:['卡士達:最穩的基本款','抹茶','巧克力','機場店另有限定口味(現場看)','放久會變稀,建議當天吃'],tag:'Day 4 機場'},
+  {id:'tteok',s:'東門市場 08:30–21:30',e:'🍡',bg:'#fde0e6',zh:'濟羅軒穀物年糕',ko:'제라헌',w:'東門市場內 08:30–21:30',tag:'Day 4 東門市場'},
+  {id:'mongle',s:'伊湖洞店 09:00–18:00',e:'☁️',bg:'#dcebfb',zh:'mongle 雲朵餅乾',ko:'몽글',w:'機場附近伊湖洞店 09:00–18:00',tag:'要繞過去'},
+  {id:'ramen',s:'便利商店、免稅店',e:'🍜',bg:'#f1e1d0',zh:'黑豬肉泡麵',ko:'흑돼지 라면',w:'便利商店、紀念品店、免稅店',tag:'Day 4 易買得'},
+  {id:'soju',s:'便利商店、超市',e:'🍶',bg:'#dff0f6',zh:'漢拏山燒酒',ko:'한라산 소주',w:'便利商店、超市。酒類帶回台灣有限量,出發前確認',rec:['한라산 17:17 度,較順口','한라산 21:21 度,原味、較烈'],tag:'Day 4 易買得'},
+  {id:'starbucks',s:'₩30,000~76,000',e:'☕',bg:'#dff0e6',zh:'濟州限定星巴克杯',ko:'',w:'₩30,000~76,000 · 濟州各星巴克門市',tag:'市區 / 機場'},
+  {id:'kakao',s:'機場 JDC 免稅店 2 樓',e:'🧸',bg:'#fff0c7',zh:'Kakao Friends 濟州限定',ko:'',w:'機場 JDC 免稅店 2 樓 · 鑰匙圈 ₩14,000 起、玩偶 ₩25,000~32,000',tag:'Day 4 機場'},
+  {id:'hallacookie',s:'8 入禮盒約 ₩13,000',e:'🍪',bg:'#f1e1d0',zh:'HALLA COOKIE 漢拏山餅乾',ko:'한라산과자점',w:'西歸浦世界盃路 105 號 · 8 入禮盒約 ₩13,000',tag:'西歸浦'},
+  {id:'pbaguette',s:'機場限定,約 ₩16,000',e:'🥜',bg:'#f6e4c8',zh:'Paris Baguette 濟州心意夾心餅(花生款)',ko:'제주마음샌드',w:'只在濟州機場 Paris Baguette 與機場租車中心分店買得到,約 ₩16,000;限購數量不一,早點買',rec:['花生口味(濟州牛島花生醬 + 奶油)','牛島限定的夾心餅這次沒去牛島,這個是本島替代方案'],tag:'Day 4 機場'},
+  {id:'gwajeul',s:'濟州傳統韓果',e:'🍊',bg:'#ffe3b8',zh:'柑橘油蜜果',ko:'신효 귤향과즐 · 제주전통한과',w:'濟州傳統韓果,用濟州柑橘做,包裝上有橘子圖案。購買地點還沒查到,看到再買',rec:['找透明包裝、寫著 귤향과즐 的那款'],tag:'傳統零食'},
+  {id:'osulloc',s:'200g 約 ₩8,500 起',e:'🍵',bg:'#e0efe6',zh:"O'sulloc 抹茶醬",ko:'',w:'機場免稅店、超市 · 200g 約 ₩8,500~12,000',tag:'Day 4 易買得'},
+  {id:'abebe',s:'東門市場旁,單顆 ₩2,900 起',e:'🍩',bg:'#ffe3b8',zh:'ABEBE BAKERY 甜甜圈',ko:'아베베 베이커리',w:'東門市場 12 號出口旁(동문로6길 4) · 10:00–21:00 · 單顆 ₩2,900~4,500。想吃!',rec:['우도 땅콩 크림 도넛:招牌','산방산 고구마 크림 도넛','조천 오메기 단팥빵','사려니 크림 왕밤빵'],tag:'Day 4 東門市場'}],
  oy:[
   {id:'oy-toner',e:'🧴',bg:'#d9edf7',zh:'Round Lab 1025 化妝水',ko:'라운드랩 1025 독도 토너',w:'溫和補水,韓國最暢銷'},
   {id:'oy-torriden',e:'💧',bg:'#d6e9fb',zh:'Torriden 玻尿酸精華',ko:'토리든 다이브인',w:'補水冠軍,面膜也熱門'},
@@ -38,7 +38,7 @@ const G={
 };
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ph=(i,h)=>`<div class="gf-ph" style="background:${i.bg||'#f1e4d0'};${h?'height:'+h+'px;':''}"><span>${i.e}</span><img src="img/gift/${i.id}.webp" alt="" loading="lazy" onerror="this.remove()"></div>`;
-const card=i=>`<div class="gf-c">${ph(i)}<div class="gf-t"><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small><p>${esc(i.w)}</p>${i.tag?`<em>${esc(i.tag)}</em>`:''}<button type="button" class="gf-recbtn${i.rec?'':' plain'}" data-id="${i.id}">${i.rec?'👍 推薦品項':'ℹ️ 詳細資訊'}</button></div></div>`;
+const card=i=>`<div class="gf-c">${ph(i)}<div class="gf-t"><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small><p>${esc(i.s||i.w)}</p>${i.tag?`<em>${esc(i.tag)}</em>`:''}<button type="button" class="gf-recbtn${i.rec?'':' plain'}" data-id="${i.id}">點擊查看</button></div></div>`;
 const TABS=[
  {k:'buy',n:'濟州必買',h:()=>`<div class="gf-note">液體超過 100ml 不能手提上機,橘子汁等請放托運。</div><div class="gf-g">${G.buy.map(card).join('')}</div>`},
  {k:'oy',n:'Olive Young',h:()=>`<div class="gf-box"><b>🛍️ 行程上順路的 3 間分店</b><p>• 東門市場店 <small>관덕로 62-1</small> Day 4 東門市場旁<br>• 易買得新濟州店 1 樓 Day 4 E-mart 裡<br>• 탑동店 <small>탑동로 15-1</small> Day 3 BHC 附近</p></div><div class="gf-note">單筆滿 15,000 韓元可免稅,結帳帶護照。</div><div class="gf-h">🍊 濟州限定<small>全韓 1,300 多間裡,只有濟州 13 間分店才買得到(品牌 Round Around 라운드어라운드)。價格取自 Olive Young 官網與韓國部落格(2026),含折扣,現場為準。</small></div><div class="gf-g">${G.jj.map(card).join('')}</div><div class="gf-h">一般熱銷</div><div class="gf-g">${G.oy.map(card).join('')}</div>`},

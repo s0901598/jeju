@@ -953,3 +953,22 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .fx-padw .fx-pad button{max-width:56px}
 .fx-padw{padding-top:8px}
 .fxc.padopen .fx-b{padding-bottom:calc(350px + env(safe-area-inset-bottom))}
+/* 伴手禮:一頁顯示四格 */
+#p-gift{padding-top:60px;padding-bottom:12px}
+#p-gift .eyebrow,#p-gift .gf-sub{display:none}
+#p-gift h3{font-size:24px;margin:0 0 6px;line-height:1.2}
+#p-gift .gf-seg{margin:0 0 6px}
+#p-gift .gf-seg button{padding:7px 2px}
+#p-gift .gf-note{margin:0 0 8px;padding:6px 10px;font-size:11.5px}
+#p-gift .gf-g{gap:8px}
+.gf-c{min-height:0}
+.gf-c .gf-ph{height:145px}
+.gf-c .gf-t{padding:6px 10px 8px}
+.gf-c .gf-t b{font-size:13px;min-height:0;-webkit-line-clamp:1}
+.gf-c .gf-t p{font-size:11.5px;-webkit-line-clamp:2;min-height:0}
+.gf-c .gf-t small{min-height:0}
+.gf-c .gf-t em{margin-top:3px}
+.gf-c .gf-recbtn{padding:4px 0;font-size:12px}
+
+.gf-c .gf-t p{-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
+.gf-c .gf-t b{font-size:13.5px}
