@@ -110,7 +110,7 @@ Object.entries(INFO).forEach(([k,v])=>{P[k].info=v});
 const MORE={"airport":1,"bagel":3,"blackpork":1,"camellia":2,"cheonjiyeon":1,"daewon":1,"dodu":1,"dongmun":3,"haejigae":3,"halla":1,"hill1100":3,"jusang":3,"malhouse":2,"olle":3,"rainbow":2,"sanbang":2,"seongsan":2,"seopji":3,"sorang":2,"tteok":2,"woljip":3,"woojin":2,"yongdu":2};
 Object.entries(MORE).forEach(([k,n])=>{P[k].imgs=[P[k].img,...Array.from({length:n},(_,i)=>`img/${k}_${i+2}.jpg`)]});
 /* 卡片底圖(水彩插圖,存在 img/ill/;還沒生的景點就沒有底圖) */
-['airport','crab','hallim','haejigae','minsok','hill1100','camellia','olle','jeongbang','blackpork','seongsan','manjang','folk','mokgwana'].forEach(k=>{P[k].ill=`img/ill/${k}.webp`});
+['airport','crab','hallim','haejigae','minsok','hill1100','camellia','olle','jeongbang','blackpork','seongsan','manjang','folk','mokgwana','samda','bhc','dongmun'].forEach(k=>{P[k].ill=`img/ill/${k}.webp`});
 const S=(k,o)=>({...P[k],...o});
 const DAYS=[
  {n:1,date:'02.08',wk:'一',title:'抵達・西部日落',rg:['北','西'],stops:[
