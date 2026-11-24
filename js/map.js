@@ -40,10 +40,11 @@ function JMap(host,o){
   const id='m'+(++uid),svg=document.createElementNS(NS,'svg');svg.setAttribute('class','jm');host.prepend(svg);
   const P=points.map(s=>[wx(s.lon),wy(s.lat)]);
   /* 路線(弧線)+ 箭頭 */
-  let d='',arrows='';
+  let d='',arrows='',segs='',SEG=[];
   if(route&&P.length>1){d=`M${P[0][0].toFixed(1)},${P[0][1].toFixed(1)}`;
     for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,sg=(i%2?1:-1)*L*.2,cx=mx-dy/L*sg,cy=my+dx/L*sg;
-      d+=`Q${cx.toFixed(1)},${cy.toFixed(1)} ${b[0].toFixed(1)},${b[1].toFixed(1)}`;
+      d+=`Q${cx.toFixed(1)},${cy.toFixed(1)} ${b[0].toFixed(1)},${b[1].toFixed(1)}`;SEG.push([a,[cx,cy],b]);
+      segs+=`<path class="road" d="M${a[0].toFixed(1)},${a[1].toFixed(1)}Q${cx.toFixed(1)},${cy.toFixed(1)} ${b[0].toFixed(1)},${b[1].toFixed(1)}" fill="none" vector-effect="non-scaling-stroke"/><path class="seg" d="M${a[0].toFixed(1)},${a[1].toFixed(1)}Q${cx.toFixed(1)},${cy.toFixed(1)} ${b[0].toFixed(1)},${b[1].toFixed(1)}" fill="none" vector-effect="non-scaling-stroke"/>`;
       const x=.25*a[0]+.5*cx+.25*b[0],y=.25*a[1]+.5*cy+.25*b[1],ang=Math.atan2(dy,dx)*180/Math.PI;
       arrows+=`<g class="jk" data-x="${x.toFixed(1)}" data-y="${y.toFixed(1)}" data-rot="${ang.toFixed(1)}"><path d="M-6,-6 L7,0 L-6,6 L-3,0Z" fill="#fff6e0" stroke="#e5600a" stroke-width="1.6" stroke-linejoin="round"/></g>`}}
   const names=new Set(points.map(s=>s.name));
@@ -51,12 +52,13 @@ function JMap(host,o){
     return `<g class="jk jlm" data-x="${wx(l.lon).toFixed(1)}" data-y="${wy(l.lat).toFixed(1)}" data-lv="${l.lv}" data-pw="${w}" data-r="11"><g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${l.n}</text></g>
       <circle r="10.5" fill="#fff" stroke="${c}" stroke-width="2.2"/><text y="4.2" text-anchor="middle" font-size="11">${ic}</text></g>`}).join('');
   const stops=points.map((s,i)=>{const w=s.name.length*12+14,t=TYPE[s.ty]||TYPE.spot;
+    const fc=t[1];
     const face=badge==='letter'
-      ?`<circle r="13" fill="url(#${id}og)" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${String.fromCharCode(65+i)}</text>`
+      ?`<g class="jf"><circle r="13" fill="${fc}" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${i+1}</text></g>`
       :`<circle r="12" fill="${t[1]}" stroke="#fff" stroke-width="2.2"/><text y="4.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${t[2]}</text>`;
     return `<g class="jk jstop${i===o.active?' on':''}" data-i="${i}" data-x="${P[i][0].toFixed(1)}" data-y="${P[i][1].toFixed(1)}" data-pw="${w}" data-r="14">
      <line class="jl" x1="0" y1="0" x2="0" y2="0" stroke="#fff" stroke-width="2.4" stroke-linecap="round" display="none"/><circle class="jd" r="3.2" fill="#ff8a1f" stroke="#fff" stroke-width="1.6" display="none"/>
-     <g class="jo"><circle class="jring" r="17" fill="none" stroke="#ff8a1f" stroke-width="2.6"/>
+     <g class="jo"><circle class="jring" r="19" fill="none" stroke="${fc}" stroke-width="3"/>
      <g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${s.name}</text></g>${face}</g></g>`}).join('');
   svg.innerHTML=`<defs>
     <linearGradient id="${id}sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sea1)"/><stop offset="1" stop-color="var(--sea2)"/></linearGradient>
@@ -74,12 +76,9 @@ function JMap(host,o){
      <g fill="none" stroke="var(--contour)" stroke-width="1.4" vector-effect="non-scaling-stroke"><ellipse cx="${HX}" cy="${HY}" rx="150" ry="95"/><ellipse cx="${HX}" cy="${HY}" rx="105" ry="64"/><ellipse cx="${HX}" cy="${HY}" rx="62" ry="36"/></g>${DECOR}${regions?REGIONS:''}</g>
    <ellipse cx="${wx(126.952)}" cy="${wy(33.503)}" rx="13" ry="9" fill="url(#${id}land)" stroke="var(--shore)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
    ${MOUNTAIN}
-   ${d?`<path class="glow" d="${d}" fill="none" stroke="#ff4a00" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="1" filter="url(#${id}g1)" vector-effect="non-scaling-stroke"/>
-   <path class="mid" d="${d}" fill="none" stroke="#ff8a1f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="1" filter="url(#${id}g2)" vector-effect="non-scaling-stroke"/>
-   <path class="core" d="${d}" fill="none" stroke="#fff4d6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-   <path class="flow" d="${d}" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".9" vector-effect="non-scaling-stroke"/>`:''}
-   <g>${lms}</g><g>${arrows}</g><g>${stops}</g>`;
-  const mks=[...svg.querySelectorAll('.jk')],lmEls=[...svg.querySelectorAll('.jlm')],stopEls=[...svg.querySelectorAll('.jstop')];
+   ${segs}
+   <g>${lms}</g><g>${stops}</g>${route&&SEG.length?`<g class=\"jk jcar\" data-x=\"0\" data-y=\"0\" data-rot=\"0\"><g class=\"jcb\"><ellipse cx=\"1\" cy=\"11\" rx=\"10\" ry=\"3\" fill=\"rgba(0,0,0,.25)\"/><circle r=\"12\" fill=\"#ff9a1f\" stroke=\"#fff\" stroke-width=\"2.4\"/><path d=\"M-6,-5 Q-1,-9 5,-6\" stroke=\"#ffd48a\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M0,-12 Q2,-19 9,-17 Q7,-11 0,-12Z\" fill=\"#3fa34d\" stroke=\"#fff\" stroke-width=\"1.4\"/><circle cx=\"-4\" cy=\"1\" r=\"1.4\" fill=\"#fff\" opacity=\".6\"/></g></g>`:''}`;
+  const car=svg.querySelector('.jcar');const mks=[...svg.querySelectorAll('.jk')],lmEls=[...svg.querySelectorAll('.jlm')],stopEls=[...svg.querySelectorAll('.jstop')];
   const W=()=>host.clientWidth,H=()=>host.clientHeight;
   /* 視角:先框住當天的點(或整座島) */
   const fitView=()=>{let bx,by,minW=140,minH=90,k1=1.38,k2=1.5;
@@ -87,7 +86,11 @@ function JMap(host,o){
     else{bx=[Math.min(...P.map(p=>p[0])),Math.max(...P.map(p=>p[0]))];by=[Math.min(...P.map(p=>p[1])),Math.max(...P.map(p=>p[1]))]}
     const bw=Math.max(bx[1]-bx[0],minW)*k1,bh=Math.max(by[1]-by[0],minH)*k2;
     return{cx:(bx[0]+bx[1])/2,cy:(by[0]+by[1])/2,ppu:Math.min(W()/bw,H()/bh,3.4)}};
-  let v={cx:0,cy:0,ppu:1},touched=false,basePpu=1;const MINP=.3,MAXP=9;
+  let v={cx:0,cy:0,ppu:1},touched=false,basePpu=1;
+  let carU=o.active||0,carTk=0;
+  const carAt=u=>{if(!car||!SEG.length)return;const si=Math.max(0,Math.min(SEG.length-1,Math.floor(u))),tt=Math.max(0,Math.min(1,u-si)),[A,C,B]=SEG[si],w=1-tt,
+    x=w*w*A[0]+2*w*tt*C[0]+tt*tt*B[0],y=w*w*A[1]+2*w*tt*C[1]+tt*tt*B[1];car.dataset.x=x;car.dataset.y=y;car.setAttribute('transform',`translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${(1/v.ppu).toFixed(4)})`)};
+  carAt(carU);const MINP=.3,MAXP=9;
   const setTouched=t=>{if(touched!==t){touched=t;if(api&&api.onTouched)api.onTouched(t)}};
   function apply(full=true){const w=W(),h=H();if(w<10||h<10)return;
     v.cx=Math.max(ISLAND_BOX.x[0]-80,Math.min(ISLAND_BOX.x[1]+80,v.cx));v.cy=Math.max(ISLAND_BOX.y[0]-80,Math.min(ISLAND_BOX.y[1]+80,v.cy));
@@ -128,8 +131,12 @@ function JMap(host,o){
   const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply();if(k<1)requestAnimationFrame(s)})(t0)};
   const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{const t=fitView();t.ppu*=zoomBias;basePpu=t.ppu;fly(t);setTouched(false)},
     focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,onTap:null,onTouched:null,
-    setActive:i=>stopEls.forEach(g=>{const on=+g.dataset.i===i;g.classList.toggle('on',on);if(on){const p=g.querySelector('.jp');if(p)p.style.display=''}}),
-    destroy:()=>{ro.disconnect();flying++;cancelAnimationFrame(raf);clearTimeout(idleT);svg.remove()}};
+    setActive:i=>{api.setActive0(i);api.driveTo(i)},
+    /* 橘子沿著道路滾到第 i 站(只在換站時動 0.3~0.9 秒) */
+    driveTo:i=>{if(!car||!SEG.length)return;const from=carU,to=i;if(from===to)return;const t0=performance.now(),dur=Math.min(900,320+140*Math.abs(to-from)),tk=++carTk;
+      (function st(n){if(tk!==carTk)return;const k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3);carU=from+(to-from)*e;carAt(carU);if(k<1)requestAnimationFrame(st)})(t0)},
+    setActive0:i=>stopEls.forEach(g=>{const on=+g.dataset.i===i;g.classList.toggle('on',on);if(on){const p=g.querySelector('.jp');if(p)p.style.display=''}}),
+    destroy:()=>{carTk++;ro.disconnect();flying++;cancelAnimationFrame(raf);clearTimeout(idleT);svg.remove()}};
   if(interactive){
     const ptr=new Map();let moved=0,downEl=null,start=[0,0],mode='';
     svg.addEventListener('pointerdown',e=>{try{svg.setPointerCapture(e.pointerId)}catch(_){}ptr.set(e.pointerId,[e.clientX,e.clientY]);if(ptr.size===1){moved=0;mode='';start=[e.clientX,e.clientY]}else mode='map';downEl=document.elementFromPoint(e.clientX,e.clientY);flying++});

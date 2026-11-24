@@ -38,7 +38,7 @@ const G={
 };
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ph=(i,h)=>`<div class="gf-ph" style="background:${i.bg||'#f1e4d0'};${h?'height:'+h+'px;':''}"><span>${i.e}</span><img src="img/gift/${i.id}.webp" alt="" loading="lazy" onerror="this.remove()"></div>`;
-const card=i=>`<div class="gf-c">${ph(i)}<div class="gf-t"><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small><p>${esc(i.w)}</p>${i.rec?`<button type="button" class="gf-recbtn" data-id="${i.id}">👍 推薦品項</button>`:''}${i.tag?`<em>${esc(i.tag)}</em>`:''}</div></div>`;
+const card=i=>`<div class="gf-c">${ph(i)}<div class="gf-t"><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small><p>${esc(i.w)}</p>${i.tag?`<em>${esc(i.tag)}</em>`:''}<button type="button" class="gf-recbtn${i.rec?'':' plain'}" data-id="${i.id}">${i.rec?'👍 推薦品項':'ℹ️ 詳細資訊'}</button></div></div>`;
 const TABS=[
  {k:'buy',n:'濟州必買',h:()=>`<div class="gf-note">液體超過 100ml 不能手提上機,橘子汁等請放托運。</div><div class="gf-g">${G.buy.map(card).join('')}</div>`},
  {k:'oy',n:'Olive Young',h:()=>`<div class="gf-box"><b>🛍️ 行程上順路的 3 間分店</b><p>• 東門市場店 <small>관덕로 62-1</small> Day 4 東門市場旁<br>• 易買得新濟州店 1 樓 Day 4 E-mart 裡<br>• 탑동店 <small>탑동로 15-1</small> Day 3 BHC 附近</p></div><div class="gf-note">單筆滿 15,000 韓元可免稅,結帳帶護照。</div><div class="gf-h">🍊 濟州限定<small>全韓 1,300 多間裡,只有濟州 13 間分店才買得到(品牌 Round Around 라운드어라운드)。價格取自 Olive Young 官網與韓國部落格(2026),含折扣,現場為準。</small></div><div class="gf-g">${G.jj.map(card).join('')}</div><div class="gf-h">一般熱銷</div><div class="gf-g">${G.oy.map(card).join('')}</div>`},
@@ -53,9 +53,9 @@ function render(){
 const ALL=()=>[...G.buy,...G.jj,...G.oy];
 document.addEventListener('click',e=>{
   const b=e.target.closest('.gf-recbtn');
-  if(b){const i=ALL().find(x=>x.id===b.dataset.id);if(!i||!i.rec)return;
+  if(b){const i=ALL().find(x=>x.id===b.dataset.id);if(!i)return;
     const ov=document.createElement('div');ov.className='gf-pop';
-    ov.innerHTML=`<div class="gf-pb"><button class="gf-px" aria-label="關閉">✕</button><div class="gf-pt">${ph(i,110)}<div><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small></div></div><h4>👍 推薦品項</h4><ul>${i.rec.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`;
+    ov.innerHTML=`<div class="gf-pb"><button class="gf-px" aria-label="關閉">✕</button><div class="gf-pt">${ph(i,110)}<div><b>${esc(i.zh)}</b><small>${esc(i.ko)}</small></div></div><h4>📍 哪裡買 / 資訊</h4><p class="gf-pw">${esc(i.w)}</p>${i.tag?`<p class="gf-ptag">${esc(i.tag)}</p>`:''}${i.rec?`<h4>👍 推薦品項</h4><ul>${i.rec.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}</div>`;
     ov.onclick=ev=>{if(ev.target===ov||ev.target.closest('.gf-px'))ov.remove()};document.body.appendChild(ov);return}
 });
 document.addEventListener('click',e=>{const x=e.target.closest('.gf-seg button');if(!x)return;cur=+x.dataset.i;render();const p=document.getElementById('p-gift');if(p)p.scrollTop=0});
