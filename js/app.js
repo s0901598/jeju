@@ -357,6 +357,10 @@ pager.addEventListener('scroll',()=>{
   const on=tabsEl.children[i];if(on)tabsEl.scrollTo({left:on.offsetLeft-tabsEl.clientWidth/2+on.offsetWidth/2,behavior:'smooth'});
 },{passive:true});
 navEl.classList.add('off');
+/* 任何一頁只要完全離開畫面(不管是滑走、點頁籤跳過去、還是一次跳好幾頁),就立刻回到最上方,下次看到都是從頭開始 */
+{const seen=new Set();const io=new IntersectionObserver(es=>es.forEach(en=>{const pg=en.target;
+  if(en.isIntersecting){seen.add(pg)}else if(seen.has(pg)){seen.delete(pg);resetPage(pg)}}),{root:pager,threshold:0});
+ pages.forEach(pg=>{if(pg.classList.contains('pg'))io.observe(pg)})}
 
 /* 電腦用:方向鍵、滑鼠拖曳也能翻頁(手機本來就能用手指滑) */
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
