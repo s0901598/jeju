@@ -858,7 +858,7 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .pnr .al{width:62px;font-size:13px;font-weight:800;color:var(--navy)}
 .pnr .cd{flex:1;font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:800;letter-spacing:.12em;color:#16395a}
 .pnr .bt{border:1.5px solid rgba(255,138,31,.6);background:#fff;color:var(--orange-d);border-radius:999px;font-size:12px;font-weight:800;padding:6px 10px;text-decoration:none;font-family:inherit;cursor:pointer}
-.pnr .bt.go{background:var(--orange);color:#fff;border-color:transparent}
+.pnr .bt.pgo{background:var(--orange);color:#fff;border-color:transparent}
 [data-theme=dark] .pnr{background:rgba(255,255,255,.07)}[data-theme=dark] .pnr h4,[data-theme=dark] .pnr .al,[data-theme=dark] .pnr .cd{color:#eaf3fb}
 
 /* ===== 每日地圖:黑色道路 + 白色虛線中線,橘子沿路滾動;景點依類別上色、標編號 ===== */

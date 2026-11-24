@@ -269,7 +269,7 @@ const tBar=(pi,li)=>{const l=TK.legs[li];return l.bar?`<img src="${l.bar}" alt="
 let TK=null,txPax=0;
 function txRender(){
   const T=TK,P=T.pax[txPax];
-  const PN=(T.pnr&&T.pnr.length)?`<div class="pnr"><h4>🎫 訂位代號 · 查詢開票狀態</h4><p class="s">到航空公司官網輸入「訂位代號 + 旅客英文姓名」,就能確認機票是否開票成功。</p><div class="who">${T.pax.map(escT).join('、')}</div>${T.pnr.map(r=>`<div class="row"><span class="al">${escT(r.al)}</span><span class="cd">${escT(r.code)}</span><button type="button" class="bt pnr-cp" data-copy="${escT(r.code)}">複製</button><a class="bt go" href="${escT(r.url)}" target="_blank" rel="noopener">查詢 ›</a></div>`).join('')}</div>`:'';
+  const PN=(T.pnr&&T.pnr.length)?`<div class="pnr"><h4>🎫 訂位代號 · 查詢開票狀態</h4><p class="s">到航空公司官網輸入「訂位代號 + 旅客英文姓名」,就能確認機票是否開票成功。</p><div class="who">${T.pax.map(escT).join('、')}</div>${T.pnr.map(r=>`<div class="row"><span class="al">${escT(r.al)}</span><span class="cd">${escT(r.code)}</span><button type="button" class="bt pnr-cp" data-copy="${escT(r.code)}">複製</button><a class="bt pgo" href="${escT(r.url)}" target="_blank" rel="noopener">查詢 ›</a></div>`).join('')}</div>`:'';
   tix.innerHTML=PN+`<div class="tx-seg fl-seg">${T.pax.map((p,i)=>`<button type="button" data-p="${i}" class="${i===txPax?'on':''}"><b>${escT(p)}</b><small>旅客 ${i+1}</small></button>`).join('')}</div>
   <div class="tx-cnt">這組代碼共 ${T.pax.length} 位旅客,每人 ${T.legs.length} 張(去程、回程)</div>
   <div class="tx-tip">📱 登機前先打開這頁,把螢幕亮度調高,櫃檯或登機口出示 QR code 或條碼給機組人員掃描。</div>
