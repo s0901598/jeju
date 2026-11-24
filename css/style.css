@@ -865,9 +865,9 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .jm .road{stroke:#222a33;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
 .jm .seg{stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-dasharray:5 6}
 .jm .jf{transform-box:fill-box;transform-origin:center}
-.jm .jstop.on .jf{transform:scale(1.35)}
+.jm .jstop.on .jf{transform:none}
 .jm .jstop .jring,.jm .jstop.on .jring{animation:none}
-.jm .jstop .jring{opacity:0}.jm .jstop.on .jring{opacity:.9}
+.jm .jstop .jring,.jm .jstop.on .jring,.day .jstop.on .jring{opacity:0}
 
 /* ===== 伴手禮:每一塊一樣大(文字超過就收起來,完整內容放在「推薦/詳細」彈窗) ===== */
 .gf-g{grid-auto-rows:1fr}
@@ -888,7 +888,7 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 /* ===== 匯率計算機:點金額欄才彈出小算盤(加減乘除) ===== */
 .fxc .fx-r.in{align-items:stretch;cursor:pointer}
 .fxc .fx-r.in.act{box-shadow:0 0 0 2px var(--orange)}
-.fxc .fx-d{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:right}
+.fxc .fx-d{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:left}
 .fxc .fx-ex{min-height:20px;font-size:14px;color:var(--muted);overflow-x:auto;white-space:nowrap;font-weight:600;scrollbar-width:none}
 .fxc .fx-d output{font-size:34px;font-weight:800;line-height:1.15;overflow-x:auto;white-space:nowrap;color:inherit;scrollbar-width:none}
 .fxc .fx-r.in select{align-self:center}

@@ -54,9 +54,9 @@ function JMap(host,o){
   const stops=points.map((s,i)=>{const w=s.name.length*12+14,t=TYPE[s.ty]||TYPE.spot;
     const fc='#1f4b7a';   // 每日地圖:所有景點同一個顏色(深藍),用編號區分
     const face=badge==='letter'
-      ?`<g class="jf"><circle r="13" fill="${fc}" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${i+1}</text></g>`
+      ?`<g class="jf"><circle r="9" fill="${fc}" stroke="#fff" stroke-width="2"/></g>`
       :`<circle r="12" fill="${t[1]}" stroke="#fff" stroke-width="2.2"/><text y="4.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${t[2]}</text>`;
-    return `<g class="jk jstop${i===o.active?' on':''}" data-i="${i}" data-x="${P[i][0].toFixed(1)}" data-y="${P[i][1].toFixed(1)}" data-pw="${w}" data-r="14">
+    return `<g class="jk jstop${i===o.active?' on':''}" data-i="${i}" data-x="${P[i][0].toFixed(1)}" data-y="${P[i][1].toFixed(1)}" data-pw="${w}" data-r="11">
      <line class="jl" x1="0" y1="0" x2="0" y2="0" stroke="#fff" stroke-width="2.4" stroke-linecap="round" display="none"/><circle class="jd" r="3.2" fill="#ff8a1f" stroke="#fff" stroke-width="1.6" display="none"/>
      <g class="jo"><circle class="jring" r="19" fill="none" stroke="${fc}" stroke-width="3"/>
      <g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${s.name}</text></g>${face}</g></g>`}).join('');
@@ -77,7 +77,7 @@ function JMap(host,o){
    <ellipse cx="${wx(126.952)}" cy="${wy(33.503)}" rx="13" ry="9" fill="url(#${id}land)" stroke="var(--shore)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
    ${MOUNTAIN}
    ${segs}
-   <g>${lms}</g><g>${stops}</g>${route&&SEG.length?`<g class=\"jk jcar\" data-x=\"0\" data-y=\"0\" data-rot=\"0\"><g class=\"jcb\"><ellipse cx=\"1\" cy=\"11\" rx=\"10\" ry=\"3\" fill=\"rgba(0,0,0,.25)\"/><circle r=\"12\" fill=\"#ff9a1f\" stroke=\"#fff\" stroke-width=\"2.4\"/><path d=\"M-6,-5 Q-1,-9 5,-6\" stroke=\"#ffd48a\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M0,-12 Q2,-19 9,-17 Q7,-11 0,-12Z\" fill=\"#3fa34d\" stroke=\"#fff\" stroke-width=\"1.4\"/><circle cx=\"-4\" cy=\"1\" r=\"1.4\" fill=\"#fff\" opacity=\".6\"/></g></g>`:''}`;
+   <g>${lms}</g><g>${stops}</g>${route&&SEG.length?`<g class=\"jk jcar\" data-x=\"0\" data-y=\"0\" data-rot=\"0\"><g class=\"jcb\" transform=\"scale(.83)\"><ellipse cx=\"1\" cy=\"11\" rx=\"10\" ry=\"3\" fill=\"rgba(0,0,0,.25)\"/><circle r=\"12\" fill=\"#ff9a1f\"/><path d=\"M-6,-5 Q-1,-9 5,-6\" stroke=\"#ffd48a\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M0,-12 Q2,-19 9,-17 Q7,-11 0,-12Z\" fill=\"#3fa34d\"/><circle cx=\"-4\" cy=\"1\" r=\"1.4\" fill=\"#fff\" opacity=\".6\"/></g></g>`:''}`;
   const car=svg.querySelector('.jcar');const mks=[...svg.querySelectorAll('.jk')],lmEls=[...svg.querySelectorAll('.jlm')],stopEls=[...svg.querySelectorAll('.jstop')];
   const W=()=>host.clientWidth,H=()=>host.clientHeight;
   /* 視角:先框住當天的點(或整座島) */
