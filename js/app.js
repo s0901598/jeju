@@ -301,7 +301,9 @@ function txOpen(li){
 tix.addEventListener('click',e=>{
   const s=e.target.closest('.tx-seg button');if(s){txPax=+s.dataset.p;txRender();return}
   const c=e.target.closest('.tb');if(c)txOpen(+c.dataset.l)});
-function lockSlots(){TK=null;slots.style.display='';tix.innerHTML='';slots.innerHTML='<div><b>🔒</b>旅客 1</div><div><b>🔒</b>旅客 2</div>';relink.style.display='none';tkBox.classList.remove('unlocked');tkBox.scrollIntoView({block:'start',behavior:'smooth'});setTimeout(()=>codeIn.focus(),350)}
+function lockSlots(){TK=null;slots.style.display='';tix.innerHTML='';slots.innerHTML='<div><b>🔒</b>旅客 1</div><div><b>🔒</b>旅客 2</div>';relink.style.display='none';tkBox.classList.remove('unlocked');const pgv=tkBox.closest('.pg');   // 內容變短後,捲動位置要馬上拉回有內容的地方(不用平滑捲動,避免手機上停在空白處)
+  const fixScroll=()=>{if(!pgv)return;const mx=Math.max(0,pgv.scrollHeight-pgv.clientHeight),want=pgv.scrollTop+tkBox.getBoundingClientRect().top-pgv.getBoundingClientRect().top-70;pgv.scrollTo({top:Math.max(0,Math.min(mx,want)),behavior:'instant'})};
+  fixScroll();requestAnimationFrame(fixScroll);setTimeout(fixScroll,120);setTimeout(()=>codeIn.focus({preventScroll:true}),150)}
 const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function tixDecrypt(code){
   if(!code||!window.TICKET_BLOBS||!window.crypto||!crypto.subtle)return null;
