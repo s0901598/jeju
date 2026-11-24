@@ -774,3 +774,9 @@ html,body{touch-action:manipulation}
 /* 修正跑版:頁面寬度不被內容撐開(名字較長的卡片,例如 Camelia Forest 山茶花森林,會讓整頁比螢幕寬) */
 .pg,.pg .body,.cards,.card,.card .cb{min-width:0}
 .pg{max-width:100%}
+
+.gf-h{font-weight:800;font-size:15px;color:var(--navy);margin:14px 2px 8px;line-height:1.4}
+.gf-h small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.5}
+
+/* 滑動順暢:看不到的頁面、正在滑動時,暫停循環動畫 */
+.pg.off *,.pg.off *::before,.pg.off *::after,.pg.sc *,.pg.sc *::before,.pg.sc *::after,body.pscroll .pg *,body.pscroll .pg *::before,body.pscroll .pg *::after{animation-play-state:paused!important}

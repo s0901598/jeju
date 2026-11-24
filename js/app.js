@@ -71,21 +71,20 @@ function cardPager(cards){
     go(idx)};
   cards.addEventListener('pointerup',end);cards.addEventListener('pointercancel',end);
   cards.addEventListener('click',e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
-  /* 手指(iPhone):保留原生捲動的跟手感,但放開時立刻煞停慣性,最多只翻一張,不會衝到最後一張 */
+  /* 手指(iPhone):用瀏覽器原生捲動(最順),只在「慣性快要衝過一張以上」時才煞車,最多翻前後一張 */
   if(window.matchMedia&&matchMedia('(pointer:coarse)').matches){
-    let tStart=0,tTop=0,tY0=0,tY=0,tT0=0,tOn=false,rt=null;
+    let base=0,mom=false,braked=false,idle=null,rt=null;
     cards.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;clearTimeout(rt);cards.style.overflowY='';cards.style.scrollBehavior='';
-      tOn=true;tTop=cards.scrollTop;tY0=tY=e.touches[0].clientY;tT0=performance.now()},{passive:true});
-    cards.addEventListener('touchmove',e=>{if(tOn&&e.touches[0])tY=e.touches[0].clientY},{passive:true});
-    const tEnd=()=>{if(!tOn)return;tOn=false;
-      const dy=tY-tY0;if(Math.abs(dy)<8&&Math.abs(cards.scrollTop-tTop)<8)return;           // 單純點一下,不處理
-      const v=dy/Math.max(1,performance.now()-tT0),base=Math.round(tTop/PITCH);          // 向上滑 v 為負
-      let idx=Math.abs(v)>0.35?base+(v<0?1:-1):Math.round(cards.scrollTop/PITCH);
-      idx=Math.max(base-1,Math.min(base+1,idx));idx=Math.max(0,Math.min(n()-1,idx));
-      cards.style.overflowY='hidden';                                                       // 立刻煞停慣性
-      cards.scrollTo({top:idx*PITCH,behavior:'smooth'});
-      clearTimeout(rt);rt=setTimeout(()=>{cards.style.overflowY='';cards.style.scrollBehavior=''},450)};
-    cards.addEventListener('touchend',tEnd,{passive:true});cards.addEventListener('touchcancel',tEnd,{passive:true})}
+      base=Math.round(cards.scrollTop/PITCH);mom=false;braked=false},{passive:true});
+    const lift=()=>{mom=true};
+    cards.addEventListener('touchend',lift,{passive:true});cards.addEventListener('touchcancel',lift,{passive:true});
+    cards.addEventListener('scroll',()=>{
+      clearTimeout(idle);idle=setTimeout(()=>{mom=false;braked=false},180);
+      if(!mom||braked)return;
+      if(Math.abs(cards.scrollTop-base*PITCH)>PITCH*1.02){            // 放手後還要飛超過一張 → 煞車,停在前/後一張
+        braked=true;const to=Math.max(0,Math.min(n()-1,base+(cards.scrollTop>base*PITCH?1:-1)));
+        cards.style.overflowY='hidden';cards.scrollTo({top:to*PITCH,behavior:'smooth'});
+        clearTimeout(rt);rt=setTimeout(()=>{cards.style.overflowY='';cards.style.scrollBehavior=''},450)}},{passive:true})}
   /* 電腦滾輪 / 觸控板:一次滾動手勢只翻一張 */
   let lock=false,lt=0;
   cards.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;e.preventDefault();
@@ -300,18 +299,26 @@ async function tryCode(code,silent){
   if(!(window.crypto&&crypto.subtle)){if(!silent)msg.textContent='這個瀏覽器不支援解鎖,請改用最新版 Safari 或 Chrome';return false}
   tryBusy=true;if(!silent)msg.textContent='解鎖中…';
   const T=await tixDecrypt(code);tryBusy=false;
-  if(T){TK=T;slots.style.display='none';txPax=0;txRender();msg.textContent='';store.set('jeju-code',code);relink.style.display='block';return true}
+  if(T){TK=T;slots.style.display='none';txPax=0;txRender();msg.textContent='';codeIn.value='';store.set('jeju-code',code);relink.style.display='block';return true}
   if(!silent)msg.textContent='找不到這組代碼,請再確認';
   return false;}
 $('#codeBtn').onclick=()=>tryCode(codeIn.value);
 codeIn.addEventListener('keydown',e=>{if(e.key==='Enter')tryCode(codeIn.value)});
 relink.onclick=()=>{store.del('jeju-code');codeIn.value='';msg.textContent='';lockSlots()};
+/* 看不到的頁面、正在滑動的頁面,暫停地圖路線與時間軸的循環動畫(它們每一格畫面都在重新排版,會跟捲動搶效能) */
+{const pgs=[...pager.children].filter(q=>q.classList.contains('pg'));
+ const mark=()=>{const i=Math.round(pager.scrollLeft/(pager.clientWidth||1));pgs.forEach((q,k)=>q.classList.toggle('off',k!==i))};
+ mark();addEventListener('resize',mark);
+ let pt;pager.addEventListener('scroll',()=>{document.body.classList.add('pscroll');clearTimeout(pt);pt=setTimeout(()=>{document.body.classList.remove('pscroll');mark()},150)},{passive:true});
+ pgs.forEach(q=>{const c=q.querySelector('.cards');if(!c)return;let t;const on=()=>{q.classList.add('sc');clearTimeout(t);t=setTimeout(()=>q.classList.remove('sc'),220)};
+   c.addEventListener('scroll',on,{passive:true});c.addEventListener('touchstart',on,{passive:true})})}
+
 /* 航班日期頁籤:切換 2/7~2/10 與 2/8~2/11 */
 document.querySelectorAll('#flSeg button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#flSeg button').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});
   $('#flA').hidden=b.dataset.g!=='a';$('#flB').hidden=b.dataset.g!=='b';
 });
-lockSlots();{const saved=store.get('jeju-code');if(saved){codeIn.value=saved;tryCode(saved,true)}}
+lockSlots();{const saved=store.get('jeju-code');if(saved){tryCode(saved,true).then(ok=>{if(!ok)store.del('jeju-code')})}}   // 不再把存起來的代碼填進輸入框;失效的代碼直接清掉
 
 /* ---------- 頁籤 + 翻頁橘子 ---------- */
 const pages=[...pager.children];
