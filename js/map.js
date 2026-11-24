@@ -104,7 +104,7 @@ function JMap(host,o){
     /* 標籤自動避開:先排行程點,再依重要程度排地標;放不下的地標就先隱藏 */
     const sx=g=>(+g.dataset.x-v.cx)*v.ppu+w/2+(+g.dataset.ox||0),sy=g=>(+g.dataset.y-v.cy)*v.ppu+h/2+(+g.dataset.oy||0),placed=[];
     /* 每日地圖:徽章靠太近就推開(約 34px),用細線連回真正位置;總覽地圖不動 */
-    if(route){const bx=stopEls.map(g=>(+g.dataset.x-v.cx)*v.ppu+w/2),by=stopEls.map(g=>(+g.dataset.y-v.cy)*v.ppu+h/2),qx=bx.slice(),qy=by.slice(),MD=21;
+    if(route){const bx=stopEls.map(g=>(+g.dataset.x-v.cx)*v.ppu+w/2),by=stopEls.map(g=>(+g.dataset.y-v.cy)*v.ppu+h/2),qx=bx.slice(),qy=by.slice(),MD=0;
      for(let it=0;it<40;it++){let mv=false;for(let i=0;i<qx.length;i++)for(let j=i+1;j<qx.length;j++){let dx=qx[j]-qx[i],dy=qy[j]-qy[i],d=Math.hypot(dx,dy);
        if(d<MD){if(d<.5){dx=Math.cos(i*2.4+j);dy=Math.sin(i*2.4+j);d=1}const k=(MD-d)/2/d;qx[i]-=dx*k;qy[i]-=dy*k;qx[j]+=dx*k;qy[j]+=dy*k;mv=true}}if(!mv)break}
      stopEls.forEach((g,i)=>{const ox=qx[i]-bx[i],oy=qy[i]-by[i],mv=Math.hypot(ox,oy)>1.5;g.dataset.ox=mv?ox:0;g.dataset.oy=mv?oy:0;
@@ -130,7 +130,7 @@ function JMap(host,o){
   const ro=new ResizeObserver(()=>{if(!touched)refit();else apply()});ro.observe(host);refit();
   const zoomAt=(px,py,f)=>{setTouched(true);const w=W(),h=H(),X=v.cx+(px-w/2)/v.ppu,Y=v.cy+(py-h/2)/v.ppu;v.ppu=Math.max(MINP,Math.min(MAXP,v.ppu*f));v.cx=X-(px-w/2)/v.ppu;v.cy=Y-(py-h/2)/v.ppu;sched(true)};
   let flying=0;
-  const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=1-Math.pow(1-k,3);v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply(k>=1);if(k<1)requestAnimationFrame(s)})(t0)};
+  const fly=(t,ms=450)=>{const a={...v},t0=performance.now(),tk=++flying;(function s(n){if(tk!==flying)return;const k=Math.min(1,(n-t0)/ms),e=(1-Math.cos(Math.PI*k))/2;v.cx=a.cx+(t.cx-a.cx)*e;v.cy=a.cy+(t.cy-a.cy)*e;v.ppu=a.ppu*Math.pow(t.ppu/a.ppu,e);apply(k>=1);if(k<1)requestAnimationFrame(s)})(t0)};
   const api={zoom:f=>zoomAt(W()/2,H()/2,f),home:()=>{const t=fitView();t.ppu*=zoomBias;basePpu=t.ppu;fly(t);setTouched(false)},
     focus:i=>fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,2.6)}),onStop:null,onTap:null,onTouched:null,
     setActive:i=>{api.setActive0(i);api.driveTo(i)},
@@ -138,7 +138,7 @@ function JMap(host,o){
     panTo:i=>{if(!P[i])return;fly({cx:P[i][0],cy:P[i][1],ppu:Math.max(v.ppu,Math.min(basePpu*1.8,3.4))},520)},
     /* 橘子沿著道路滾到第 i 站(只在換站時動 0.3~0.9 秒) */
     driveTo:i=>{if(!car||!SEG.length)return;const from=carU,to=i;if(from===to)return;const t0=performance.now(),dur=Math.min(900,320+140*Math.abs(to-from)),tk=++carTk;
-      (function st(n){if(tk!==carTk)return;const k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3);carU=from+(to-from)*e;carAt(carU);if(k<1)requestAnimationFrame(st)})(t0)},
+      (function st(n){if(tk!==carTk)return;const k=Math.min(1,(n-t0)/dur),e=(1-Math.cos(Math.PI*k))/2;carU=from+(to-from)*e;carAt(carU);if(k<1)requestAnimationFrame(st)})(t0)},
     setActive0:i=>stopEls.forEach(g=>{const on=+g.dataset.i===i;g.classList.toggle('on',on);if(on){g.parentNode.appendChild(g);const p=g.querySelector('.jp');if(p)p.style.display=''}}),
     destroy:()=>{carTk++;ro.disconnect();flying++;cancelAnimationFrame(raf);clearTimeout(idleT);svg.remove()}};
   if(interactive){
