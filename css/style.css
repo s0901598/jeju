@@ -907,3 +907,7 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 
 .day .map,.day .map *{touch-action:none}
 .day .map{overscroll-behavior:none}
+
+/* 目前這一站的名稱標籤:橘底白字(其他站維持白底黑字) */
+.jm .jstop.on .jp rect{fill:#f0720c}
+.jm .jstop.on .jp text{fill:#fff}

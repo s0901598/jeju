@@ -52,7 +52,7 @@ function JMap(host,o){
     return `<g class="jk jlm" data-x="${wx(l.lon).toFixed(1)}" data-y="${wy(l.lat).toFixed(1)}" data-lv="${l.lv}" data-pw="${w}" data-r="11"><g class="jp"><rect width="${w}" height="19" rx="9.5"/><text x="${w/2}" y="13.5" text-anchor="middle" font-size="11.5">${l.n}</text></g>
       <circle r="10.5" fill="#fff" stroke="${c}" stroke-width="2.2"/><text y="4.2" text-anchor="middle" font-size="11">${ic}</text></g>`}).join('');
   const stops=points.map((s,i)=>{const w=s.name.length*12+14,t=TYPE[s.ty]||TYPE.spot;
-    const fc=t[1];
+    const fc='#1f4b7a';   // 每日地圖:所有景點同一個顏色(深藍),用編號區分
     const face=badge==='letter'
       ?`<g class="jf"><circle r="13" fill="${fc}" stroke="#fff" stroke-width="2.2"/><text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${i+1}</text></g>`
       :`<circle r="12" fill="${t[1]}" stroke="#fff" stroke-width="2.2"/><text y="4.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${t[2]}</text>`;
@@ -137,7 +137,7 @@ function JMap(host,o){
     /* 橘子沿著道路滾到第 i 站(只在換站時動 0.3~0.9 秒) */
     driveTo:i=>{if(!car||!SEG.length)return;const from=carU,to=i;if(from===to)return;const t0=performance.now(),dur=Math.min(900,320+140*Math.abs(to-from)),tk=++carTk;
       (function st(n){if(tk!==carTk)return;const k=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-k,3);carU=from+(to-from)*e;carAt(carU);if(k<1)requestAnimationFrame(st)})(t0)},
-    setActive0:i=>stopEls.forEach(g=>{const on=+g.dataset.i===i;g.classList.toggle('on',on);if(on){const p=g.querySelector('.jp');if(p)p.style.display=''}}),
+    setActive0:i=>stopEls.forEach(g=>{const on=+g.dataset.i===i;g.classList.toggle('on',on);if(on){g.parentNode.appendChild(g);const p=g.querySelector('.jp');if(p)p.style.display=''}}),
     destroy:()=>{carTk++;ro.disconnect();flying++;cancelAnimationFrame(raf);clearTimeout(idleT);svg.remove()}};
   if(interactive){
     const ptr=new Map();let moved=0,downEl=null,start=[0,0],mode='';
