@@ -9,8 +9,12 @@ const fxComma=v=>{const [i,d]=String(v).split('.');return (i||'').replace(/\B(?=
 const fxSt={from:'KRW',to:'TWD',amt:'10000',expr:'10000',just:true};
 /* 小算盤:支援 + − × ÷(先乘除後加減),不用 eval */
 const fxOps={'+':1,'−':1,'×':2,'÷':2};
+function fxTok(ex){const r=ex.match(/\d+\.?\d*|\.\d+|[+−×÷]/g)||[],t=[];
+  for(let i=0;i<r.length;i++){const k=r[i];
+    if(k==='−'&&(!t.length||fxOps[t[t.length-1]])&&i+1<r.length&&!fxOps[r[i+1]]){t.push('-'+r[++i])}else t.push(k)}
+  return t}
 function fxEval(ex){
-  const t=ex.match(/\d+\.?\d*|\.\d+|[+−×÷]/g)||[];while(t.length&&fxOps[t[t.length-1]])t.pop();   // 結尾是運算符就先忽略
+  const t=fxTok(ex);while(t.length&&fxOps[t[t.length-1]])t.pop();   // 結尾是運算符就先忽略
   if(!t.length)return 0;
   const out=[],st=[];
   for(const k of t){if(fxOps[k]){while(st.length&&fxOps[st[st.length-1]]>=fxOps[k])out.push(st.pop());st.push(k)}else out.push(k)}
@@ -18,12 +22,19 @@ function fxEval(ex){
   const v=[];
   for(const k of out){if(fxOps[k]){const b=v.pop(),a=v.pop();v.push(k==='+'?a+b:k==='−'?a-b:k==='×'?a*b:(b===0?NaN:a/b))}else v.push(parseFloat(k))}
   return v.pop()}
-const fxShow=ex=>ex.replace(/\d+\.?\d*|\.\d+/g,n=>{const [i,d]=n.split('.');return fxComma(i||'0')+(d!==undefined?'.'+d:'')}).replace(/([+−×÷])/g,' $1 ');
+const fxNum=n=>{const neg=n[0]==='-'?'−':'',m=neg?n.slice(1):n,[i,d]=m.split('.');return neg+fxComma(i||'0')+(d!==undefined?'.'+d:'')};
+const fxShow=ex=>fxTok(ex).map(k=>fxOps[k]?' '+k+' ':fxNum(k)).join('').trim();
 function fxKey(k){
   let e=fxSt.expr;const last=e.slice(-1),num=(e.match(/[\d.]+$/)||[''])[0];
   if(k==='AC'){e='';fxSt.just=false}
   else if(k==='⌫'){e=e.slice(0,-1);fxSt.just=false}
-  else if(k==='='){const v=fxEval(e);if(isFinite(v)){e=String(Math.round(v*100)/100);fxSt.just=true}}
+  else if(k==='±'){const m=e.match(/(−?)([\d.]+)$/);
+    if(!m){if(!e||fxOps[last])e+='−';else if(last==='−'&&(e.length===1||fxOps[e.slice(-2,-1)]))e=e.slice(0,-1)}
+    else{const before=e.slice(0,e.length-m[0].length),un=m[1]&&(!before||fxOps[before.slice(-1)]);
+      if(un)e=before+m[2];else e=e.slice(0,e.length-m[2].length)+'−'+m[2]}
+    fxSt.just=false}
+  else if(k==='%'){if(num){const v=parseFloat(num)/100;e=e.slice(0,e.length-num.length)+String(+v.toPrecision(12));fxSt.just=false}}
+  else if(k==='='){const v=fxEval(e);if(isFinite(v)){e=String(Math.round(v*100)/100).replace('-','−');fxSt.just=true}}
   else if(fxOps[k]){if(!e){e='0'+k}else if(fxOps[last])e=e.slice(0,-1)+k;else e+=k;fxSt.just=false}
   else{   // 數字、00、.
     if(fxSt.just&&!fxOps[last]){e='';fxSt.just=false}
@@ -50,11 +61,10 @@ function fxCard(){
     <div class="fx-all" id="fxAll"></div>
    </div>
    <div class="fx-padw" id="fxPadW"><div class="fx-padh"><span>🧮 小算盤</span><button type="button" id="fxDone">完成 ▾</button></div>
-    <div class="fx-ops" id="fxOps">${['÷','×','−','+','='].map(k=>`<button type="button" data-k="${k}" class="${k==='='?'eq':'op'}">${k}</button>`).join('')}</div>
-    <div class="fx-pad" id="fxPad">${['AC','⌫','⇅','7','8','9','4','5','6','1','2','3','0','00','.'].map(k=>`<button type="button" data-k="${k}" class="${/AC|⌫|⇅/.test(k)?'fn':''}">${k}</button>`).join('')}</div></div></div>`}
+    <div class="fx-pad" id="fxPad">${[['AC','fn'],['±','fn'],['%','fn'],['÷','op'],['7'],['8'],['9'],['×','op'],['4'],['5'],['6'],['−','op'],['1'],['2'],['3'],['+','op'],['close','fn ic'],['0'],['.'],['=','op']].map(([k,c])=>`<button type="button" data-k="${k}" class="${c||''}" ${k==='close'?'aria-label="收起小算盤"':''}>${k==='close'?'<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="5" y="2.5" width="14" height="19" rx="3"/><rect x="7.5" y="5" width="9" height="4" rx="1" fill="#6b6b6b"/><g fill="#6b6b6b"><circle cx="8.5" cy="12.5" r="1.1"/><circle cx="12" cy="12.5" r="1.1"/><circle cx="15.5" cy="12.5" r="1.1"/><circle cx="8.5" cy="16" r="1.1"/><circle cx="12" cy="16" r="1.1"/><circle cx="15.5" cy="16" r="1.1"/><circle cx="8.5" cy="19" r="1.1"/><circle cx="12" cy="19" r="1.1"/><circle cx="15.5" cy="19" r="1.1"/></g></svg>':k}</button>`).join('')}</div></div></div></div>`}
 const fxR=n=>n>=100?Math.round(n).toLocaleString('en-US'):n>=1?n.toFixed(n>=10?1:2):n.toPrecision(3);
 function fxUpdate(){
-  const v=fxEval(fxSt.expr),a=isFinite(v)?v:0,{from:f,to:t}=fxSt,hasOp=/[+−×÷]/.test(fxSt.expr);fxSt.amt=String(a);
+  const v=fxEval(fxSt.expr),a=isFinite(v)?v:0,{from:f,to:t}=fxSt,hasOp=fxTok(fxSt.expr).some(k=>fxOps[k]);fxSt.amt=String(a);
   document.getElementById('fxEx').textContent=hasOp?fxShow(fxSt.expr):'';
   {const ex=document.getElementById('fxEx');ex.scrollLeft=ex.scrollWidth}
   document.getElementById('fxAmt').textContent=!isFinite(v)?'—':hasOp?fxFmt(a,f):(fxShow(fxSt.expr)||'0');
@@ -77,8 +87,8 @@ function openFx(){
   $('fxIn').addEventListener('click',e=>{if(e.target.closest('select'))return;openPad()});
   $('fxIn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPad()}});
   $('fxDone').onclick=closePad;
-  const press=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.k==='⇅'){$('fxSw').click();return}fxKey(b.dataset.k)};
-  $('fxPad').onclick=press;$('fxOps').onclick=press;
+  const press=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.k==='close'){closePad();return}fxKey(b.dataset.k)};
+  $('fxPad').onclick=press;
   $('fxFrom').onchange=e=>{fxSt.from=e.target.value;fxUpdate()};
   $('fxTo').onchange=e=>{fxSt.to=e.target.value;fxUpdate()};
   $('fxSw').onclick=()=>{[fxSt.from,fxSt.to]=[fxSt.to,fxSt.from];$('fxFrom').value=fxSt.from;$('fxTo').value=fxSt.to;fxUpdate()};

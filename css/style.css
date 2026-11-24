@@ -911,3 +911,32 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 /* 目前這一站的名稱標籤:橘底白字(其他站維持白底黑字) */
 .jm .jstop.on .jp rect{fill:#f0720c}
 .jm .jstop.on .jp text{fill:#fff}
+
+/* ===== 電子機票:解鎖後隱藏輸入框;日期、時間放大 ===== */
+.ticket.unlocked .field,.ticket.unlocked .msg,.ticket.unlocked>.s{display:none}
+.ticket.unlocked .t{margin-bottom:6px}
+.relink{width:100%;margin-top:6px;padding:13px 0;border-radius:14px;border:1.5px solid rgba(232,112,10,.55);background:#fff;color:var(--orange-d);font-size:16px;font-weight:800;text-decoration:none;font-family:inherit;cursor:pointer}
+.tbt{font-size:20px;font-weight:800;color:#c85a00}
+.tbd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:6px 14px 0;padding:8px 0 2px;border-top:1px dashed rgba(255,138,31,.4)}
+.tbd .tdd{font-size:15px;font-weight:800;color:#16395a;white-space:nowrap}
+.tbd .tdt{font-size:17px;font-weight:800;color:#c85a00;white-space:nowrap}
+.tba{padding:0 14px;font-size:13px;font-weight:700;color:#3f5d76}
+
+/* ===== 匯率小算盤:仿 iPhone 計算機(圓形按鈕、右側橘色運算鍵) ===== */
+.fx-padw{background:#2b2b2d;border-top:0;padding:10px 16px calc(16px + env(safe-area-inset-bottom))}
+.fx-padh{color:#a8a8ad;margin-bottom:8px}.fx-padh button{background:rgba(255,255,255,.12);color:#fff}
+.fx-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;justify-items:center;margin-top:0}
+.fx-padw .fx-pad button{width:100%;max-width:74px;height:auto;aspect-ratio:1;border-radius:50%;border:0;background:#505053;color:#fff;font-size:30px;font-weight:400;display:flex;align-items:center;justify-content:center;padding:0}
+.fx-padw .fx-pad button:active{filter:brightness(1.35)}
+.fx-padw .fx-pad .fn{background:#6c6c70;font-size:26px}
+.fx-padw .fx-pad .ic{background:#505053;color:#fff}
+.fx-padw .fx-pad .op{background:#f59b36;color:#fff;font-size:36px}
+.fx-padw .fx-pad .op:active{background:#ffc27a}
+.fxc.padopen .fx-b{padding-bottom:calc(470px + env(safe-area-inset-bottom))}
+.fx-padh{display:none}
+.fx-padw{padding:12px 18px calc(14px + env(safe-area-inset-bottom))}
+.fx-pad{gap:9px}
+.fx-padw .fx-pad button{max-width:60px;font-size:26px}
+.fx-padw .fx-pad .fn{font-size:22px}
+.fx-padw .fx-pad .op{font-size:32px}
+.fxc.padopen .fx-b{padding-bottom:calc(370px + env(safe-area-inset-bottom))}

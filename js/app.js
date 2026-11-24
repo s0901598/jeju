@@ -256,7 +256,7 @@ $('#checklist').addEventListener('change',e=>{const i=+e.target.dataset.i;e.targ
 
 /* ---------- 機票:輸入代碼(目前只有範例代碼,尚未加密) ---------- */
 const codeIn=$('#code'),msg=$('#codeMsg'),slots=$('#slots'),relink=$('#relink');
-const tix=$('#tix');
+const tix=$('#tix'),tkBox=$('.fc.ticket');
 const escT=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* 沒有真的碼圖時,顯示範例用的假 QR / 條碼(不能掃)。真的碼圖放在加密資料 legs[].qr / bar */
 function sampleQR(seed,n){n=n||25;let s=seed;const r=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;let d='';
@@ -272,14 +272,15 @@ let TK=null,txPax=0;
 function txRender(){
   const T=TK,P=T.pax[txPax];
   const PN=(T.pnr&&T.pnr.length)?`<div class="pnr"><h4>🎫 訂位代號 · 查詢開票狀態</h4><p class="s">到航空公司官網輸入「訂位代號 + 旅客英文姓名」,就能確認機票是否開票成功。</p><div class="who">${T.pax.map(escT).join('、')}</div>${T.pnr.map(r=>`<div class="row"><span class="al">${escT(r.al)}</span><span class="cd">${escT(r.code)}</span><button type="button" class="bt pnr-cp" data-copy="${escT(r.code)}">複製</button><a class="bt pgo" href="${escT(r.url)}" target="_blank" rel="noopener">查詢 ›</a></div>`).join('')}</div>`:'';
-  tix.innerHTML=PN+`<div class="tx-seg fl-seg">${T.pax.map((p,i)=>`<button type="button" data-p="${i}" class="${i===txPax?'on':''}"><b>${escT(p)}</b><small>旅客 ${i+1}</small></button>`).join('')}</div>
+  tix.innerHTML=`<div class="tx-seg fl-seg">${T.pax.map((p,i)=>`<button type="button" data-p="${i}" class="${i===txPax?'on':''}"><b>${escT(p)}</b><small>旅客 ${i+1}</small></button>`).join('')}</div>
   <div class="tx-cnt">這組代碼共 ${T.pax.length} 位旅客,每人 ${T.legs.length} 張(去程、回程)</div>
   <div class="tx-tip">📱 登機前先打開這頁,把螢幕亮度調高,櫃檯或登機口出示 QR code 或條碼給機組人員掃描。</div>
   ${T.legs.map((l,i)=>`<div class="tb" data-l="${i}"><div class="tbh"><span>${l.tag} · ${l.from} → ${l.to}</span><span>${l.flt}</span></div>
    <div class="tbn"><small>PASSENGER</small><b>${escT(P)}</b></div>
-   <div class="tbm"><div><b>${l.from}</b><small>${l.date}</small></div><div class="tbt">✈ ${l.time}</div><div style="text-align:right"><b>${l.to}</b><small>${l.air}</small></div></div>
+   <div class="tbm"><div><b>${l.from}</b></div><div class="tbt">✈</div><div style="text-align:right"><b>${l.to}</b></div></div>
+   <div class="tbd"><span class="tdd">${l.date}</span><span class="tdt">${l.time}</span></div><div class="tba">${l.air}</div>
    <div class="tbc"><div class="tbq">${tQR(txPax,i)}</div><div class="tbb">${tBar(txPax,i)}<small>條碼</small></div></div>
-   <div class="tbs">點一下放大${l.qr?'':' · 目前是範例圖案,不能掃'}</div></div>`).join('')}`;
+   <div class="tbs">點一下放大${l.qr?'':' · 目前是範例圖案,不能掃'}</div></div>`).join('')}`+PN;
 }
 function txOpen(li){
   const T=TK;let cur=li;
@@ -300,7 +301,7 @@ function txOpen(li){
 tix.addEventListener('click',e=>{
   const s=e.target.closest('.tx-seg button');if(s){txPax=+s.dataset.p;txRender();return}
   const c=e.target.closest('.tb');if(c)txOpen(+c.dataset.l)});
-function lockSlots(){TK=null;slots.style.display='';tix.innerHTML='';slots.innerHTML='<div><b>🔒</b>旅客 1</div><div><b>🔒</b>旅客 2</div>';relink.style.display='none'}
+function lockSlots(){TK=null;slots.style.display='';tix.innerHTML='';slots.innerHTML='<div><b>🔒</b>旅客 1</div><div><b>🔒</b>旅客 2</div>';relink.style.display='none';tkBox.classList.remove('unlocked');tkBox.scrollIntoView({block:'start',behavior:'smooth'});setTimeout(()=>codeIn.focus(),350)}
 const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function tixDecrypt(code){
   if(!code||!window.TICKET_BLOBS||!window.crypto||!crypto.subtle)return null;
@@ -320,7 +321,7 @@ async function tryCode(code,silent){
   if(!(window.crypto&&crypto.subtle)){if(!silent)msg.textContent='這個瀏覽器不支援解鎖,請改用最新版 Safari 或 Chrome';return false}
   tryBusy=true;if(!silent)msg.textContent='解鎖中…';
   const T=await tixDecrypt(code);tryBusy=false;
-  if(T){TK=T;slots.style.display='none';txPax=0;txRender();msg.textContent='';codeIn.value='';relink.style.display='block';return true}   // 不把代碼存在手機裡:每次打開都要重新輸入並按「查看」
+  if(T){TK=T;tkBox.classList.add('unlocked');slots.style.display='none';txPax=0;txRender();msg.textContent='';codeIn.value='';relink.style.display='block';return true}   // 不把代碼存在手機裡:每次打開都要重新輸入並按「查看」
   if(!silent)msg.textContent='找不到這組代碼,請再確認';
   return false;}
 $('#codeBtn').onclick=()=>tryCode(codeIn.value);
@@ -393,6 +394,10 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
  const st=document.getElementById('stars');if(st)st.innerHTML=o;}
 
 /* 封面文字位置:依螢幕大小跟著背景圖縮放 */
+/* 封面:點一下也可以翻到下一頁(滑動原本就可以;手指有移動就不算點) */
+{const cv=document.querySelector('.cover');if(cv){let dx0=0,dy0=0;
+  cv.addEventListener('pointerdown',e=>{dx0=e.clientX;dy0=e.clientY});
+  cv.addEventListener('click',e=>{if(e.target.closest('button,a,input,select'))return;if(Math.hypot(e.clientX-dx0,e.clientY-dy0)>8)return;pager.scrollTo({left:pager.clientWidth,behavior:'smooth'})})}}
 {const cv=document.querySelector('.cover');const fit=()=>{if(!cv)return;const s=Math.max(cv.clientWidth/390,cv.clientHeight/844);cv.style.setProperty('--cs',s.toFixed(3))};
  fit();addEventListener('resize',fit);if(window.ResizeObserver)new ResizeObserver(fit).observe(cv)}
 
