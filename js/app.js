@@ -304,7 +304,7 @@ async function tryCode(code,silent){
   if(!(window.crypto&&crypto.subtle)){if(!silent)msg.textContent='這個瀏覽器不支援解鎖,請改用最新版 Safari 或 Chrome';return false}
   tryBusy=true;if(!silent)msg.textContent='解鎖中…';
   const T=await tixDecrypt(code);tryBusy=false;
-  if(T){TK=T;slots.style.display='none';txPax=0;txRender();msg.textContent='';codeIn.value='';store.set('jeju-code',code);relink.style.display='block';return true}
+  if(T){TK=T;slots.style.display='none';txPax=0;txRender();msg.textContent='';codeIn.value='';relink.style.display='block';return true}   // 不把代碼存在手機裡:每次打開都要重新輸入並按「查看」
   if(!silent)msg.textContent='找不到這組代碼,請再確認';
   return false;}
 $('#codeBtn').onclick=()=>tryCode(codeIn.value);
@@ -323,7 +323,7 @@ document.querySelectorAll('#flSeg button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#flSeg button').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});
   $('#flA').hidden=b.dataset.g!=='a';$('#flB').hidden=b.dataset.g!=='b';
 });
-lockSlots();{const saved=store.get('jeju-code');if(saved){tryCode(saved,true).then(ok=>{if(!ok)store.del('jeju-code')})}}   // 不再把存起來的代碼填進輸入框;失效的代碼直接清掉
+lockSlots();store.del('jeju-code');   // 清掉舊版存在手機裡的代碼,不再自動解鎖
 
 /* ---------- 頁籤 + 翻頁橘子 ---------- */
 const pages=[...pager.children];
