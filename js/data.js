@@ -129,7 +129,7 @@ const DAYS=[
   S('olle',{t:'13:30',note:'西歸浦市區逛街、午餐',dr:'車程40分',lab:'d'}),
   S('jeongbang',{t:'16:00',note:'午後休息完再去',dr:'車程10分',lab:'r'}),
   {t:'17:30',ty:'spot',name:'按摩(待填)',ko:'',addr:'地址待填',lon:126.53,lat:33.508,note:'回市區',dr:'車程50分',lab:'u'},
-  S('blackpork',{t:'19:30',note:'黑毛豬肉燒烤',dr:'車程10分',lab:'r'}),
+  S('blackpork',{t:'19:30',name:'黑豬肉燒烤(店名待填)',ko:'',addr:'제주특별자치도 제주시 제원길 30',lat:33.4879,lon:126.4893,note:'黑毛豬肉燒烤',dr:'車程10分',lab:'r'}),
   {t:'21:00',ty:'stay',name:'飯店(待填)',ko:'',addr:'地址待填',lon:126.52,lat:33.505,note:'回飯店休息',lab:'r'}]},
  {n:3,date:'02.10',wk:'三',title:'東部',rg:['東'],stops:[
   {t:'08:15',ty:'stay',name:'飯店(待填)',ko:'',addr:'地址待填',lon:126.52,lat:33.505,note:'從飯店出發',lab:'r'},
