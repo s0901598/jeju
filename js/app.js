@@ -123,15 +123,17 @@ function dismissSpot(el){if(!el||el.classList.contains('closing'))return;el.clas
   ovJM&&ovJM.setActive&&ovJM.setActive(-1);setTimeout(()=>el.remove(),270)}
 const closeSpot=()=>{const o=document.querySelector('.app > .spot:not(.closing)');if(!o)return false;dismissSpot(o);return true};
 function showSpot(s){if(!s)return;document.querySelector('.app > .spot')?.remove();document.querySelector('.app').insertAdjacentHTML('beforeend',spotCard(s));const i=ovPts.indexOf(s);ovJM&&ovJM.setActive&&ovJM.setActive(i)}
+let ovMode='list';
 function renderOverview(){
   const pts=ovFilter==='all'?OV:OV.filter(s=>s.ty===ovFilter);
-  const byR=(l,r)=>l.filter(s=>regionOf(s.lon,s.lat)===r);const sel=ovRegion!=='全部'?ovRegion:'';const mp=sel?byR(pts,sel):pts;
+  const byR=(l,r)=>l.filter(s=>regionOf(s.lon,s.lat)===r);const sel=(ovMode==='list'&&ovRegion!=='全部')?ovRegion:'';const mp=sel?byR(pts,sel):pts;
   ovPts=mp;if(ovJM)ovJM.destroy();ovJM=JMap($('#ovHost'),{points:mp,route:false,badge:'type',interactive:true,small:true,fit:sel?'points':'island',regions:!sel});
   const rs2=$('#ovReset');rs2.classList.remove('on');ovJM.onTouched=t=>rs2.classList.toggle('on',t);ovJM.onTap=()=>{if(!closeSpot())openOv()};ovJM.onStop=i=>showSpot(ovPts[i]);closeSpot();
-  const tabs=['全部',...REG].map(r=>`<button data-r="${r}" class="${ovRegion===r?'on':''}">${r==='全部'?'全部':r+'部'}<em>${r==='全部'?pts.length:byR(pts,r).length}</em></button>`).join('');
+  const opts=['全部',...REG].map(r=>`<option value="${r}"${ovRegion===r?' selected':''}>${r==='全部'?'全部景點':r+'部'}(${r==='全部'?pts.length:byR(pts,r).length})</option>`).join('');
   const body=sel?(byR(pts,sel).map(rowHTML).join('')||'<div class="empty">這個區域沒有安排</div>')
     :REG.map(r=>{const l=byR(pts,r);return l.length?`<div class="rgp"><h4>${r}部 <small>${l.length}</small></h4>${l.map(rowHTML).join('')}</div>`:''}).join('')||'<div class="empty">沒有安排</div>';
-  $('#rgList').innerHTML=`<div class="seg">${tabs}</div><div class="rows">${body}</div>`;
+  const nav=ovMode==='nav';
+  $('#rgList').innerHTML=`<div class="ovbar"><label class="ovsel${nav?'':' on'}"><select id="ovRgSel" aria-label="區域">${opts}</select><span>▾</span></label><button type="button" class="ovnav${nav?' on':''}" id="ovNavBtn">🗺️ 路線規劃</button></div>${nav?routePanelHTML():`<div class="rows">${body}</div>`}`;
   $('#filters').innerHTML=`<button class="fpill all${ovFilter==='all'?' on':''}" data-f="all" style="--c:#ee6a0a;--rgb:238,106,10">全部<em>${OV.length}</em></button>`+
     Object.entries(TYPE).map(([k,[n,c,g]])=>`<button class="fpill${ovFilter===k?' on':''}" data-f="${k}" style="${cv(k)}"><i>${g}</i>${n}<em>${OV.filter(s=>s.ty===k).length}</em></button>`).join('');}
 $('#rgList').addEventListener('click',e=>{const r=e.target.closest('.rrow');if(r)showSpot(OV[+r.dataset.o])});
@@ -420,3 +422,6 @@ if(q.get('p')){const st=document.createElement('style');st.textContent='*{transi
  fit();addEventListener('resize',fit);if(window.ResizeObserver)new ResizeObserver(fit).observe(cv)}
 
 $('#rgList').addEventListener('click',e=>{const b=e.target.closest('.seg button');if(!b)return;ovRegion=b.dataset.r;renderOverview()});
+
+$('#rgList').addEventListener('change',e=>{if(e.target.id==='ovRgSel'){ovRegion=e.target.value;ovMode='list';renderOverview()}});
+$('#rgList').addEventListener('click',e=>{if(e.target.closest('#ovNavBtn')&&ovMode!=='nav'){ovMode='nav';renderOverview()}});

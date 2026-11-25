@@ -989,3 +989,49 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 .card .ill-bg{z-index:-1;transform:none;-webkit-transform:none}
 .card .cb{z-index:1}
 .card .ib,.card .go{position:relative;z-index:3;-webkit-transform:translateZ(0);transform:translateZ(0)}
+
+/* ===== 總覽:區域下拉選單 + 路線規劃 ===== */
+.ovbar{display:flex;gap:10px;margin:14px 0 10px}
+.ovsel{position:relative;flex:1;display:block}
+.ovsel select{appearance:none;-webkit-appearance:none;width:100%;height:44px;border-radius:999px;border:1.5px solid rgba(255,138,31,.6);background:#fff;color:var(--navy);font:800 15px "PingFang TC",sans-serif;padding:0 36px 0 18px;outline:0}
+.ovsel span{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--orange-d);font-size:13px}
+.ovsel.on select{background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;border-color:transparent;box-shadow:0 4px 10px rgba(230,120,30,.35)}
+.ovsel.on span{color:#fff}
+.ovnav{flex:1;height:44px;border-radius:999px;border:1.5px solid rgba(255,138,31,.6);background:#fff;color:var(--orange-d);font:800 15px "PingFang TC",sans-serif;cursor:pointer}
+.ovnav.on{background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff;border-color:transparent;box-shadow:0 4px 10px rgba(230,120,30,.35)}
+[data-theme=dark] .ovsel select,[data-theme=dark] .ovnav:not(.on){background:#22405f;color:#eaf3fa;border-color:rgba(255,190,130,.7)}
+[data-theme=dark] .ovsel.on select{background:linear-gradient(135deg,#ffa133,#ee6a0a);color:#fff}
+.rt{background:rgba(255,255,255,.92);border:1px solid rgba(255,138,31,.4);border-radius:18px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.rt h4{font-size:15px;display:flex;gap:6px;align-items:center;color:var(--navy)}.rt h4 small{margin-left:auto;font-weight:500;font-size:11.5px;color:var(--muted)}
+.rt-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.rt-dot{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff}
+.rt-c0{background:#2e7d4f}.rt-c1{background:#1f4b7a}.rt-c2{background:#6a4fb0}.rt-c3{background:#e8600a}
+.rt-sel{flex:1;min-width:0;height:46px;border:1.5px solid rgba(255,138,31,.6);border-radius:12px;background:#fff;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:6px;font:700 14.5px "PingFang TC",sans-serif;color:var(--navy);text-align:left;cursor:pointer}
+.rt-sel span{min-width:0}.rt-sel b{display:block;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rt-sel small{display:block;font-size:11px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-sel.empty{color:var(--muted);border-style:dashed}.rt-sel i{font-style:normal;color:var(--orange-d);flex:none}
+.rt-x{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid rgba(0,0,0,.2);background:#fff;font-size:12px;color:var(--muted);cursor:pointer}
+.rt-sw{margin:6px 0 -2px 34px;display:inline-block;font:800 12px "PingFang TC",sans-serif;color:var(--orange-d);background:#fff4e0;border:1.5px solid rgba(255,138,31,.65);border-radius:999px;padding:4px 12px;cursor:pointer}
+.rt-add{display:block;width:100%;margin-top:10px;font:800 13px "PingFang TC",sans-serif;color:var(--orange-d);background:transparent;border:1.5px dashed rgba(255,138,31,.7);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.rt-add.off{color:var(--muted);border-color:rgba(0,0,0,.15);cursor:default}
+.rt-go{display:block;width:100%;margin-top:10px;border:0;font:800 15.5px "PingFang TC",sans-serif;color:#fff;background:linear-gradient(135deg,#ffa133,#ee6a0a);border-radius:14px;padding:13px;cursor:pointer}
+.rt-go2{display:block;width:100%;margin-top:8px;font:800 13px "PingFang TC",sans-serif;color:var(--orange-d);background:#fff;border:1.5px solid rgba(255,138,31,.65);border-radius:14px;padding:10px;cursor:pointer}
+.rt-sum{margin-top:10px;font-size:12.5px;line-height:1.6;color:var(--navy);font-weight:700}
+.rt-note{margin-top:4px;font-size:11px;line-height:1.5;color:var(--muted)}
+[data-theme=dark] .rt{background:rgba(255,255,255,.08)}
+[data-theme=dark] .rt-sel,[data-theme=dark] .rt-x,[data-theme=dark] .rt-go2{background:#22405f;color:#eaf3fa}
+[data-theme=dark] .rt h4,[data-theme=dark] .rt-sum{color:#fff}
+.rt-pop{position:fixed;inset:0;z-index:9500;background:rgba(10,24,40,.55);display:flex;align-items:flex-end}
+.rt-sheet{width:100%;max-height:82vh;display:flex;flex-direction:column;background:#fffaf2;border-radius:22px 22px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.3)}
+.rt-sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:var(--navy);font-size:16px}
+.rt-close{width:32px;height:32px;border-radius:50%;border:0;background:rgba(0,0,0,.1);font-size:15px;cursor:pointer}
+.rt-q{width:100%;height:44px;border-radius:12px;border:1.5px solid rgba(255,138,31,.6);padding:0 14px;font-size:16px;margin-bottom:8px;background:#fff;color:var(--navy);outline:0}
+.rt-list{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.rt-g{font-size:11.5px;font-weight:800;color:var(--orange-d);background:#fff4e0;padding:5px 10px;border-radius:8px;margin:8px 0 2px}
+.rt-it{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:9px 6px;border-bottom:1px solid rgba(0,0,0,.06);text-align:left;font-family:inherit;cursor:pointer;color:var(--navy)}
+.rt-it i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:14px;color:#fff}
+.rt-it span{flex:1;min-width:0}.rt-it b{display:block;font-size:14.5px}.rt-it small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-it em{flex:none;font-style:normal;font-size:11px;font-weight:800;color:var(--muted);background:rgba(0,0,0,.06);padding:2px 8px;border-radius:999px}
+.rt-empty{padding:20px 8px;text-align:center;color:var(--muted);font-size:13px}
+[data-theme=dark] .rt-sheet{background:#1b3550}[data-theme=dark] .rt-sh,[data-theme=dark] .rt-it{color:#eaf3fb}[data-theme=dark] .rt-q{background:#22405f;color:#fff}
+#navfb .nf-copy{background:#ff8a1f;color:#fff;font-weight:800;border-radius:999px;padding:7px 12px;font-size:13px;white-space:nowrap}
+.rt-q{-webkit-appearance:none;appearance:none;height:46px;line-height:46px;flex:none}
