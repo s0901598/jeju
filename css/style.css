@@ -983,3 +983,9 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 #navfb span,#lnbar span{flex:1;line-height:1.4}
 #navfb a,#lnbar a{background:#ff8a1f;color:#fff;font-weight:800;text-decoration:none;padding:7px 12px;border-radius:999px;white-space:nowrap}
 #navfb button,#lnbar button{background:none;border:0;color:#fff;font-size:15px;padding:4px}
+
+/* ===== 卡片:插圖一律墊在最底層,按鈕/文字永遠在插圖上面(iPhone 上導航鈕被插圖蓋住的問題) ===== */
+.card{isolation:isolate}
+.card .ill-bg{z-index:-1;transform:none;-webkit-transform:none}
+.card .cb{z-index:1}
+.card .ib,.card .go{position:relative;z-index:3;-webkit-transform:translateZ(0);transform:translateZ(0)}
