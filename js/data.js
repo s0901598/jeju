@@ -135,8 +135,8 @@ const DAYS=[
   {t:'08:15',ty:'stay',name:'飯店(待填)',ko:'',addr:'地址待填',lon:126.52,lat:33.505,note:'從飯店出發',lab:'r'},
   S('manjang',{t:'09:00',note:'包車出發',lab:'u'}),
   S('seongsan',{t:'10:45',note:'',dr:'車程35分',lab:'r'}),
-  S('samda',{t:'12:30',note:'海鮮自助午餐;週三 17:00 才開,需確認',dr:'車程10分',lab:'d'}),
-  S('folk',{t:'14:30',note:'',dr:'車程25分',lab:'d'}),
+  S('woljip',{t:'12:30',note:'黑豬肉午餐;部分日期休息,出發前確認',dr:'車程35分',lab:'d'}),
+  S('folk',{t:'14:30',note:'',dr:'車程55分',lab:'d'}),
   S('bhc',{t:'18:00',note:'韓式炸雞;分店待確認',dr:'車程60分',lab:'l'}),
   S('hyatt',{t:'19:30',note:'Check-in(預計住君悅)',dr:'車程10分',lab:'r'})]},
  {n:4,date:'02.11',wk:'四',title:'市區・返程',rg:['北'],stops:[
@@ -152,7 +152,7 @@ P.hyatt.ill='img/ill/hotel.webp';
 const GEN={'飯店(待填)':'hotel','早餐(待填)':'breakfast','按摩(待填)':'massage','晚餐(待填)':'dinner'};
 DAYS.forEach(d=>d.stops.forEach(s=>{s.days=[d.n];if(GEN[s.name])s.ill=`img/ill/${GEN[s.name]}.webp`;if(s.name==='君悅酒店')s.ill='img/ill/hotel.webp'}));
 /* 還沒排進行程、但想放在總覽地圖上的地點(Alice 蒐集 + 熱門推薦) */
-const CANDIDATES=['haejigae','jamae','woljip','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'推薦行程'}));
+const CANDIDATES=['haejigae','jamae','samda','malhouse','bhc','bagel','camellia','sorang','udo','hill1100','halla','rainbow','dodu','blackpork','woojin','daewon','tteok'].map(k=>S(k,{note:'推薦行程'}));
 
 /* 住宿(三晚,範例) */
 const STAYS=[
