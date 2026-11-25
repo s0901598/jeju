@@ -976,10 +976,6 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 
 /* ===== Day 頁:卡片停靠位置上移,縮小頂部空白 ===== */
 .cards{padding-top:var(--pad,0px);padding-bottom:var(--padb,var(--pad,0px));scroll-padding-top:0;scroll-padding-bottom:var(--spb,0px)}
-/* ===== 卡片按鈕:疊在插圖上也要看得清楚 ===== */
-.card .ib{background:#fff;border:2px solid #e8700a;color:#b85500;box-shadow:0 2px 6px rgba(0,0,0,.22)}
-.card .go{background:#fff;border:2px solid #e8700a;color:#b85500;box-shadow:0 2px 6px rgba(0,0,0,.22);font-weight:800}
-[data-theme=dark] .card .ib,[data-theme=dark] .card .go{background:#22405f;border-color:#ffb36b;color:#ffd9b0}
 /* ===== 導航備援 / LINE 提示列 ===== */
 #navfb,#lnbar{position:fixed;left:12px;right:12px;z-index:9600;display:flex;align-items:center;gap:10px;background:#16395a;color:#fff;border-radius:14px;padding:10px 12px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #navfb{bottom:24px;transform:translateY(160%);transition:transform .25s}#navfb.on{transform:none}
