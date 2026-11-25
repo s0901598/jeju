@@ -22,7 +22,7 @@ function spotCard(s,cls){
     <div class="ko"><span class="kt">${s.ko||'韓文待填'}</span>${s.ko?btn('copy',s.ko,'複製韓文名稱')+btn('play',s.ko,'播放韓文發音'):''}</div>
     <div class="ad"><span class="at">📍 ${s.addr}</span>${btn('copy',s.addr,'複製地址')}</div>
     ${spotInfo(s)}
-    <div class="ft"><span class="nt">${nt||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}
+    <div class="ft"><span class="nt">${nt||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}" data-addr="${s.addr}">導航 ›</a></div></div></div>`}
 
 /* ========== 放大的地圖視窗:縮放、拖動、點行程點看資訊、切換插畫地圖 / 真實地圖 ========== */
 function openMapFull(o){

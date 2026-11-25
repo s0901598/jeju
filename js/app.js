@@ -1,4 +1,5 @@
 const PITCH=226;
+const CC=.32;   /* Day 頁:行程卡停靠的位置(占卡片區高度的比例),越小越靠上 */
 const $=s=>document.querySelector(s);
 const pager=$('#pager'),navEl=$('#nav'),tabsEl=$('#tabs');
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
@@ -27,14 +28,25 @@ function speak(txt,el){
   const au=new Audio(src);curAudio=au;el.classList.add('busy');
   au.onended=au.onpause=()=>el.classList.remove('busy');
   au.play().catch(()=>{el.classList.remove('busy');fallback()});}
-/* 導航:先試 Naver Map app,沒開起來就改開 Google Map */
-function navigate(lat,lon,name){
-  const naver=`nmap://place?lat=${lat}&lng=${lon}&name=${encodeURIComponent(name)}&appname=io.github.s0901598.jeju`;
-  const google=`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+/* 導航:用「地址」在 Naver Map 搜尋(和複製地址貼到 Naver 是同一個結果);不會自動把本頁換成 Google Map */
+function navigate(lat,lon,name,addr){
+  const q=(addr&&!/待填/.test(addr))?addr:name;
+  const naver=`nmap://search?query=${encodeURIComponent(q)}&appname=io.github.s0901598.jeju`;
+  const google=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   let left=false;const onHide=()=>{if(document.hidden)left=true};
-  document.addEventListener('visibilitychange',onHide);addEventListener('pagehide',()=>left=true,{once:true});
-  setTimeout(()=>{document.removeEventListener('visibilitychange',onHide);if(!left&&!document.hidden)location.href=google},1800);
+  document.addEventListener('visibilitychange',onHide);
+  setTimeout(()=>{document.removeEventListener('visibilitychange',onHide);if(!left&&!document.hidden)navFallback(google)},2000);
   location.href=naver;}
+function navFallback(url){
+  let b=document.getElementById('navfb');if(!b){b=document.createElement('div');b.id='navfb';document.body.appendChild(b)}
+  b.innerHTML=`<span>沒有跳到 Naver Map?</span><a href="${url}" target="_blank" rel="noopener">改開 Google 地圖</a><button type="button" aria-label="關閉">✕</button>`;
+  b.classList.add('on');b.querySelector('button').onclick=()=>b.classList.remove('on');setTimeout(()=>b.classList.remove('on'),9000)}
+/* LINE 內建瀏覽器:提示改用 Safari 開啟 */
+(()=>{if(!/\bLine\//i.test(navigator.userAgent)||/openExternalBrowser=1/.test(location.search))return;
+  const bar=document.createElement('div');bar.id='lnbar';
+  const u=location.origin+location.pathname+'?openExternalBrowser=1';
+  bar.innerHTML=`<span>你在 LINE 裡開啟,部分功能(導航、複製)可能不順</span><a href="${u}">用 Safari 開啟</a><button type="button" aria-label="關閉">✕</button>`;
+  bar.querySelector('button').onclick=()=>bar.remove();document.body.appendChild(bar)})();
 document.addEventListener('click',async e=>{
   const c=e.target.closest('.ib.copy,.pnr-cp'),p=e.target.closest('.ib.play'),g=e.target.closest('a.go');
   if(c){e.stopPropagation();const t=c.dataset.copy;
@@ -44,7 +56,7 @@ document.addEventListener('click',async e=>{
   else if(e.target.closest('.sp-tg')){e.stopPropagation();const b=e.target.closest('.sp-tg'),sec=b.parentElement,pop=sec.querySelector('.sp-pop'),open=pop.hidden;sec.closest('.spot').querySelectorAll('.sp-pop').forEach(p=>{p.hidden=true;p.parentElement.classList.remove('open')});if(open){pop.hidden=false;sec.classList.add('open')}sec.closest('.spot').classList.toggle('ex',open)}
   else if(e.target.closest('.sp-x')){e.stopPropagation();dismissSpot(e.target.closest('.spot'))}
   else if(e.target.closest('.sp-img img')){e.stopPropagation();if(window.__spotDragT&&performance.now()-window.__spotDragT<350)return;openLightbox(e.target.closest('.sp-img img'))}
-  else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name)}
+  else if(g){e.preventDefault();e.stopPropagation();navigate(g.dataset.lat,g.dataset.lon,g.dataset.name,g.dataset.addr)}
 },true);
 
 
@@ -190,7 +202,7 @@ DAYS.forEach(d=>{
         ${s.ill?`<div class="ill-bg" style="background-image:url(${s.ill})"></div>`:''}<div class="cb"><div class="r1"><span class="nm">${s.name}</span><span class="ty" style="background:${tc}">${tn}</span></div>
         <div class="ko"><span class="kt">${s.ko||'韓文待填'}</span>${s.ko?btn('copy',s.ko,'複製韓文名稱')+btn('play',s.ko,'播放韓文發音'):''}</div>
         <div class="ad"><span class="at">📍 ${s.addr}</span>${btn('copy',s.addr,'複製地址')}</div>
-        <div class="ft"><span class="nt"><span class="lb">內容：</span>${s.note||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"></div></div>
+        <div class="ft"><span class="nt"><span class="lb">內容：</span>${s.note||'—'}</span><a class="go" href="#" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.ko||s.name}" data-addr="${s.addr}">導航 ›</a></div></div></div>`}).join('')}<div class="sp"></div></div>
    </div>
    <div class="map"><div class="mhost"></div><span class="badge r">草案</span><button class="mreset" aria-label="回到全景">◎</button><span class="mexpand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></span></div>`;
   pager.insertBefore(pg,infoPg);
@@ -208,8 +220,8 @@ DAYS.forEach(d=>{
   /* 時間軸 <-> 行程 雙向連動 */
   const tl=pg.querySelector('.tl'),cards=pg.querySelector('.cards');
   const CSS_TL=!!(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','--x')&&CSS.supports('timeline-scope','--x'));   // 瀏覽器支援「CSS 捲動連動」:時間軸跟著行程卡走,不需要 JS
-  if(tl){const setMax=()=>{const c1=cards.querySelector('.card'),CH=c1?c1.offsetHeight:212,pad=Math.max(0,(cards.clientHeight-CH)/2);
-      pg.style.setProperty('--pad',pad+'px');            /* 上下各留半個畫面,讓第一張、最後一張也能停在正中間 */
+  if(tl){const setMax=()=>{const c1=cards.querySelector('.card'),CH=c1?c1.offsetHeight:212,H=cards.clientHeight,pad=Math.max(0,CC*H-CH/2),padb=Math.max(0,(1-CC)*H-CH/2);
+      pg.style.setProperty('--pad',pad+'px');pg.style.setProperty('--padb',padb+'px');pg.style.setProperty('--spb',Math.max(0,H*(1-2*CC))+'px');            /* 上下各留半個畫面,讓第一張、最後一張也能停在正中間 */
       const M=Math.max(0,cards.scrollHeight-cards.clientHeight),N=d.stops.length;
       tl.style.setProperty('--tlmax',M+'px');
       /* 每一站「亮起」的捲動範圍:那一張停在正中間(捲動量 = 站序 × 一格高)前後各半格;最後一站到底都亮 */
@@ -233,7 +245,7 @@ DAYS.forEach(d=>{
   /* 地圖的「目前這站」:卡片經過畫面正中央時才換(只在換張的那一下執行,捲動中不跑程式) */
   let panT=0;   // 換站後等 0.15 秒再平移地圖(不跟手指滑動搶效能)
   if(!HIDE_DAY_MAP){const mp=pg.querySelector('.map');if(mp)mp.addEventListener('touchmove',e=>{if(e.cancelable)e.preventDefault()},{passive:false})}   // 在地圖上拖動時,頁面本身不能跟著動
-  if(!HIDE_DAY_MAP&&window.IntersectionObserver){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const i=+en.target.dataset.i;if(i!==curIdx){setActive(i);clearTimeout(panT);panT=setTimeout(()=>jm.panTo&&jm.panTo(i),150)}}}),{root:cards,rootMargin:'-47% 0px -47% 0px'});cards.querySelectorAll('.card').forEach(c=>io.observe(c))}
+  if(!HIDE_DAY_MAP&&window.IntersectionObserver){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){const i=+en.target.dataset.i;if(i!==curIdx){setActive(i);clearTimeout(panT);panT=setTimeout(()=>jm.panTo&&jm.panTo(i),150)}}}),{root:cards,rootMargin:`-${(CC-.03)*100}% 0px -${(1-CC-.03)*100}% 0px`});cards.querySelectorAll('.card').forEach(c=>io.observe(c))}
   pg.querySelectorAll('.tli').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
   pg.querySelectorAll('.card').forEach(e=>e.onclick=()=>cards.scrollTo({top:e.dataset.i*PITCH,behavior:'smooth'}));
 });
