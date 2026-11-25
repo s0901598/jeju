@@ -1035,3 +1035,4 @@ html,body{position:fixed;inset:0;width:100%;overflow:hidden;overscroll-behavior:
 [data-theme=dark] .rt-sheet{background:#1b3550}[data-theme=dark] .rt-sh,[data-theme=dark] .rt-it{color:#eaf3fb}[data-theme=dark] .rt-q{background:#22405f;color:#fff}
 #navfb .nf-copy{background:#ff8a1f;color:#fff;font-weight:800;border-radius:999px;padding:7px 12px;font-size:13px;white-space:nowrap}
 .rt-q{-webkit-appearance:none;appearance:none;height:46px;line-height:46px;flex:none}
+.ovsel select{text-align:center;text-align-last:center;-moz-text-align-last:center;padding:0 36px}
